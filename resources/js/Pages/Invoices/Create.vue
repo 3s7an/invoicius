@@ -1,0 +1,335 @@
+<script setup>
+import { reactive, computed, ref, onMounted } from 'vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import BillingDetailsForm from '@/Components/BillingDetailsForm.vue';
+import InvoiceSettings from '@/Components/InvoiceSettings.vue';
+import RecipientDetailsForm from '@/Components/RecipientDetailsForm.vue';
+import InvoiceHeaderForm from '@/Components/InvoiceHeaderForm.vue';
+import InvoiceItemsTable from '@/Components/InvoiceItemsTable.vue';
+import AutoComplete from 'primevue/autocomplete';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
+
+const props = defineProps({
+    recipients: {
+        type: Array,
+        default: () => [],
+    },
+    suggested_number: {
+        type: String,
+        default: '',
+    },
+    preselected_recipient: {
+        type: Object,
+        default: null,
+    },
+    currencies: {
+        type: Array,
+        default: () => [],
+    },
+    vat_types: {
+        type: Array,
+        default: () => [],
+    },
+    default_currency_id: {
+        type: [Number, String],
+        default: null,
+    },
+    invoice_colors: {
+        type: Array,
+        default: () => [],
+    },
+    invoiceColors: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const user = usePage().props.auth?.user;
+
+/** Invoice colors (support both snake_case and camelCase from backend) */
+const invoiceColorsList = computed(() => {
+    const list = props.invoice_colors ?? props.invoiceColors ?? [];
+    return Array.isArray(list) ? list : [];
+});
+
+// Add display label for AutoComplete (company_name || name)
+const recipientsWithLabel = computed(() =>
+    (props.recipients ?? []).map((r) => ({
+        ...r,
+        _label: (r.company_name || r.name || '').trim() || '—',
+    }))
+);
+
+const selectedRecipient = ref(null);
+const filteredRecipients = ref([]);
+const recipientQuery = ref('');
+
+function searchRecipients(event) {
+    recipientQuery.value = event.query ?? '';
+    const q = (event.query || '').trim().toLowerCase();
+    if (!q) {
+        filteredRecipients.value = [...recipientsWithLabel.value];
+        return;
+    }
+    filteredRecipients.value = recipientsWithLabel.value.filter(
+        (r) =>
+            (r.name || '').toLowerCase().includes(q) ||
+            (r.company_name || '').toLowerCase().includes(q)
+    );
+}
+
+function applyRecipient(r) {
+    if (!r) return;
+    recipient.recipient_name = (r.company_name || r.name || '').trim();
+    recipient.recipient_street = r.street ?? '';
+    recipient.recipient_street_num = r.street_num ?? '';
+    recipient.recipient_city = r.city ?? '';
+    recipient.recipient_state = [r.state, r.zip].filter(Boolean).join(', ');
+    recipient.recipient_ico = r.ico ?? '';
+    recipient.recipient_dic = r.dic ?? '';
+    recipient.recipient_ic_dph = r.ic_dph ?? '';
+    recipient.recipient_iban = r.iban ?? '';
+}
+
+function onRecipientSelect(event) {
+    applyRecipient(event.value);
+}
+
+const showAddRecipientFooter = computed(
+    () =>
+        filteredRecipients.value.length === 0 &&
+        (recipientQuery.value.length > 0 || recipientsWithLabel.value.length === 0)
+);
+
+onMounted(() => {
+    const pre = props.preselected_recipient;
+    if (pre) {
+        const withLabel = { ...pre, _label: (pre.company_name || pre.name || '').trim() || '—' };
+        selectedRecipient.value = withLabel;
+        applyRecipient(withLabel);
+    }
+});
+
+const toYMD = (d) => d.toISOString().slice(0, 10);
+const today = toYMD(new Date());
+const defaultDue = toYMD(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000));
+
+const invoice = reactive({
+    number: props.suggested_number || today,
+    variable_symbol: props.suggested_number || today,
+    issue_date: today,
+    due_date: defaultDue,
+    currency_id: props.default_currency_id ?? (props.currencies?.[0]?.id ?? ''),
+    invoice_color_id: user?.invoice_color_id ?? (props.invoice_colors?.[0]?.id ?? ''),
+});
+
+const currencySymbol = computed(() => {
+    const id = Number(invoice.currency_id);
+    const c = (props.currencies ?? []).find((x) => Number(x.id) === id);
+    return c?.symbol ?? '';
+});
+
+const hasUserBillingDetails = computed(() => {
+    if (!user) return false;
+    return [user.street, user.street_num, user.city, user.zip, user.state, user.ico, user.dic, user.ic_dph].some(
+        (v) => v != null && String(v).trim() !== ''
+    );
+});
+
+const issuer = reactive({
+    name: user?.name ?? '',
+    street: user?.street ?? '',
+    street_num: user?.street_num ?? '',
+    city: user?.city ?? '',
+    zip: user?.zip ?? '',
+    state: user?.state ?? '',
+    ico: user?.ico ?? '',
+    dic: user?.dic ?? '',
+    ic_dph: user?.ic_dph ?? '',
+});
+
+const recipient = reactive({
+    recipient_name: '',
+    recipient_street: '',
+    recipient_street_num: '',
+    recipient_city: '',
+    recipient_state: '',
+    recipient_ico: '',
+    recipient_dic: '',
+    recipient_ic_dph: '',
+    recipient_iban: '',
+});
+
+const items = ref([
+    { name: '', quantity: 1, unit: 'pcs', unit_price: '' },
+]);
+
+const hasValidItem = (item) =>
+    String(item?.name ?? '').trim() !== '' &&
+    Number(Number.parseFloat(item?.quantity) || 0) > 0 &&
+    Number(Number.parseFloat(item?.unit_price) || 0) >= 0;
+
+const hasAtLeastOneItem = computed(() =>
+    items.value.some((item) => hasValidItem(item))
+);
+
+const validationErrors = ref({});
+
+function validateForm() {
+    const err = {};
+    if (String(invoice.number ?? '').trim() === '') err.number = 'Invoice number is required.';
+    if (String(invoice.variable_symbol ?? '').trim() === '') err.variable_symbol = 'Variable symbol is required.';
+    if (String(invoice.issue_date ?? '').trim() === '') err.issue_date = 'Issue date is required.';
+    if (String(invoice.due_date ?? '').trim() === '') err.due_date = 'Due date is required.';
+    if (!invoice.currency_id) err.currency_id = 'Currency is required.';
+    if (String(issuer.name ?? '').trim() === '') err.issuer_name = 'Issuer name is required.';
+    if (String(recipient.recipient_name ?? '').trim() === '') err.recipient_name = 'Recipient is required.';
+    if (!hasAtLeastOneItem.value) err.items = 'Add at least one item with name, quantity and unit price.';
+    return err;
+}
+
+const creating = ref(false);
+
+function createInvoice() {
+    const err = validateForm();
+    validationErrors.value = err;
+    const hasErrors = Object.keys(err).length > 0;
+    if (hasErrors || creating.value) return;
+    creating.value = true;
+    validationErrors.value = {};
+    router.post(route('invoices.store'), {
+        number: invoice.number,
+        variable_symbol: invoice.variable_symbol,
+        issue_date: invoice.issue_date,
+        due_date: invoice.due_date,
+        currency_id: invoice.currency_id,
+        recipient_id: selectedRecipient.value?.id ?? null,
+        issuer: { ...issuer },
+        recipient: { ...recipient },
+        items: items.value.filter((item) => hasValidItem(item)),
+    }, {
+        preserveScroll: true,
+        onFinish: () => { creating.value = false; },
+    });
+}
+</script>
+
+<template>
+    <Head title="New invoice" />
+
+    <AuthenticatedLayout>
+        <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <Link :href="route('invoices')" class="text-sm text-gray-500 hover:text-gray-700">← Invoices</Link>
+                <h1 class="text-lg font-medium text-gray-900">New invoice</h1>
+            </div>
+              
+                <!-- Invoice header -->
+                <InvoiceHeaderForm
+                    :model-value="invoice"
+                    :currencies="currencies"
+                    :errors="validationErrors"
+                    @update:model-value="(v) => Object.assign(invoice, v)"
+                    id-prefix="invoice"
+                />
+
+                <!-- Invoice settings (logo + color) -->
+                <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                    <h3 class="text-lg font-medium text-gray-900">Invoice settings</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Company logo and invoice color for this invoice.
+                    </p>
+                    <div class="mt-6">
+                        <InvoiceSettings
+                            mode="invoice"
+                            :model="invoice"
+                            :user="user"
+                            :invoice-colors="invoiceColorsList"
+                            id-prefix="invoice-settings"
+                        />
+                    </div>
+                </div>
+
+                <!-- Billing details (issuer) -->
+                <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                    <BillingDetailsForm
+                        mode="embed"
+                        :model-value="issuer"
+                        :include-name="true"
+                        :readonly="hasUserBillingDetails"
+                        :errors="validationErrors"
+                        id-prefix="invoice-issuer"
+                    />
+                </div>
+
+                <!-- Recipient -->
+                <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+                    <h3 class="text-lg font-medium text-gray-900">Recipient</h3>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Search and select a recipient, or add a new one.
+                    </p>
+                    <div class="mt-6">
+                        <label for="invoice-recipient-search" class="block text-sm font-medium text-gray-700">
+                            Search recipient
+                        </label>
+                        <AutoComplete
+                            id="invoice-recipient-search"
+                            v-model="selectedRecipient"
+                            :suggestions="filteredRecipients"
+                            option-label="_label"
+                            placeholder="Type to search..."
+                            class="mt-1 w-full"
+                            fluid
+                            @complete="searchRecipients"
+                            @item-select="onRecipientSelect"
+                        >
+                            <template #option="{ option }">
+                                <div class="flex flex-col">
+                                    <span class="font-medium">{{ option._label }}</span>
+                                    <span v-if="option.street || option.city" class="text-sm text-gray-500">
+                                        {{ [option.street, option.city].filter(Boolean).join(', ') }}
+                                    </span>
+                                </div>
+                            </template>
+                            <template v-if="showAddRecipientFooter" #footer>
+                                <Link
+                                    :href="route('recipients.create') + '?from_invoice=1'"
+                                    class="block px-3 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
+                                >
+                                    + Add new recipient
+                                </Link>
+                            </template>
+                        </AutoComplete>
+                    </div>
+                    <div class="mt-6 border-t border-gray-200 pt-6">
+                        <RecipientDetailsForm
+                            mode="invoice"
+                            :model-value="recipient"
+                            :errors="validationErrors"
+                            id-prefix="invoice-recipient"
+                        />
+                    </div>
+                </div>
+
+                <!-- Invoice items -->
+                <InvoiceItemsTable
+                    v-model="items"
+                    :currency-symbol="currencySymbol"
+                    :vat-types="vat_types"
+                    :error="validationErrors.items"
+                />
+
+                <!-- Create invoice CTA -->
+                 <div class="flex justify-end">
+                    <button
+                        type="button"
+                        :disabled="creating"
+                        @click="createInvoice"
+                        class="w-full min-w-[200px] rounded-lg bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 sm:w-auto"
+                    >
+                        {{ creating ? 'Creating…' : 'Create invoice' }}
+                    </button>
+                </div>
+        </div>
+    </AuthenticatedLayout>
+</template>
