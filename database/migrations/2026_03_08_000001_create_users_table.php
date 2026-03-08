@@ -6,36 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('recipients', function (Blueprint $table) {
+        if (Schema::hasTable('users')) {
+            return;
+        }
+
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('name')->nullable();
+            $table->string('name');
             $table->string('company_name')->nullable();
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
             $table->string('street')->nullable();
             $table->string('street_num')->nullable();
             $table->string('city')->nullable();
-            $table->string('zip')->nullable();
+            $table->string('zip', 20)->nullable();
             $table->string('state')->nullable();
-            $table->string('ico')->nullable();
-            $table->string('dic')->nullable();
-            $table->string('ic_dph')->nullable();
+            $table->string('ico', 20)->nullable();
+            $table->string('dic', 20)->nullable();
+            $table->string('ic_dph', 20)->nullable();
             $table->string('iban', 34)->nullable();
+            $table->rememberToken();
             $table->timestamps();
-
-            $table->index('user_id');
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('recipients');
+        Schema::dropIfExists('users');
     }
 };
