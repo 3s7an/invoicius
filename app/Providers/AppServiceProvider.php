@@ -13,6 +13,7 @@ use App\Services\InvoiceService;
 use App\Services\ProfileService;
 use App\Services\RecipientService;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -35,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(Recipient::class, RecipientPolicy::class);
+
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
 
         Vite::prefetch(concurrency: 3);
     }
