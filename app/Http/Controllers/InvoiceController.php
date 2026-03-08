@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateInvoiceStatusRequest;
 use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,7 +22,20 @@ class InvoiceController extends Controller
 
     public function index(Request $request): Response
     {
-        $data = $this->invoiceService->getIndexData($request->user()->id);
+        try {
+            $data = $this->invoiceService->getIndexData($request->user()->id);
+        } catch (\Throwable $e) {
+            Log::error('Invoices index getIndexData failed', [
+                'user_id' => $request->user()->id,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $data = [
+                'invoices' => collect([]),
+                'invoice_stats' => ['total_invoiced' => 0, 'paid' => 0, 'awaiting' => 0, 'overdue' => 0],
+                'invoice_statuses' => collect([]),
+            ];
+        }
 
         return Inertia::render('Invoices', [
             'invoices' => $data['invoices'],
