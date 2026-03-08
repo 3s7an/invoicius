@@ -53,7 +53,8 @@ return new class extends Migration
     private function ensureNullableAndFk(string $table, string $column, string $refTable, string $fkName, int $default): void
     {
         if (DB::connection()->getDriverName() === 'mysql') {
-            DB::statement("ALTER TABLE {$table} MODIFY {$column} BIGINT UNSIGNED NULL DEFAULT ?", [$default]);
+            $default = (int) $default;
+            DB::statement("ALTER TABLE `{$table}` MODIFY `{$column}` BIGINT UNSIGNED NULL DEFAULT {$default}");
         }
         $this->ensureFk($table, $column, $refTable, $fkName);
     }
