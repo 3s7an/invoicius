@@ -41,7 +41,11 @@ class HandleInertiaRequests extends Middleware
                 'street', 'street_num', 'city', 'zip', 'state', 'ico', 'dic', 'ic_dph', 'iban',
                 'currency_id', 'company_logo_id', 'invoice_color_id',
             ]);
-            $authUser['company_logo'] = $user->companyLogo ? ['url' => $user->companyLogo->url] : null;
+            try {
+                $authUser['company_logo'] = $user->companyLogo ? ['url' => $user->companyLogo->url] : null;
+            } catch (\Throwable $e) {
+                $authUser['company_logo'] = null;
+            }
         }
 
         return [
