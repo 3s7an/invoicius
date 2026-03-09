@@ -8,13 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('vat_types')) {
-            return;
-        }
-
         Schema::create('vat_types', function (Blueprint $table) {
             $table->id();
             $table->string('code', 20)->unique();
+            $table->decimal('rate', 5, 2)->default(0);
             $table->timestamps();
         });
     }

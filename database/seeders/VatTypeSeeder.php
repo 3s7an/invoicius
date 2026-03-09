@@ -12,10 +12,19 @@ class VatTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $codes = ['23', '19', '5', 'MIMO', 'OSVO'];
+        $types = [
+            ['code' => '23', 'rate' => 23.00],
+            ['code' => '19', 'rate' => 19.00],
+            ['code' => '5', 'rate' => 5.00],
+            ['code' => 'MIMO', 'rate' => 0.00],
+            ['code' => 'OSVO', 'rate' => 0.00],
+        ];
 
-        foreach ($codes as $code) {
-            VatType::firstOrCreate(['code' => $code]);
+        foreach ($types as $type) {
+            VatType::updateOrCreate(
+                ['code' => $type['code']],
+                ['rate' => $type['rate']],
+            );
         }
     }
 }

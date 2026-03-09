@@ -43,7 +43,7 @@ function val(v) {
                         <h3 class="text-lg font-medium text-gray-900">Invoices ({{ recipient.invoices.length }})</h3>
                         <ul class="mt-2 space-y-1">
                             <li v-for="inv in recipient.invoices" :key="inv.id">
-                                <Link :href="route('invoices')" class="text-indigo-600 hover:underline">{{ inv.number }}</Link>
+                                <Link :href="route('invoices.edit', inv.id)" class="text-indigo-600 hover:underline">{{ inv.number }}</Link>
                             </li>
                         </ul>
                     </div>

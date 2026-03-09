@@ -12,7 +12,15 @@ class VatType extends Model
 
     protected $fillable = [
         'code',
+        'rate',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'rate' => 'decimal:2',
+        ];
+    }
 
     public function invoiceItems(): HasMany
     {

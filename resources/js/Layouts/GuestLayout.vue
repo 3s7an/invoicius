@@ -18,7 +18,7 @@ import { Link } from '@inertiajs/vue3';
                         d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 2v5h5l-5-5zm-4 4h8v1.5h-8V8zm0 3h8v1.5h-8V11zm0 3h5v1.5h-5V14z"
                     />
                 </svg>
-                <span class="text-xl font-light tracking-tight text-gray-700">invoicer</span>
+                <span class="text-xl font-light tracking-tight text-gray-700">Invoicius</span>
             </Link>
         </header>
 

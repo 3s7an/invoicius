@@ -13,7 +13,7 @@ interface RecipientServiceInterface
 
     public function findForUserOrFail(int $userId, int $recipientId): Recipient;
 
-    public function update(Recipient $recipient, int $userId, array $validated): Recipient;
+    public function update(Recipient $recipient, array $validated): Recipient;
 
-    public function delete(Recipient $recipient, int $userId): void;
+    public function delete(Recipient $recipient): void;
 }

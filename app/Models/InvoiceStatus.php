@@ -11,7 +11,9 @@ class InvoiceStatus extends Model
     use HasFactory;
 
     public const CODE_DRAFT = 'draft';
+    public const CODE_SENT = 'sent';
     public const CODE_PAID = 'paid';
+    public const CODE_OVERDUE = 'overdue';
 
     protected $fillable = [
         'code',

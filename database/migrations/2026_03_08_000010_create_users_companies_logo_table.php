@@ -8,11 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('users_companies_logo')) {
-            return;
-        }
-
-        Schema::create('users_companies_logo', function (Blueprint $table) {
+        Schema::create('user_company_logos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('link');
@@ -23,6 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('users_companies_logo');
+        Schema::dropIfExists('user_company_logos');
     }
 };

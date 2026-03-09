@@ -12,8 +12,8 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: props.recipient.company_name ?? props.recipient.name ?? '',
-    company_name: props.recipient.company_name ?? props.recipient.name ?? '',
+    name: props.recipient.name ?? '',
+    company_name: props.recipient.company_name ?? '',
     street: props.recipient.street ?? '',
     street_num: props.recipient.street_num ?? '',
     city: props.recipient.city ?? '',

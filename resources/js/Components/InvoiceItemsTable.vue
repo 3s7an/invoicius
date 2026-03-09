@@ -55,13 +55,17 @@ const items = ref(
         : [defaultItem()]
 );
 
+let debounceTimer = null;
 watch(
     items,
     () => {
-        emit(
-            'update:modelValue',
-            items.value.map((i) => ({ ...i }))
-        );
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            emit(
+                'update:modelValue',
+                items.value.map((i) => ({ ...i }))
+            );
+        }, 150);
     },
     { deep: true }
 );
@@ -81,7 +85,6 @@ function lineTotal(item) {
     return q * p;
 }
 
-/** MIMO, OSVO = no VAT; otherwise rate from code (23, 19, 5). */
 function lineVatAmount(item) {
     const lineWoVat = lineTotal(item);
     const vatId = item.vat_type_id != null ? Number(item.vat_type_id) : null;
@@ -90,7 +93,7 @@ function lineVatAmount(item) {
     if (!vatType) return 0;
     const code = String(vatType.code || '').toUpperCase();
     if (code === 'MIMO' || code === 'OSVO') return 0;
-    const rate = Number.parseFloat(vatType.code) || 0;
+    const rate = Number.parseFloat(vatType.rate ?? vatType.code) || 0;
     return lineWoVat * (rate / 100);
 }
 
@@ -120,7 +123,7 @@ function formatNum(x) {
             <button
                 type="button"
                 @click="addItem"
-                class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900"
             >
                 Add item
             </button>

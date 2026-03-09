@@ -74,7 +74,7 @@ class RecipientController extends Controller
     public function update(UpdateRecipientRequest $request, Recipient $recipient): RedirectResponse
     {
         $this->authorize('update', $recipient);
-        $this->recipientService->update($recipient, $recipient->user_id, $request->validated());
+        $this->recipientService->update($recipient, $request->validated());
 
         return redirect()
             ->route('recipients.index')
@@ -84,7 +84,7 @@ class RecipientController extends Controller
     public function destroy(Recipient $recipient): RedirectResponse
     {
         $this->authorize('delete', $recipient);
-        $this->recipientService->delete($recipient, $recipient->user_id);
+        $this->recipientService->delete($recipient);
 
         return redirect()
             ->route('recipients.index')

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserCompanyLogo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileService implements ProfileServiceInterface
@@ -71,7 +72,9 @@ class ProfileService implements ProfileServiceInterface
 
     public function deleteAccount(User $user): void
     {
-        Auth::logout();
-        $user->delete();
+        DB::transaction(function () use ($user) {
+            $user->delete();
+            Auth::logout();
+        });
     }
 }

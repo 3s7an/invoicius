@@ -44,6 +44,10 @@ class HandleInertiaRequests extends Middleware
             try {
                 $authUser['company_logo'] = $user->companyLogo ? ['url' => $user->companyLogo->url] : null;
             } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Failed to resolve company logo', [
+                    'user_id' => $user->id,
+                    'exception' => $e->getMessage(),
+                ]);
                 $authUser['company_logo'] = null;
             }
         }
@@ -52,6 +56,10 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $authUser,
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

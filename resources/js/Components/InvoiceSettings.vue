@@ -29,11 +29,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    /** Alias for invoiceColors (Inertia may pass snake_case) */
-    invoice_colors: {
-        type: Array,
-        default: () => [],
-    },
     idPrefix: {
         type: String,
         default: 'invoice-settings',
@@ -41,7 +36,7 @@ const props = defineProps({
 });
 
 const colorsList = computed(() => {
-    const list = props.invoiceColors ?? props.invoice_colors ?? [];
+    const list = props.invoiceColors ?? [];
     return Array.isArray(list) ? list : [];
 });
 

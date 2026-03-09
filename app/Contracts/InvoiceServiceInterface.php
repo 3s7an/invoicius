@@ -15,8 +15,6 @@ interface InvoiceServiceInterface
      */
     public function getInvoiceStats(int $userId): array;
 
-    public function getRecipients(int $userId): Collection;
-
     public function getSuggestedNumber(int $userId): string;
 
     public function createInvoice(CreateInvoiceData $data): Invoice;

@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Contracts\InvoiceServiceInterface;
+use App\Contracts\RecipientServiceInterface;
 use App\DTOs\CreateInvoiceData;
-use App\DTOs\CreateInvoiceItemData;
+use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceColor;
@@ -13,6 +14,7 @@ use App\Models\InvoiceStatus;
 use App\Models\Recipient;
 use App\Models\User;
 use App\Models\VatType;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,6 +23,11 @@ use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceService implements InvoiceServiceInterface
 {
+    public function __construct(
+        private readonly RecipientServiceInterface $recipientService,
+    ) {
+    }
+
     public function getInvoices(int $userId): Collection
     {
         return Invoice::forUser($userId)
@@ -36,7 +43,9 @@ class InvoiceService implements InvoiceServiceInterface
     {
         $base = Invoice::forUser($userId);
         $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
+        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
         $paidStatusId = $paidStatus?->id;
+        $draftStatusId = $draftStatus?->id;
         $today = now()->startOfDay();
 
         $totalInvoiced = (clone $base)->sum('total_price');
@@ -48,9 +57,20 @@ class InvoiceService implements InvoiceServiceInterface
         if ($paidStatusId !== null) {
             $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $paidStatusId);
         }
+        if ($draftStatusId !== null) {
+            $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $draftStatusId);
+        }
         $overdue = (float) $overdueQuery->sum('total_price');
 
-        $awaiting = $totalInvoiced - $paid - $overdue;
+        $excludeIds = array_filter([$paidStatusId, $draftStatusId]);
+        $awaitingQuery = clone $base;
+        if ($excludeIds) {
+            $awaitingQuery = $awaitingQuery->whereNotIn('invoice_status_id', $excludeIds);
+        }
+        $awaitingQuery = $awaitingQuery->where(function ($q) use ($today) {
+            $q->whereNull('due_date')->orWhereDate('due_date', '>=', $today);
+        });
+        $awaiting = (float) $awaitingQuery->sum('total_price');
 
         return [
             'total_invoiced' => (float) $totalInvoiced,
@@ -60,17 +80,7 @@ class InvoiceService implements InvoiceServiceInterface
         ];
     }
 
-    public function getRecipients(int $userId): Collection
-    {
-        return Recipient::forUser($userId)
-            ->orderBy('company_name')
-            ->orderBy('name')
-            ->get();
-    }
 
-    /**
-     * MIMO a OSVO = bez DPH; inak percento z kódu (23, 19, 5).
-     */
     private function calculateLineVat(float $lineWoVat, ?int $vatTypeId): float
     {
         if (! $vatTypeId) {
@@ -80,9 +90,8 @@ class InvoiceService implements InvoiceServiceInterface
         if (! $vatType || in_array(strtoupper((string) $vatType->code), ['MIMO', 'OSVO'], true)) {
             return 0.0;
         }
-        $rate = (float) $vatType->code;
 
-        return $lineWoVat * ($rate / 100);
+        return $lineWoVat * ($vatType->rate / 100);
     }
 
     public function getSuggestedNumber(int $userId): string
@@ -102,19 +111,45 @@ class InvoiceService implements InvoiceServiceInterface
 
     public function createInvoice(CreateInvoiceData $data): Invoice
     {
+        if ($data->recipientId !== null) {
+            $recipientBelongsToUser = Recipient::forUser($data->userId)
+                ->where('id', $data->recipientId)
+                ->exists();
+
+            if (! $recipientBelongsToUser) {
+                abort(403, 'Recipient does not belong to this user.');
+            }
+        }
+
         try {
             return DB::transaction(function () use ($data) {
+                $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+
                 $woVatTotal = 0.0;
                 $vatTotal = 0.0;
+                $itemRows = [];
 
-                foreach ($data->items as $item) {
+                foreach ($data->items as $position => $item) {
                     $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                    $vatAmount = $this->calculateLineVat($lineWoVat, $item->vatTypeId);
-                    $woVatTotal += $lineWoVat;
-                    $vatTotal += $vatAmount;
-                }
+                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
 
-                $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+                    $woVatTotal += $lineWoVat;
+                    $vatTotal += $lineVat;
+
+                    $itemRows[] = [
+                        'vat_type_id' => $item->vatTypeId,
+                        'name' => $item->name,
+                        'unit' => $item->unit,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unitPrice,
+                        'unit_wo_vat' => $item->unitPrice,
+                        'position' => $position,
+                        'line_wo_vat' => $lineWoVat,
+                        'vat' => $lineVat,
+                        'line_total' => $lineTotalWithVat,
+                    ];
+                }
 
                 $invoice = Invoice::create([
                     'user_id' => $data->userId,
@@ -139,28 +174,14 @@ class InvoiceService implements InvoiceServiceInterface
                     'invoice_status_id' => $draftStatus?->id,
                 ]);
 
-                foreach ($data->items as $position => $item) {
-                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
-                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
-
-                    InvoiceItem::create([
-                        'invoice_id' => $invoice->id,
-                        'vat_type_id' => $item->vatTypeId,
-                        'name' => $item->name,
-                        'unit' => $item->unit,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unitPrice,
-                        'unit_wo_vat' => $item->unitPrice,
-                        'position' => $position,
-                        'line_wo_vat' => $lineWoVat,
-                        'vat' => $lineVat,
-                        'line_total' => $lineTotalWithVat,
-                    ]);
+                foreach ($itemRows as $row) {
+                    $invoice->items()->create($row);
                 }
 
                 return $invoice;
             });
+        } catch (UniqueConstraintViolationException $e) {
+            throw new DuplicateInvoiceNumberException($data->number);
         } catch (\Throwable $e) {
             Log::error('Failed to create invoice', [
                 'user_id' => $data->userId,
@@ -174,10 +195,6 @@ class InvoiceService implements InvoiceServiceInterface
 
     public function updateStatus(Invoice $invoice, int $invoiceStatusId): void
     {
-        $exists = InvoiceStatus::where('id', $invoiceStatusId)->exists();
-        if (! $exists) {
-            abort(422, 'Invalid status.');
-        }
         $invoice->update(['invoice_status_id' => $invoiceStatusId]);
     }
 
@@ -234,11 +251,11 @@ class InvoiceService implements InvoiceServiceInterface
         }
 
         return [
-            'recipients' => $this->getRecipients($userId),
+            'recipients' => $this->recipientService->listForUser($userId),
             'suggested_number' => $this->getSuggestedNumber($userId),
             'preselected_recipient' => $preselectedRecipient,
             'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
-            'vat_types' => VatType::orderBy('code')->get(['id', 'code']),
+            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
             'default_currency_id' => $user?->currency_id,
             'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
         ];

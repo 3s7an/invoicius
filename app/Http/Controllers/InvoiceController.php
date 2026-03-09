@@ -70,11 +70,6 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice created.');
     }
 
-    public function show(Invoice $invoice): never
-    {
-        abort(404);
-    }
-
     public function edit(Invoice $invoice): Response
     {
         $this->authorize('view', $invoice);
@@ -83,11 +78,6 @@ class InvoiceController extends Controller
         return Inertia::render('Invoices/Edit', [
             'invoice' => $invoice,
         ]);
-    }
-
-    public function update(Invoice $invoice): never
-    {
-        abort(404);
     }
 
     public function updateStatus(UpdateInvoiceStatusRequest $request, Invoice $invoice): RedirectResponse

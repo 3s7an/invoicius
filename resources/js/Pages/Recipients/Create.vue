@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import RecipientDetailsForm from '@/Components/RecipientDetailsForm.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Button from 'primevue/button';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -32,9 +33,11 @@ const form = useForm({
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="mb-6 flex flex-wrap items-center gap-3">
-                <Link :href="route('recipients.index')" class="text-sm text-gray-500 hover:text-gray-700">← Recipients</Link>
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <h1 class="text-lg font-medium text-gray-900">New recipient</h1>
+                <Link :href="route('recipients.index')">
+                    <Button label="Back to recipients" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                </Link>
             </div>
                 <form @submit.prevent="form.post(route('recipients.store'))" class="space-y-6 rounded-lg bg-white p-6 shadow">
                     <RecipientDetailsForm

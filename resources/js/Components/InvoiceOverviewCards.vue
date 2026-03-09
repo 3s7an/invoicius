@@ -30,15 +30,19 @@ const cards = [
         <div
             v-for="card in cards"
             :key="card.key"
-            class="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+            class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
         >
-            <span class="h-2.5 w-2.5 shrink-0 rounded-full" :class="card.dotClass" aria-hidden="true" />
-            <div class="min-w-0 flex-1">
+            <div class="flex min-w-0 flex-1 items-center gap-2">
+                <span
+                    class="h-2.5 w-2.5 shrink-0 rounded-full"
+                    :class="card.dotClass"
+                    aria-hidden="true"
+                />
                 <p class="text-sm font-medium text-gray-500">{{ card.label }}</p>
-                <p class="mt-0.5 truncate text-xl font-semibold text-gray-900">
-                    {{ formatAmount(stats[card.key]) }} {{ currencySymbol }}
-                </p>
             </div>
+            <p class="mt-0.5 truncate text-xl font-semibold text-gray-900">
+                {{ formatAmount(stats[card.key]) }} {{ currencySymbol }}
+            </p>
         </div>
     </div>
 </template>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdateInvoiceSettingsRequest;
 use App\Http\Requests\UpdateProfileDetailsRequest;
 use App\Contracts\ProfileServiceInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -45,6 +46,18 @@ class ProfileController extends Controller
     }
 
     public function updateDetails(UpdateProfileDetailsRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        $this->profileService->updateDetails(
+            $user,
+            $request->validated(),
+            $request->file('company_logo'),
+        );
+
+        return redirect()->route('profile.edit');
+    }
+
+    public function updateInvoiceSettings(UpdateInvoiceSettingsRequest $request): RedirectResponse
     {
         $user = $request->user();
         $this->profileService->updateDetails(

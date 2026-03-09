@@ -34,23 +34,15 @@ class RecipientService implements RecipientServiceInterface
         return $recipient;
     }
 
-    public function update(Recipient $recipient, int $userId, array $validated): Recipient
+    public function update(Recipient $recipient, array $validated): Recipient
     {
-        if ($recipient->user_id !== $userId) {
-            abort(403);
-        }
-
         $recipient->update($validated);
 
         return $recipient;
     }
 
-    public function delete(Recipient $recipient, int $userId): void
+    public function delete(Recipient $recipient): void
     {
-        if ($recipient->user_id !== $userId) {
-            abort(403);
-        }
-
         $recipient->delete();
     }
 }

@@ -1,12 +1,13 @@
 <script setup>
 import { reactive, computed, ref, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import BillingDetailsForm from '@/Components/BillingDetailsForm.vue';
+import IssuerDetailsForm from '@/Components/IssuerDetailsForm.vue';
 import InvoiceSettings from '@/Components/InvoiceSettings.vue';
 import RecipientDetailsForm from '@/Components/RecipientDetailsForm.vue';
 import InvoiceHeaderForm from '@/Components/InvoiceHeaderForm.vue';
 import InvoiceItemsTable from '@/Components/InvoiceItemsTable.vue';
 import AutoComplete from 'primevue/autocomplete';
+import Button from 'primevue/button';
 import { Head, Link, usePage, router } from '@inertiajs/vue3';
 
 const props = defineProps({
@@ -38,17 +39,12 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    invoiceColors: {
-        type: Array,
-        default: () => [],
-    },
 });
 
 const user = usePage().props.auth?.user;
 
-/** Invoice colors (support both snake_case and camelCase from backend) */
 const invoiceColorsList = computed(() => {
-    const list = props.invoice_colors ?? props.invoiceColors ?? [];
+    const list = props.invoice_colors ?? [];
     return Array.isArray(list) ? list : [];
 });
 
@@ -84,7 +80,7 @@ function applyRecipient(r) {
     recipient.recipient_street = r.street ?? '';
     recipient.recipient_street_num = r.street_num ?? '';
     recipient.recipient_city = r.city ?? '';
-    recipient.recipient_state = [r.state, r.zip].filter(Boolean).join(', ');
+    recipient.recipient_state = r.state ?? '';
     recipient.recipient_ico = r.ico ?? '';
     recipient.recipient_dic = r.dic ?? '';
     recipient.recipient_ic_dph = r.ic_dph ?? '';
@@ -178,9 +174,14 @@ const validationErrors = ref({});
 function validateForm() {
     const err = {};
     if (String(invoice.number ?? '').trim() === '') err.number = 'Invoice number is required.';
+    if (String(invoice.number ?? '').length > 50) err.number = 'Invoice number must be at most 50 characters.';
     if (String(invoice.variable_symbol ?? '').trim() === '') err.variable_symbol = 'Variable symbol is required.';
+    if (String(invoice.variable_symbol ?? '').length > 50) err.variable_symbol = 'Variable symbol must be at most 50 characters.';
     if (String(invoice.issue_date ?? '').trim() === '') err.issue_date = 'Issue date is required.';
     if (String(invoice.due_date ?? '').trim() === '') err.due_date = 'Due date is required.';
+    if (invoice.issue_date && invoice.due_date && invoice.due_date < invoice.issue_date) {
+        err.due_date = 'Due date must be on or after the issue date.';
+    }
     if (!invoice.currency_id) err.currency_id = 'Currency is required.';
     if (String(issuer.name ?? '').trim() === '') err.issuer_name = 'Issuer name is required.';
     if (String(recipient.recipient_name ?? '').trim() === '') err.recipient_name = 'Recipient is required.';
@@ -220,8 +221,10 @@ function createInvoice() {
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <Link :href="route('invoices')" class="text-sm text-gray-500 hover:text-gray-700">← Invoices</Link>
                 <h1 class="text-lg font-medium text-gray-900">New invoice</h1>
+                <Link :href="route('invoices')">
+                    <Button label="Back to invoices" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                </Link>
             </div>
               
                 <!-- Invoice header -->
@@ -252,10 +255,8 @@ function createInvoice() {
 
                 <!-- Billing details (issuer) -->
                 <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-                    <BillingDetailsForm
-                        mode="embed"
+                    <IssuerDetailsForm
                         :model-value="issuer"
-                        :include-name="true"
                         :readonly="hasUserBillingDetails"
                         :errors="validationErrors"
                         id-prefix="invoice-issuer"
@@ -325,7 +326,7 @@ function createInvoice() {
                         type="button"
                         :disabled="creating"
                         @click="createInvoice"
-                        class="w-full min-w-[200px] rounded-lg bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-600 sm:w-auto"
+                        class="w-full min-w-[200px] rounded-lg bg-gray-800 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                         {{ creating ? 'Creating…' : 'Create invoice' }}
                     </button>

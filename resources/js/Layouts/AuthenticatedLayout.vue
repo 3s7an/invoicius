@@ -1,13 +1,24 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+
+const page = usePage();
+const flash = computed(() => page.props.flash ?? {});
+const showFlash = ref(false);
+
+onMounted(() => {
+    if (flash.value.success || flash.value.error) {
+        showFlash.value = true;
+        setTimeout(() => { showFlash.value = false; }, 4000);
+    }
+});
 </script>
 
 <template>
@@ -202,6 +213,26 @@ const showingNavigationDropdown = ref(false);
                     </div>
                 </div>
             </nav>
+
+            <!-- Flash notifications -->
+            <Transition
+                enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0 -translate-y-2"
+                enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition ease-in duration-200"
+                leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-2"
+            >
+                <div v-if="showFlash && (flash.success || flash.error)" class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
+                    <div
+                        class="flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium shadow-sm"
+                        :class="flash.success ? 'bg-green-50 text-green-800 ring-1 ring-green-200' : 'bg-red-50 text-red-800 ring-1 ring-red-200'"
+                    >
+                        <span>{{ flash.success || flash.error }}</span>
+                        <button @click="showFlash = false" class="ml-4 text-current opacity-50 hover:opacity-100">&times;</button>
+                    </div>
+                </div>
+            </Transition>
 
             <!-- Page Content -->
             <main class="py-8">

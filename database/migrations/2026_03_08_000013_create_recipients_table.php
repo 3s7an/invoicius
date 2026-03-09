@@ -8,10 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (Schema::hasTable('recipients')) {
-            return;
-        }
-
         Schema::create('recipients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
@@ -26,6 +22,7 @@ return new class extends Migration
             $table->string('dic')->nullable();
             $table->string('ic_dph')->nullable();
             $table->string('iban', 34)->nullable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index('user_id');

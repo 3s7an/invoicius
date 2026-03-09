@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Storage;
 
 class UserCompanyLogo extends Model
 {
-    protected $table = 'users_companies_logo';
+    protected $table = 'user_company_logos';
 
     protected $fillable = [
         'user_id',
@@ -25,6 +25,6 @@ class UserCompanyLogo extends Model
 
     public function getUrlAttribute(): string
     {
-        return '/storage/' . ltrim($this->link, '/');
+        return Storage::disk('public')->url($this->link);
     }
 }
