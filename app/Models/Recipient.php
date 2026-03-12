@@ -42,4 +42,9 @@ class Recipient extends Model
     {
         return $this->hasMany(Invoice::class);
     }
+
+    public function automatizations(): HasMany
+    {
+        return $this->hasMany(Automatization::class);
+    }
 }

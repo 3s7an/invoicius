@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Contracts\InvoiceServiceInterface;
 use App\Contracts\RecipientServiceInterface;
 use App\DTOs\CreateInvoiceData;
+use App\DTOs\CreateInvoiceItemData;
+use App\DTOs\CreateInvoiceRecipientData;
 use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Currency;
 use App\Models\Invoice;
@@ -16,6 +18,7 @@ use App\Models\User;
 use App\Models\VatType;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -259,5 +262,46 @@ class InvoiceService implements InvoiceServiceInterface
             'default_currency_id' => $user?->currency_id,
             'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
         ];
+    }
+
+    public function generateFromAutomatization(int $userId, int $recipientId): Invoice
+    {
+        $user = User::with('defaultVatType')->findOrFail($userId);
+        $recipient = Recipient::forUser($userId)->findOrFail($recipientId);
+
+        $defaultCurrencyId = $user->currency_id ?? Currency::orderBy('id')->value('id');
+        $defaultVatTypeId = $user->default_vat_type_id;
+
+        $data = new CreateInvoiceData(
+            userId: $userId,
+            number: $this->getSuggestedNumber($userId),
+            variableSymbol: $this->getSuggestedNumber($userId),
+            issueDate: Carbon::today(),
+            dueDate: Carbon::today()->addDays(14),
+            currencyId: $defaultCurrencyId,
+            recipientId: $recipientId,
+            recipient: new CreateInvoiceRecipientData(
+                recipientName: $recipient->company_name ?? $recipient->name,
+                recipientStreet: $recipient->street,
+                recipientStreetNum: $recipient->street_num,
+                recipientCity: $recipient->city,
+                recipientState: $recipient->state,
+                recipientIco: $recipient->ico,
+                recipientDic: $recipient->dic,
+                recipientIcDph: $recipient->ic_dph,
+                recipientIban: $recipient->iban,
+            ),
+            items: [
+                new CreateInvoiceItemData(
+                    name: '',
+                    quantity: 1,
+                    unitPrice: 0,
+                    unit: '',
+                    vatTypeId: $defaultVatTypeId,
+                ),
+            ],
+        );
+
+        return $this->createInvoice($data);
     }
 }

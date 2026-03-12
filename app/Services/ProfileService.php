@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\ProfileServiceInterface;
 use App\Models\Currency;
 use App\Models\InvoiceColor;
+use App\Models\VatType;
 use App\Models\User;
 use App\Models\UserCompanyLogo;
 use Illuminate\Http\UploadedFile;
@@ -19,6 +20,7 @@ class ProfileService implements ProfileServiceInterface
         return [
             'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
             'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
+            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
         ];
     }
 

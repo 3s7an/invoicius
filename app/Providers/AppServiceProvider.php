@@ -2,13 +2,18 @@
 
 namespace App\Providers;
 
+use App\Automatizations\Handlers\InvoiceAutoGenHandler;
+use App\Contracts\AutomatizationServiceInterface;
 use App\Contracts\InvoiceServiceInterface;
 use App\Contracts\ProfileServiceInterface;
 use App\Contracts\RecipientServiceInterface;
+use App\Models\Automatization;
 use App\Models\Invoice;
 use App\Models\Recipient;
+use App\Policies\AutomatizationPolicy;
 use App\Policies\InvoicePolicy;
 use App\Policies\RecipientPolicy;
+use App\Services\AutomatizationService;
 use App\Services\InvoiceService;
 use App\Services\ProfileService;
 use App\Services\RecipientService;
@@ -27,6 +32,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InvoiceServiceInterface::class, InvoiceService::class);
         $this->app->bind(RecipientServiceInterface::class, RecipientService::class);
         $this->app->bind(ProfileServiceInterface::class, ProfileService::class);
+
+        $this->app->singleton(AutomatizationServiceInterface::class, function ($app) {
+            $service = new AutomatizationService();
+            $service->registerHandler($app->make(InvoiceAutoGenHandler::class));
+
+            return $service;
+        });
     }
 
     /**
@@ -36,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(Recipient::class, RecipientPolicy::class);
+        Gate::policy(Automatization::class, AutomatizationPolicy::class);
 
         if ($this->app->environment('production')) {
             URL::forceScheme('https');

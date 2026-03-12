@@ -31,4 +31,6 @@ interface InvoiceServiceInterface
     public function getIndexData(int $userId): array;
 
     public function getCreateFormData(int $userId, ?int $createdRecipientId): array;
+
+    public function generateFromAutomatization(int $userId, int $recipientId): Invoice;
 }

@@ -23,6 +23,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    vat_types: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const user = usePage().props.auth?.user;
@@ -43,6 +47,7 @@ const billingDetailsForm = useForm({
     dic: user?.dic ?? '',
     ic_dph: user?.ic_dph ?? '',
     currency_id: user?.currency_id ?? '',
+    default_vat_type_id: user?.default_vat_type_id ?? '',
     _method: 'patch',
 });
 </script>
@@ -112,6 +117,7 @@ const billingDetailsForm = useForm({
                             :form="billingDetailsForm"
                                 id-prefix="profile-billing"
                             :currencies="currencies"
+                            :vat-types="vat_types"
                             class="max-w-xl"
                         />
                     </div>

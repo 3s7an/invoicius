@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AutomatizationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +31,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('recipients', RecipientController::class);
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('automatizations', AutomatizationController::class)
+        ->only(['store', 'update', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {

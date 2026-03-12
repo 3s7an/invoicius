@@ -19,6 +19,10 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    vatTypes: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const countries = computed(() => {
@@ -71,6 +75,24 @@ const selectClass =
                     </option>
                 </select>
                 <InputError class="mt-2" :message="form.errors.currency_id" />
+            </div>
+            <div v-if="vatTypes.length" class="max-w-xs">
+                <InputLabel :for="id('default_vat_type_id')" value="Default VAT type" />
+                <select
+                    :id="id('default_vat_type_id')"
+                    v-model="form.default_vat_type_id"
+                    :class="selectClass"
+                >
+                    <option value="">—</option>
+                    <option
+                        v-for="vt in vatTypes"
+                        :key="vt.id"
+                        :value="vt.id"
+                    >
+                        {{ vt.code }} ({{ vt.rate }}%)
+                    </option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.default_vat_type_id" />
             </div>
             <div class="grid gap-6 sm:grid-cols-2">
                 <div>

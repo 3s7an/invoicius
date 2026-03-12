@@ -37,6 +37,7 @@ class User extends Authenticatable
         'currency_id',
         'company_logo_id',
         'invoice_color_id',
+        'default_vat_type_id',
     ];
 
     /**
@@ -85,5 +86,15 @@ class User extends Authenticatable
     public function recipients(): HasMany
     {
         return $this->hasMany(Recipient::class);
+    }
+
+    public function defaultVatType(): BelongsTo
+    {
+        return $this->belongsTo(VatType::class, 'default_vat_type_id');
+    }
+
+    public function automatizations(): HasMany
+    {
+        return $this->hasMany(Automatization::class);
     }
 }

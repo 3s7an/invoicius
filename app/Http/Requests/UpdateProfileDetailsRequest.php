@@ -24,6 +24,7 @@ class UpdateProfileDetailsRequest extends FormRequest
             'dic' => ['nullable', 'string', 'max:20'],
             'ic_dph' => ['nullable', 'string', 'max:20'],
             'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
+            'default_vat_type_id' => ['nullable', 'integer', 'exists:vat_types,id'],
             'invoice_color_id' => ['nullable', 'integer', 'exists:invoice_colors,id'],
             'company_logo' => ['nullable', 'image', 'max:2048'],
         ];
@@ -38,6 +39,9 @@ class UpdateProfileDetailsRequest extends FormRequest
             'invoice_color_id' => $this->input('invoice_color_id') === '' || $this->input('invoice_color_id') === null
                 ? (InvoiceColor::orderBy('id')->value('id') ?? 1)
                 : (int) $this->input('invoice_color_id'),
+            'default_vat_type_id' => $this->input('default_vat_type_id') === '' || $this->input('default_vat_type_id') === null
+                ? null
+                : (int) $this->input('default_vat_type_id'),
         ]);
     }
 }

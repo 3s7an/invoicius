@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'n8n' => [
+        'header_name' => env('N8N_USER'),
+        'token' => env('N8N_TOKEN'),
+    ],
+
 ];
