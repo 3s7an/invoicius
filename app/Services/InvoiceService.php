@@ -196,6 +196,88 @@ class InvoiceService implements InvoiceServiceInterface
         }
     }
 
+    public function updateInvoice(Invoice $invoice, CreateInvoiceData $data): Invoice
+    {
+        if ($data->recipientId !== null) {
+            $recipientBelongsToUser = Recipient::forUser($data->userId)
+                ->where('id', $data->recipientId)
+                ->exists();
+
+            if (! $recipientBelongsToUser) {
+                abort(403, 'Recipient does not belong to this user.');
+            }
+        }
+
+        try {
+            return DB::transaction(function () use ($invoice, $data) {
+                $woVatTotal = 0.0;
+                $vatTotal = 0.0;
+                $itemRows = [];
+
+                foreach ($data->items as $position => $item) {
+                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
+                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
+
+                    $woVatTotal += $lineWoVat;
+                    $vatTotal += $lineVat;
+
+                    $itemRows[] = [
+                        'vat_type_id' => $item->vatTypeId,
+                        'name' => $item->name,
+                        'unit' => $item->unit,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unitPrice,
+                        'unit_wo_vat' => $item->unitPrice,
+                        'position' => $position,
+                        'line_wo_vat' => $lineWoVat,
+                        'vat' => $lineVat,
+                        'line_total' => $lineTotalWithVat,
+                    ];
+                }
+
+                $invoice->update([
+                    'recipient_id' => $data->recipientId,
+                    'number' => $data->number,
+                    'varsym' => $data->variableSymbol,
+                    'issue_date' => $data->issueDate,
+                    'due_date' => $data->dueDate,
+                    'currency_id' => $data->currencyId,
+                    'recipient_name' => $data->recipient->recipientName,
+                    'recipient_street' => $data->recipient->recipientStreet,
+                    'recipient_street_num' => $data->recipient->recipientStreetNum,
+                    'recipient_city' => $data->recipient->recipientCity,
+                    'recipient_state' => $data->recipient->recipientState,
+                    'recipient_ico' => $data->recipient->recipientIco,
+                    'recipient_dic' => $data->recipient->recipientDic,
+                    'recipient_ic_dph' => $data->recipient->recipientIcDph,
+                    'iban' => $data->recipient->recipientIban,
+                    'wo_vat_price' => round($woVatTotal, 2),
+                    'vat_price' => round($vatTotal, 2),
+                    'total_price' => round($woVatTotal + $vatTotal, 2),
+                ]);
+
+                $invoice->items()->delete();
+                foreach ($itemRows as $row) {
+                    $invoice->items()->create($row);
+                }
+
+                return $invoice->fresh('items');
+            });
+        } catch (UniqueConstraintViolationException $e) {
+            throw new DuplicateInvoiceNumberException($data->number);
+        } catch (\Throwable $e) {
+            Log::error('Failed to update invoice', [
+                'invoice_id' => $invoice->id,
+                'user_id' => $data->userId,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw $e;
+        }
+    }
+
     public function updateStatus(Invoice $invoice, int $invoiceStatusId): void
     {
         $invoice->update(['invoice_status_id' => $invoiceStatusId]);
@@ -260,6 +342,20 @@ class InvoiceService implements InvoiceServiceInterface
             'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
             'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
             'default_currency_id' => $user?->currency_id,
+            'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
+        ];
+    }
+
+    public function getEditFormData(Invoice $invoice, int $userId): array
+    {
+        $invoice->load(['items', 'recipient']);
+
+        return [
+            'invoice' => $invoice,
+            'recipients' => $this->recipientService->listForUser($userId),
+            'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
+            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
+            'default_currency_id' => $invoice->currency_id,
             'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
         ];
     }

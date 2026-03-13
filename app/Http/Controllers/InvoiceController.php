@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Contracts\InvoiceServiceInterface;
 use App\DTOs\CreateInvoiceData;
 use App\Http\Requests\StoreInvoiceRequest;
+use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceStatusRequest;
 use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
@@ -70,14 +71,25 @@ class InvoiceController extends Controller
             ->with('success', 'Invoice created.');
     }
 
-    public function edit(Invoice $invoice): Response
+    public function edit(Request $request, Invoice $invoice): Response
     {
         $this->authorize('view', $invoice);
-        $invoice->load('items');
 
-        return Inertia::render('Invoices/Edit', [
-            'invoice' => $invoice,
-        ]);
+        $data = $this->invoiceService->getEditFormData($invoice, $request->user()->id);
+
+        return Inertia::render('Invoices/Edit', $data);
+    }
+
+    public function update(UpdateInvoiceRequest $request, Invoice $invoice): RedirectResponse
+    {
+        $this->authorize('update', $invoice);
+
+        $data = CreateInvoiceData::fromValidated($request->validated(), $request->user()->id);
+        $this->invoiceService->updateInvoice($invoice, $data);
+
+        return redirect()
+            ->route('invoices')
+            ->with('success', 'Invoice updated.');
     }
 
     public function updateStatus(UpdateInvoiceStatusRequest $request, Invoice $invoice): RedirectResponse

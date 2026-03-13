@@ -19,6 +19,8 @@ interface InvoiceServiceInterface
 
     public function createInvoice(CreateInvoiceData $data): Invoice;
 
+    public function updateInvoice(Invoice $invoice, CreateInvoiceData $data): Invoice;
+
     public function updateStatus(Invoice $invoice, int $invoiceStatusId): void;
 
     public function delete(Invoice $invoice): void;
@@ -31,6 +33,8 @@ interface InvoiceServiceInterface
     public function getIndexData(int $userId): array;
 
     public function getCreateFormData(int $userId, ?int $createdRecipientId): array;
+
+    public function getEditFormData(Invoice $invoice, int $userId): array;
 
     public function generateFromAutomatization(int $userId, int $recipientId): Invoice;
 }
