@@ -1,2 +1,2 @@
 [deploy]
-startCommand = "php artisan migrate --force && php artisan db:seed --force && php-fpm -F"
+startCommand = "php artisan migrate --force && php-fpm -F"
