@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Automatizations\Handlers\InvoiceAutoGenHandler;
+use App\Automatizations\Handlers\InvoiceReportHandler;
 use App\Contracts\AutomatizationServiceInterface;
 use App\Contracts\InvoiceServiceInterface;
 use App\Contracts\ProfileServiceInterface;
@@ -36,6 +37,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AutomatizationServiceInterface::class, function ($app) {
             $service = new AutomatizationService();
             $service->registerHandler($app->make(InvoiceAutoGenHandler::class));
+            $service->registerHandler($app->make(InvoiceReportHandler::class));
 
             return $service;
         });
