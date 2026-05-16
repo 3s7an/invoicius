@@ -27,11 +27,9 @@ onMounted(() => {
             <nav
                 class="border-b border-gray-100 bg-white"
             >
-                <!-- Primary Navigation Menu -->
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
                         <div class="flex">
-                            <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')" class="flex items-center">
                                     <ApplicationLogo
@@ -40,7 +38,6 @@ onMounted(() => {
                                 </Link>
                             </div>
 
-                            <!-- Navigation Links -->
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
@@ -48,25 +45,24 @@ onMounted(() => {
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
-                                    Dashboard
+                                    Prehľad
                                 </NavLink>
                                 <NavLink
                                     :href="route('invoices')"
                                     :active="route().current('invoices')"
                                 >
-                                    Invoices
+                                    Faktúry
                                 </NavLink>
                                 <NavLink
                                     :href="route('recipients.index')"
                                     :active="route().current('recipients.*')"
                                 >
-                                    Recipients
+                                    Odberatelia
                                 </NavLink>
                             </div>
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
@@ -97,21 +93,20 @@ onMounted(() => {
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            Profile
+                                            Profil
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            Odhlásiť sa
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
                             </div>
                         </div>
 
-                        <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
                             <button
                                 @click="
@@ -154,7 +149,6 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
                 <div
                     :class="{
                         block: showingNavigationDropdown,
@@ -167,23 +161,22 @@ onMounted(() => {
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
                         >
-                            Dashboard
+                            Prehľad
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('invoices')"
                             :active="route().current('invoices')"
                         >
-                            Invoices
+                            Faktúry
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             :href="route('recipients.index')"
                             :active="route().current('recipients.*')"
                         >
-                            Recipients
+                            Odberatelia
                         </ResponsiveNavLink>
                     </div>
 
-                    <!-- Responsive Settings Options -->
                     <div
                         class="border-t border-gray-200 pb-1 pt-4"
                     >
@@ -200,21 +193,20 @@ onMounted(() => {
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">
-                                Profile
+                                Profil
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
                             >
-                                Log Out
+                                Odhlásiť sa
                             </ResponsiveNavLink>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            <!-- Flash notifications -->
             <Transition
                 enter-active-class="transition ease-out duration-300"
                 enter-from-class="opacity-0 -translate-y-2"
@@ -234,7 +226,6 @@ onMounted(() => {
                 </div>
             </Transition>
 
-            <!-- Page Content -->
             <main class="py-8">
                 <slot />
             </main>

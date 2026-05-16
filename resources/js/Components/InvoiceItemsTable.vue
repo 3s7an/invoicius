@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { formatVatTypeLabel } from '@/utils/vatTypes';
 
 const props = defineProps({
     modelValue: {
@@ -29,9 +30,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const UNITS = [
-    { value: 'pcs', label: 'pcs' },
-    { value: 'hrs', label: 'hrs' },
-    { value: 'days', label: 'days' },
+    { value: 'pcs', label: 'ks' },
+    { value: 'hrs', label: 'hod' },
+    { value: 'days', label: 'dni' },
     { value: 'kg', label: 'kg' },
     { value: 'm', label: 'm' },
     { value: 'm²', label: 'm²' },
@@ -114,9 +115,9 @@ function formatNum(x) {
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h3 class="text-lg font-medium text-gray-900">Invoice items</h3>
+                <h3 class="text-lg font-medium text-gray-900">Položky faktúry</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Add one or more line items with name, quantity, unit and price.
+                    Pridajte jednu alebo viac položiek s názvom, množstvom, jednotkou a cenou.
                 </p>
                 <InputError v-if="error" class="mt-2" :message="error" />
             </div>
@@ -125,7 +126,7 @@ function formatNum(x) {
                 @click="addItem"
                 class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900"
             >
-                Add item
+                Pridať položku
             </button>
         </div>
 
@@ -137,54 +138,54 @@ function formatNum(x) {
                             scope="col"
                             class="py-3 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-6"
                         >
-                            Name
+                            Názov
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Quantity
+                            Množstvo
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Unit
+                            Jednotka
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Unit price
+                            Jednotková cena
                         </th>
                         <th
                             v-if="vatTypesList.length"
                             scope="col"
                             class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            VAT type
+                            Typ DPH
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Amount excl. VAT
+                            Suma bez DPH
                         </th>
                         <th
                             v-if="vatTypesList.length"
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            VAT
+                            DPH
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Total
+                            Celkom
                         </th>
                         <th scope="col" class="relative py-3 pl-3 pr-4 sm:pr-6">
-                            <span class="sr-only">Remove</span>
+                            <span class="sr-only">Odstrániť</span>
                         </th>
                     </tr>
                 </thead>
@@ -240,7 +241,7 @@ function formatNum(x) {
                                     :key="v.id"
                                     :value="v.id"
                                 >
-                                    {{ v.code }}
+                                    {{ formatVatTypeLabel(v) }}
                                 </option>
                             </select>
                         </td>
@@ -268,7 +269,7 @@ function formatNum(x) {
                                 @click="removeItem(index)"
                                 :disabled="items.length <= minRows"
                                 class="text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                title="Remove line"
+                                title="Odstrániť riadok"
                             >
                                 <span aria-hidden="true">×</span>
                             </button>
@@ -278,10 +279,10 @@ function formatNum(x) {
             </table>
         </div>
 
-        <!-- Summary: Subtotal excl. VAT, VAT, Total -->
+        <!-- Zhrnutie: medzisúčet bez DPH, DPH, celkom -->
         <div class="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-6 sm:max-w-xs sm:ml-auto">
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">Subtotal (excl. VAT)</label>
+                <label class="text-sm font-medium text-gray-700">Medzisúčet (bez DPH)</label>
                 <input
                     :value="formatNum(totalWoVat)"
                     type="text"
@@ -290,7 +291,7 @@ function formatNum(x) {
                 />
             </div>
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">VAT</label>
+                <label class="text-sm font-medium text-gray-700">DPH</label>
                 <input
                     :value="formatNum(totalVat)"
                     type="text"
@@ -299,7 +300,7 @@ function formatNum(x) {
                 />
             </div>
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">Total</label>
+                <label class="text-sm font-medium text-gray-700">Celkom</label>
                 <input
                     :value="formatNum(invoiceTotal)"
                     type="text"

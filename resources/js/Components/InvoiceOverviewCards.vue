@@ -18,10 +18,10 @@ defineProps({
 });
 
 const cards = [
-    { key: 'total_invoiced', label: 'Invoiced', dotClass: 'bg-indigo-500' },
-    { key: 'paid', label: 'Paid', dotClass: 'bg-cyan-500' },
-    { key: 'awaiting', label: 'Awaiting payment', dotClass: 'bg-amber-500' },
-    { key: 'overdue', label: 'Overdue', dotClass: 'bg-red-500' },
+    { key: 'total_invoiced', label: 'Vyfakturované', dotClass: 'bg-indigo-500' },
+    { key: 'paid', label: 'Uhradené', dotClass: 'bg-cyan-500' },
+    { key: 'awaiting', label: 'Čaká na úhradu', dotClass: 'bg-amber-500' },
+    { key: 'overdue', label: 'Po splatnosti', dotClass: 'bg-red-500' },
 ];
 </script>
 

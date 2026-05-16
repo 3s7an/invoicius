@@ -178,19 +178,19 @@ const validationErrors = ref({});
 
 function validateForm() {
     const err = {};
-    if (String(invoice.number ?? '').trim() === '') err.number = 'Invoice number is required.';
-    if (String(invoice.number ?? '').length > 50) err.number = 'Invoice number must be at most 50 characters.';
-    if (String(invoice.variable_symbol ?? '').trim() === '') err.variable_symbol = 'Variable symbol is required.';
-    if (String(invoice.variable_symbol ?? '').length > 50) err.variable_symbol = 'Variable symbol must be at most 50 characters.';
-    if (String(invoice.issue_date ?? '').trim() === '') err.issue_date = 'Issue date is required.';
-    if (String(invoice.due_date ?? '').trim() === '') err.due_date = 'Due date is required.';
+    if (String(invoice.number ?? '').trim() === '') err.number = 'Číslo faktúry je povinné.';
+    if (String(invoice.number ?? '').length > 50) err.number = 'Číslo faktúry môže mať najviac 50 znakov.';
+    if (String(invoice.variable_symbol ?? '').trim() === '') err.variable_symbol = 'Variabilný symbol je povinný.';
+    if (String(invoice.variable_symbol ?? '').length > 50) err.variable_symbol = 'Variabilný symbol môže mať najviac 50 znakov.';
+    if (String(invoice.issue_date ?? '').trim() === '') err.issue_date = 'Dátum vystavenia je povinný.';
+    if (String(invoice.due_date ?? '').trim() === '') err.due_date = 'Dátum splatnosti je povinný.';
     if (invoice.issue_date && invoice.due_date && invoice.due_date < invoice.issue_date) {
-        err.due_date = 'Due date must be on or after the issue date.';
+        err.due_date = 'Dátum splatnosti musí byť v deň vystavenia alebo po ňom.';
     }
-    if (!invoice.currency_id) err.currency_id = 'Currency is required.';
-    if (String(issuer.name ?? '').trim() === '') err.issuer_name = 'Issuer name is required.';
-    if (String(recipient.recipient_name ?? '').trim() === '') err.recipient_name = 'Recipient is required.';
-    if (!hasAtLeastOneItem.value) err.items = 'Add at least one item with name, quantity and unit price.';
+    if (!invoice.currency_id) err.currency_id = 'Mena je povinná.';
+    if (String(issuer.name ?? '').trim() === '') err.issuer_name = 'Meno alebo firma vystaviteľa je povinné.';
+    if (String(recipient.recipient_name ?? '').trim() === '') err.recipient_name = 'Odberateľ je povinný.';
+    if (!hasAtLeastOneItem.value) err.items = 'Pridajte aspoň jednu položku s názvom, množstvom a jednotkovou cenou.';
     return err;
 }
 
@@ -221,14 +221,14 @@ function updateInvoice() {
 </script>
 
 <template>
-    <Head :title="'Edit Invoice ' + (inv?.number ?? '')" />
+    <Head :title="'Upraviť faktúru ' + (inv?.number ?? '')" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Edit invoice {{ inv?.number }}</h1>
+                <h1 class="text-lg font-medium text-gray-900">Upraviť faktúru {{ inv?.number }}</h1>
                 <Link :href="route('invoices')">
-                    <Button label="Back to invoices" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                    <Button label="Späť na faktúry" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
                 </Link>
             </div>
 
@@ -243,9 +243,9 @@ function updateInvoice() {
 
             <!-- Invoice settings (logo + color) -->
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-                <h3 class="text-lg font-medium text-gray-900">Invoice settings</h3>
+                <h3 class="text-lg font-medium text-gray-900">Nastavenia faktúry</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Company logo and invoice color for this invoice.
+                    Logo firmy a farba tejto faktúry.
                 </p>
                 <div class="mt-6">
                     <InvoiceSettings
@@ -270,20 +270,20 @@ function updateInvoice() {
 
             <!-- Recipient -->
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-                <h3 class="text-lg font-medium text-gray-900">Recipient</h3>
+                <h3 class="text-lg font-medium text-gray-900">Odberateľ</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Search and select a recipient, or edit the details below.
+                    Vyhľadajte a vyberte odberateľa alebo upravte údaje nižšie.
                 </p>
                 <div class="mt-6">
                     <label for="invoice-recipient-search" class="block text-sm font-medium text-gray-700">
-                        Search recipient
+                        Hľadať odberateľa
                     </label>
                     <AutoComplete
                         id="invoice-recipient-search"
                         v-model="selectedRecipient"
                         :suggestions="filteredRecipients"
                         option-label="_label"
-                        placeholder="Type to search..."
+                        placeholder="Začnite písať…"
                         class="mt-1 w-full"
                         fluid
                         @complete="searchRecipients"
@@ -302,7 +302,7 @@ function updateInvoice() {
                                 :href="route('recipients.create') + '?from_invoice=1'"
                                 class="block px-3 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
                             >
-                                + Add new recipient
+                                + Pridať nového odberateľa
                             </Link>
                         </template>
                     </AutoComplete>
@@ -333,7 +333,7 @@ function updateInvoice() {
                     @click="updateInvoice"
                     class="w-full min-w-[200px] rounded-lg bg-gray-800 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                 >
-                    {{ saving ? 'Saving…' : 'Update invoice' }}
+                    {{ saving ? 'Ukladám…' : 'Uložiť faktúru' }}
                 </button>
             </div>
         </div>

@@ -121,7 +121,7 @@ class InvoiceService implements InvoiceServiceInterface
                 ->exists();
 
             if (! $recipientBelongsToUser) {
-                abort(403, 'Recipient does not belong to this user.');
+                abort(403, 'Odberateľ nepatrí tomuto používateľovi.');
             }
         }
 
@@ -205,7 +205,7 @@ class InvoiceService implements InvoiceServiceInterface
                 ->exists();
 
             if (! $recipientBelongsToUser) {
-                abort(403, 'Recipient does not belong to this user.');
+                abort(403, 'Odberateľ nepatrí tomuto používateľovi.');
             }
         }
 
@@ -321,6 +321,14 @@ class InvoiceService implements InvoiceServiceInterface
             'logoDataUrl' => $logoDataUrl,
             'paymentIban' => $paymentIban,
             'paymentQrDataUrl' => $paymentQrDataUrl,
+            'unitLabels' => [
+                'pcs' => 'ks',
+                'hrs' => 'hod',
+                'days' => 'dni',
+                'kg' => 'kg',
+                'm' => 'm',
+                'm²' => 'm²',
+            ],
         ])
             ->name('invoice-' . preg_replace('/[^a-z0-9-]/i', '-', $invoice->number) . '.pdf')
             ->download();

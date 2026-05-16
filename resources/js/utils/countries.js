@@ -254,7 +254,19 @@ const FALLBACK_COUNTRIES = [
     { code: 'ZW', name: 'Zimbabwe' },
 ];
 
-/** Sorted by name for display. */
-export const FALLBACK_COUNTRY_LIST = [...FALLBACK_COUNTRIES].sort((a, b) =>
-    a.name.localeCompare(b.name)
-);
+function localizeCountryList(entries) {
+    try {
+        const displayNames = new Intl.DisplayNames(['sk'], { type: 'region' });
+        return entries
+            .map(({ code }) => ({
+                code,
+                name: displayNames.of(code) || code,
+            }))
+            .sort((a, b) => a.name.localeCompare(b.name, 'sk'));
+    } catch {
+        return [...entries].sort((a, b) => a.name.localeCompare(b.name));
+    }
+}
+
+/** Sorted by name for display (Slovak labels when Intl is available). */
+export const FALLBACK_COUNTRY_LIST = localizeCountryList(FALLBACK_COUNTRIES);

@@ -14,12 +14,12 @@ class CurrencySeeder extends Seeder
     {
         $currencies = [
             ['name' => 'Euro', 'symbol' => '€'],
-            ['name' => 'Czech Koruna', 'symbol' => 'Kč'],
-            ['name' => 'US Dollar', 'symbol' => '$'],
+            ['name' => 'Česká koruna', 'symbol' => 'Kč'],
+            ['name' => 'Americký dolár', 'symbol' => '$'],
         ];
 
         foreach ($currencies as $row) {
-            Currency::firstOrCreate(
+            Currency::updateOrCreate(
                 ['symbol' => $row['symbol']],
                 ['name' => $row['name']]
             );

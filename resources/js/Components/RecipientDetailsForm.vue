@@ -36,14 +36,14 @@ function id(name) {
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Recipient details
+                Údaje o odberateľovi
             </h2>
             <p class="mt-1 text-sm text-gray-600">
                 <template v-if="mode === 'invoice'">
-                    Address of the recipient (customer) on the invoice.
+                    Adresa odberateľa na faktúre.
                 </template>
                 <template v-else>
-                    Name, address and identification of the recipient.
+                    Názov, adresa a identifikátory odberateľa.
                 </template>
             </p>
         </header>
@@ -52,7 +52,7 @@ function id(name) {
             <!-- Invoice mode: recipient_* (name, address, tax ids, IBAN) -->
             <div v-if="mode === 'invoice'" class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('name')" value="Name / company" />
+                    <InputLabel :for="id('name')" value="Názov / firma" />
                     <TextInput
                         :id="id('name')"
                         type="text"
@@ -63,7 +63,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.recipient_name" />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('street')" value="Street" />
+                    <InputLabel :for="id('street')" value="Ulica" />
                     <TextInput
                         :id="id('street')"
                         type="text"
@@ -73,7 +73,7 @@ function id(name) {
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('street_num')" value="Number" />
+                    <InputLabel :for="id('street_num')" value="Číslo" />
                     <TextInput
                         :id="id('street_num')"
                         type="text"
@@ -83,7 +83,7 @@ function id(name) {
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('city')" value="City" />
+                    <InputLabel :for="id('city')" value="Mesto" />
                     <TextInput
                         :id="id('city')"
                         type="text"
@@ -93,7 +93,7 @@ function id(name) {
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('state')" value="State / ZIP" />
+                    <InputLabel :for="id('state')" value="Štát / PSČ" />
                     <TextInput
                         :id="id('state')"
                         type="text"
@@ -103,7 +103,7 @@ function id(name) {
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('ico')" value="Company ID (IČO)" />
+                    <InputLabel :for="id('ico')" value="IČO" />
                     <TextInput
                         :id="id('ico')"
                         type="text"
@@ -113,7 +113,7 @@ function id(name) {
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('dic')" value="Tax ID (DIČ)" />
+                    <InputLabel :for="id('dic')" value="DIČ" />
                     <TextInput
                         :id="id('dic')"
                         type="text"
@@ -123,7 +123,7 @@ function id(name) {
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('ic_dph')" value="VAT ID (IČ DPH)" />
+                    <InputLabel :for="id('ic_dph')" value="IČ DPH" />
                     <TextInput
                         :id="id('ic_dph')"
                         type="text"
@@ -147,7 +147,7 @@ function id(name) {
             <!-- Recipient mode: full form (name/company = one field, street, ...) -->
             <div v-else class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('name')" value="Name / Company name" />
+                    <InputLabel :for="id('name')" value="Názov / obchodné meno" />
                     <TextInput
                         :id="id('name')"
                         type="text"
@@ -158,7 +158,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.company_name || errors.name" />
                 </div>
                 <div>
-                    <InputLabel :for="id('street')" value="Street" />
+                    <InputLabel :for="id('street')" value="Ulica" />
                     <TextInput
                         :id="id('street')"
                         type="text"
@@ -169,7 +169,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.street" />
                 </div>
                 <div>
-                    <InputLabel :for="id('street_num')" value="Street number" />
+                    <InputLabel :for="id('street_num')" value="Číslo ulice" />
                     <TextInput
                         :id="id('street_num')"
                         type="text"
@@ -179,7 +179,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.street_num" />
                 </div>
                 <div>
-                    <InputLabel :for="id('city')" value="City" />
+                    <InputLabel :for="id('city')" value="Mesto" />
                     <TextInput
                         :id="id('city')"
                         type="text"
@@ -190,7 +190,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.city" />
                 </div>
                 <div>
-                    <InputLabel :for="id('zip')" value="ZIP / Postal code" />
+                    <InputLabel :for="id('zip')" value="PSČ" />
                     <TextInput
                         :id="id('zip')"
                         type="text"
@@ -201,7 +201,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.zip" />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('state')" value="State / Country" />
+                    <InputLabel :for="id('state')" value="Štát / krajina" />
                     <TextInput
                         :id="id('state')"
                         type="text"
@@ -212,7 +212,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.state" />
                 </div>
                 <div>
-                    <InputLabel :for="id('ico')" value="Company ID (IČO)" />
+                    <InputLabel :for="id('ico')" value="IČO" />
                     <TextInput
                         :id="id('ico')"
                         type="text"
@@ -222,7 +222,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.ico" />
                 </div>
                 <div>
-                    <InputLabel :for="id('dic')" value="Tax ID (DIČ)" />
+                    <InputLabel :for="id('dic')" value="DIČ" />
                     <TextInput
                         :id="id('dic')"
                         type="text"
@@ -232,7 +232,7 @@ function id(name) {
                     <InputError class="mt-2" :message="errors.dic" />
                 </div>
                 <div>
-                    <InputLabel :for="id('ic_dph')" value="VAT ID (IČ DPH)" />
+                    <InputLabel :for="id('ic_dph')" value="IČ DPH" />
                     <TextInput
                         :id="id('ic_dph')"
                         type="text"

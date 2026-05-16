@@ -44,12 +44,12 @@ class RecipientController extends Controller
         if ($request->boolean('from_invoice')) {
             return redirect()
                 ->route('invoices.create', ['created_recipient_id' => $recipient->id])
-                ->with('success', 'Recipient created.');
+                ->with('success', 'Odberateľ bol vytvorený.');
         }
 
         return redirect()
             ->route('recipients.index')
-            ->with('success', 'Recipient created.');
+            ->with('success', 'Odberateľ bol vytvorený.');
     }
 
     public function show(Recipient $recipient): Response
@@ -78,7 +78,7 @@ class RecipientController extends Controller
 
         return redirect()
             ->route('recipients.index')
-            ->with('success', 'Recipient updated.');
+            ->with('success', 'Odberateľ bol upravený.');
     }
 
     public function destroy(Recipient $recipient): RedirectResponse
@@ -88,6 +88,6 @@ class RecipientController extends Controller
 
         return redirect()
             ->route('recipients.index')
-            ->with('success', 'Recipient deleted.');
+            ->with('success', 'Odberateľ bol zmazaný.');
     }
 }

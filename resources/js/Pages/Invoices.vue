@@ -37,33 +37,33 @@ function updateStatus(invoice, newStatusId) {
 }
 
 function confirmDeleteInvoice(invoice) {
-    if (!confirm(`Delete invoice ${invoice.number}?`)) return;
+    if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
     router.delete(route('invoices.destroy', invoice.id));
 }
 </script>
 
 <template>
-    <Head title="Invoices" />
+    <Head title="Faktúry" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Invoices</h1>
+                <h1 class="text-lg font-medium text-gray-900">Faktúry</h1>
                 <Link :href="route('invoices.create')">
-                    <Button label="New invoice" icon="pi pi-plus" class="p-button-raised p-button-sm" />
+                    <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" />
                 </Link>
             </div>
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                     <DataTable :value="invoices" tableStyle="min-width: 50rem">
-                    <Column field="number" header="Invoice number"></Column>
-                    <Column field="recipient_name" header="Recipient"></Column>
-                    <Column field="created_at" header="Created At">
+                    <Column field="number" header="Číslo faktúry"></Column>
+                    <Column field="recipient_name" header="Odberateľ"></Column>
+                    <Column field="created_at" header="Vytvorené">
                         <template #body="{ data }">{{ formatDate(data.created_at) }}</template>
                     </Column>
-                    <Column field="total_price" header="Amount">
+                    <Column field="total_price" header="Suma">
                         <template #body="{ data }">{{ formatAmount(data.total_price) }} €</template>
                     </Column>
-                    <Column field="invoice_status_id" header="Status">
+                    <Column field="invoice_status_id" header="Stav">
                         <template #body="{ data }">
                             <select
                                 :value="data.invoice_status_id"
@@ -80,18 +80,18 @@ function confirmDeleteInvoice(invoice) {
                             </select>
                         </template>
                     </Column>
-                    <Column header="Actions">
+                    <Column header="Akcie">
                         <template #body="{ data }">
-                            <a :href="route('invoices.pdf', data.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Download PDF">
+                            <a :href="route('invoices.pdf', data.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Stiahnuť PDF">
                                 <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
                             </a>
                             <Link :href="route('invoices.edit', data.id)">
-                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Edit" />
+                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
                             </Link>
                             <Button
                                 icon="pi pi-trash"
                                 class="p-button-text p-button-sm p-button-danger"
-                                title="Delete"
+                                title="Zmazať"
                                 @click="confirmDeleteInvoice(data)"
                             />
                         </template>

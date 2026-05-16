@@ -28,14 +28,14 @@ const form = useForm({
 </script>
 
 <template>
-    <Head :title="'Edit: ' + (recipient.company_name || recipient.name || 'Recipient')" />
+    <Head :title="'Upraviť: ' + (recipient.company_name || recipient.name || 'Odberateľ')" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Edit recipient</h1>
+                <h1 class="text-lg font-medium text-gray-900">Upraviť odberateľa</h1>
                 <Link :href="route('recipients.index')">
-                    <Button label="Back to recipients" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                    <Button label="Späť na zoznam" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
                 </Link>
             </div>
                 <form @submit.prevent="form.put(route('recipients.update', recipient.id))" class="space-y-6 rounded-lg bg-white p-6 shadow">
@@ -46,9 +46,9 @@ const form = useForm({
                         id-prefix="recipient"
                     />
                     <div class="flex gap-4">
-                        <PrimaryButton :disabled="form.processing">Save changes</PrimaryButton>
+                        <PrimaryButton :disabled="form.processing">Uložiť zmeny</PrimaryButton>
                         <Link :href="route('recipients.show', recipient.id)" class="inline-flex items-center rounded-md px-4 py-2 text-gray-700 hover:bg-gray-100">
-                            Cancel
+                            Zrušiť
                         </Link>
                     </div>
                 </form>

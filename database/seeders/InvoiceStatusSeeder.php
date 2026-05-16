@@ -10,14 +10,14 @@ class InvoiceStatusSeeder extends Seeder
     public function run(): void
     {
         $statuses = [
-            ['code' => 'draft', 'name' => 'Draft'],
-            ['code' => 'sent', 'name' => 'Sent'],
-            ['code' => 'paid', 'name' => 'Paid'],
-            ['code' => 'overdue', 'name' => 'Overdue'],
+            ['code' => 'draft', 'name' => 'Koncept'],
+            ['code' => 'sent', 'name' => 'Odoslaná'],
+            ['code' => 'paid', 'name' => 'Uhradená'],
+            ['code' => 'overdue', 'name' => 'Po splatnosti'],
         ];
 
         foreach ($statuses as $row) {
-            InvoiceStatus::firstOrCreate(
+            InvoiceStatus::updateOrCreate(
                 ['code' => $row['code']],
                 ['name' => $row['name']]
             );

@@ -46,18 +46,18 @@ function closeForm() {
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Prehľad" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 class="mb-6 text-lg font-medium text-gray-900">Dashboard</h1>
+            <h1 class="mb-6 text-lg font-medium text-gray-900">Prehľad</h1>
             <InvoiceOverviewCards :stats="invoice_stats" :currency-symbol="currency_symbol" />
 
             <div class="mt-10">
                 <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-                    <h2 class="text-lg font-medium text-gray-900">Automatizations</h2>
+                    <h2 class="text-lg font-medium text-gray-900">Automatizácie</h2>
                     <Button
-                        label="New automatization"
+                        label="Nová automatizácia"
                         icon="pi pi-plus"
                         class="p-button-raised p-button-sm"
                         @click="openCreate"
@@ -71,7 +71,7 @@ function closeForm() {
                     />
                 </div>
                 <p v-else class="text-sm text-gray-500">
-                    No automatizations yet. Create one to automate invoice generation.
+                    Zatiaľ nemáte žiadne automatizácie. Vytvorte jednu na automatické generovanie faktúr.
                 </p>
             </div>
         </div>

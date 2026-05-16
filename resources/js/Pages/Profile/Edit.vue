@@ -54,11 +54,11 @@ const billingDetailsForm = useForm({
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head title="Profil" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="mb-6 text-lg font-medium text-gray-900">Profile</h1>
+            <h1 class="mb-6 text-lg font-medium text-gray-900">Profil</h1>
                 <div
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >
@@ -77,10 +77,10 @@ const billingDetailsForm = useForm({
                 >
                     <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                         <h2 class="text-lg font-medium text-gray-900">
-                            Invoice settings
+                            Nastavenia faktúry
                         </h2>
                         <p class="mt-1 text-sm text-gray-600">
-                            Company logo and default invoice color.
+                            Logo firmy a predvolená farba faktúry.
                         </p>
                         <div class="mt-6">
                             <InvoiceSettings
@@ -92,7 +92,7 @@ const billingDetailsForm = useForm({
                             />
                         </div>
                         <div class="mt-6 flex items-center gap-4">
-                            <PrimaryButton :disabled="invoiceSettingsForm.processing">Save</PrimaryButton>
+                            <PrimaryButton :disabled="invoiceSettingsForm.processing">Uložiť</PrimaryButton>
                             <Transition
                                 enter-active-class="transition ease-in-out"
                                 enter-from-class="opacity-0"
@@ -100,7 +100,7 @@ const billingDetailsForm = useForm({
                                 leave-to-class="opacity-0"
                             >
                                 <p v-if="invoiceSettingsForm.recentlySuccessful" class="text-sm text-gray-600">
-                                    Saved.
+                                    Uložené.
                                 </p>
                             </Transition>
                         </div>

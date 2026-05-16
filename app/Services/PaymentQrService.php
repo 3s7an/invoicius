@@ -122,17 +122,17 @@ class PaymentQrService
     {
         $name = trim((string) ($issuer->company_name ?: $issuer->name));
 
-        return $name !== '' ? $name : 'Payment recipient';
+        return $name !== '' ? $name : 'Príjemca platby';
     }
 
     private function buildPaymentNote(Invoice $invoice): string
     {
         $parts = array_filter([
-            $invoice->number ? 'Invoice '.$invoice->number : null,
+            $invoice->number ? 'Faktúra '.$invoice->number : null,
             $invoice->varsym ? 'VS '.$invoice->varsym : null,
         ]);
 
-        return implode(', ', $parts) ?: 'Invoice payment';
+        return implode(', ', $parts) ?: 'Úhrada faktúry';
     }
 
     private function resolveCurrencyCode(Invoice $invoice): string
@@ -146,8 +146,8 @@ class PaymentQrService
             '$' => 'USD',
             default => match (true) {
                 str_contains($name, 'euro') => 'EUR',
-                str_contains($name, 'koruna'), str_contains($name, 'czech') => 'CZK',
-                str_contains($name, 'dollar') => 'USD',
+                str_contains($name, 'koruna'), str_contains($name, 'czech'), str_contains($name, 'česk') => 'CZK',
+                str_contains($name, 'dollar'), str_contains($name, 'dolár'), str_contains($name, 'dolar') => 'USD',
                 default => 'EUR',
             },
         };

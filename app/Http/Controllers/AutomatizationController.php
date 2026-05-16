@@ -24,7 +24,7 @@ class AutomatizationController extends Controller
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Automatization created.');
+            ->with('success', 'Automatizácia bola vytvorená.');
     }
 
     public function update(UpdateAutomatizationRequest $request, Automatization $automatization): RedirectResponse
@@ -35,7 +35,7 @@ class AutomatizationController extends Controller
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Automatization updated.');
+            ->with('success', 'Automatizácia bola upravená.');
     }
 
     public function destroy(Automatization $automatization): RedirectResponse
@@ -46,6 +46,6 @@ class AutomatizationController extends Controller
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Automatization deleted.');
+            ->with('success', 'Automatizácia bola zmazaná.');
     }
 }

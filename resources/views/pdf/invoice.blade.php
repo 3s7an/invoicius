@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>Invoice {{ $invoice->number }}</title>
+    <title>Faktúra {{ $invoice->number }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -166,7 +166,7 @@
     <table class="header">
         <tr>
             <td>
-                <div class="title">Invoice</div>
+                <div class="title">Faktúra</div>
                 <div class="number">{{ $invoice->number }}</div>
             </td>
             @if(!empty($logoDataUrl))
@@ -180,7 +180,7 @@
     <table class="parties">
         <tr>
             <td>
-                <div class="section-label">From</div>
+                <div class="section-label">Dodávateľ</div>
                 <div class="party-name">{{ $issuer->company_name ?: $issuer->name }}</div>
                 <div class="party-info">
                     @if($issuer->company_name)
@@ -195,7 +195,7 @@
                 @if($issuer->ico || $issuer->dic || $issuer->ic_dph)
                 <div class="party-meta">
                     @if($issuer->ico)
-                        IČ: {{ $issuer->ico }}<br>
+                        IČO: {{ $issuer->ico }}<br>
                     @endif
                     @if($issuer->dic)
                         DIČ: {{ $issuer->dic }}<br>
@@ -207,7 +207,7 @@
                 @endif
             </td>
             <td>
-                <div class="section-label">Bill to</div>
+                <div class="section-label">Odberateľ</div>
                 <div class="party-name">{{ $invoice->recipient_name }}</div>
                 <div class="party-info">
                     @if($invoice->recipient_street)
@@ -228,7 +228,7 @@
                 @if(!empty($buyerIco) || !empty($buyerDic) || !empty($buyerIcDph))
                 <div class="party-meta">
                     @if(!empty($buyerIco))
-                        IČ: {{ $buyerIco }}<br>
+                        IČO: {{ $buyerIco }}<br>
                     @endif
                     @if(!empty($buyerDic))
                         DIČ: {{ $buyerDic }}<br>
@@ -244,15 +244,15 @@
 
     <table class="details">
         <tr>
-            <td class="dt">Issue date</td>
+            <td class="dt">Dátum vystavenia</td>
             <td class="dd">{{ $invoice->issue_date?->format('d.m.Y') }}</td>
         </tr>
         <tr>
-            <td class="dt">Due date</td>
+            <td class="dt">Dátum splatnosti</td>
             <td class="dd">{{ $invoice->due_date?->format('d.m.Y') }}</td>
         </tr>
         <tr>
-            <td class="dt">Variable symbol</td>
+            <td class="dt">Variabilný symbol</td>
             <td class="dd">{{ $invoice->varsym }}</td>
         </tr>
     </table>
@@ -260,13 +260,13 @@
     <table class="items">
         <thead>
             <tr>
-                <th>Description</th>
-                <th class="r">Qty</th>
-                <th>Unit</th>
-                <th class="r">Unit price</th>
-                <th class="r">Net</th>
-                <th class="r">VAT</th>
-                <th class="r">Total</th>
+                <th>Popis</th>
+                <th class="r">Množ.</th>
+                <th>Mj.</th>
+                <th class="r">Jedn. cena</th>
+                <th class="r">Základ</th>
+                <th class="r">DPH</th>
+                <th class="r">Celkom</th>
             </tr>
         </thead>
         <tbody>
@@ -274,7 +274,7 @@
             <tr>
                 <td class="name">{{ $item->name }}</td>
                 <td class="r">{{ number_format($item->quantity, 2, ',', ' ') }}</td>
-                <td>{{ $item->unit ?? 'pcs' }}</td>
+                <td>{{ $unitLabels[$item->unit ?? 'pcs'] ?? ($item->unit ?? 'ks') }}</td>
                 <td class="r">{{ number_format($item->unit_price, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                 <td class="r">{{ number_format($item->line_wo_vat ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                 <td class="r">{{ number_format($item->vat ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
@@ -290,15 +290,15 @@
             <td>
                 <table class="summary-table">
                     <tr>
-                        <td class="lbl">Subtotal</td>
+                        <td class="lbl">Medzisúčet</td>
                         <td class="val">{{ number_format($invoice->wo_vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
                     <tr>
-                        <td class="lbl">VAT</td>
+                        <td class="lbl">DPH</td>
                         <td class="val">{{ number_format($invoice->vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
                     <tr class="total">
-                        <td class="lbl">Total due</td>
+                        <td class="lbl">Na úhradu</td>
                         <td class="val">{{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
                 </table>
@@ -311,21 +311,21 @@
         <tr>
             @if(!empty($paymentQrDataUrl))
             <td class="qr-cell">
-                <img src="{{ $paymentQrDataUrl }}" alt="Payment QR code" class="qr-image" />
+                <img src="{{ $paymentQrDataUrl }}" alt="Platobný QR kód" class="qr-image" />
             </td>
             @endif
             <td>
-                <div class="payment-title">Scan to pay</div>
+                <div class="payment-title">Naskenujte na úhradu</div>
                 @if(!empty($paymentIban))
                 <div class="payment-detail">
                     IBAN: {{ trim(chunk_split($paymentIban, 4, ' ')) }}<br>
-                    Amount: {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}<br>
+                    Suma: {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}<br>
                     @if($invoice->varsym)
-                        Variable symbol: {{ $invoice->varsym }}<br>
+                        Variabilný symbol: {{ $invoice->varsym }}<br>
                     @endif
-                    Beneficiary: {{ $issuer->company_name ?: $issuer->name }}
+                    Príjemca: {{ $issuer->company_name ?: $issuer->name }}
                 </div>
-                <div class="payment-hint">Compatible with Slovak banking apps (Pay by Square) and SEPA QR payments.</div>
+                <div class="payment-hint">Kompatibilné so slovenskými bankovými aplikáciami (Pay by Square) a SEPA QR platbami.</div>
                 @endif
             </td>
         </tr>

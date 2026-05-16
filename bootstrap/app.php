@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
                     return redirect()->back()
                         ->withInput()
-                        ->with('error', 'Invoice with this number already exists. Please try again.');
+                        ->with('error', 'Faktúra s týmto číslom už existuje. Skúste to znova.');
                 }
                 if ($e instanceof \App\Exceptions\DuplicateInvoiceNumberException) {
                     return redirect()->back()

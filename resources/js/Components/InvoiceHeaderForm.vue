@@ -78,13 +78,13 @@ function id(name) {
 
 <template>
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-        <h3 class="text-lg font-medium text-gray-900">Invoice</h3>
+        <h3 class="text-lg font-medium text-gray-900">Faktúra</h3>
         <p class="mt-1 text-sm text-gray-600">
-            Number, variable symbol and dates.
+            Číslo, variabilný symbol a dátumy.
         </p>
         <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
             <div>
-                <InputLabel :for="id('number')" value="Invoice number" />
+                <InputLabel :for="id('number')" value="Číslo faktúry" />
                 <TextInput
                     :id="id('number')"
                     v-model="header.number"
@@ -95,7 +95,7 @@ function id(name) {
                 <InputError class="mt-2" :message="errors.number" />
             </div>
             <div>
-                <InputLabel :for="id('variable-symbol')" value="Variable symbol" />
+                <InputLabel :for="id('variable-symbol')" value="Variabilný symbol" />
                 <TextInput
                     :id="id('variable-symbol')"
                     v-model="header.variable_symbol"
@@ -106,7 +106,7 @@ function id(name) {
                 <InputError class="mt-2" :message="errors.variable_symbol" />
             </div>
             <div>
-                <InputLabel :for="id('issue-date')" value="Issue date" />
+                <InputLabel :for="id('issue-date')" value="Dátum vystavenia" />
                 <TextInput
                     :id="id('issue-date')"
                     v-model="header.issue_date"
@@ -116,7 +116,7 @@ function id(name) {
                 <InputError class="mt-2" :message="errors.issue_date" />
             </div>
             <div>
-                <InputLabel :for="id('due-date')" value="Due date" />
+                <InputLabel :for="id('due-date')" value="Dátum splatnosti" />
                 <TextInput
                     :id="id('due-date')"
                     v-model="header.due_date"
@@ -126,7 +126,7 @@ function id(name) {
                 <InputError class="mt-2" :message="errors.due_date" />
             </div>
             <div v-if="currencies.length">
-                <InputLabel :for="id('currency_id')" value="Currency" />
+                <InputLabel :for="id('currency_id')" value="Mena" />
                 <select
                     :id="id('currency_id')"
                     v-model="header.currency_id"

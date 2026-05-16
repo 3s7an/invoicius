@@ -68,7 +68,7 @@ class InvoiceController extends Controller
 
         return redirect()
             ->route('invoices')
-            ->with('success', 'Invoice created.');
+            ->with('success', 'Faktúra bola vytvorená.');
     }
 
     public function edit(Request $request, Invoice $invoice): Response
@@ -89,7 +89,7 @@ class InvoiceController extends Controller
 
         return redirect()
             ->route('invoices')
-            ->with('success', 'Invoice updated.');
+            ->with('success', 'Faktúra bola upravená.');
     }
 
     public function updateStatus(UpdateInvoiceStatusRequest $request, Invoice $invoice): RedirectResponse
@@ -98,7 +98,7 @@ class InvoiceController extends Controller
 
         return redirect()
             ->back()
-            ->with('success', 'Invoice status updated.');
+            ->with('success', 'Stav faktúry bol aktualizovaný.');
     }
 
     public function destroy(Invoice $invoice): RedirectResponse
@@ -108,7 +108,7 @@ class InvoiceController extends Controller
 
         return redirect()
             ->route('invoices')
-            ->with('success', 'Invoice deleted.');
+            ->with('success', 'Faktúra bola zmazaná.');
     }
 
     /**

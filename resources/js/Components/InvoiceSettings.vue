@@ -78,12 +78,12 @@ function id(name) {
     <div class="space-y-6">
         <!-- Company logo -->
         <div class="space-y-2">
-            <InputLabel :for="id('company_logo')" value="Company logo" />
+            <InputLabel :for="id('company_logo')" value="Logo firmy" />
             <div class="flex items-center gap-4">
                 <img
                     v-if="companyLogoPreviewUrl"
                     :src="companyLogoPreviewUrl"
-                    :alt="mode === 'profile' && form?.company_logo && isFile(form.company_logo) ? 'New logo preview' : 'Company logo'"
+                    :alt="mode === 'profile' && form?.company_logo && isFile(form.company_logo) ? 'Náhľad nového loga' : 'Logo firmy'"
                     class="h-16 w-16 rounded border border-gray-200 object-contain bg-gray-50"
                 />
                 <input
@@ -95,7 +95,7 @@ function id(name) {
                     @input="form.company_logo = $event.target.files?.[0] ?? null"
                 />
                 <p v-else-if="mode === 'invoice' && !companyLogoPreviewUrl" class="text-sm text-gray-500">
-                    No logo set. Add one in Profile.
+                    Žiadne logo. Pridajte ho v nastaveniach účtu (Profil).
                 </p>
             </div>
             <InputError v-if="form" class="mt-2" :message="form.errors?.company_logo" />
@@ -103,7 +103,7 @@ function id(name) {
 
         <!-- Invoice color -->
         <div class="space-y-2">
-            <InputLabel :for="id('invoice_color_id')" value="Invoice color" />
+            <InputLabel :for="id('invoice_color_id')" value="Farba faktúry" />
             <div v-if="colorsList.length" class="flex flex-wrap items-center gap-2.5" role="group" :aria-label="id('invoice_color_id')">
                 <button
                     v-for="c in colorsList"
@@ -117,7 +117,7 @@ function id(name) {
                 />
             </div>
             <p v-else class="text-sm text-gray-500">
-                No colors. Run: <code class="rounded bg-gray-100 px-1">php artisan db:seed --class=InvoiceColorSeeder</code>
+                Žiadne farby. Spustite: <code class="rounded bg-gray-100 px-1">php artisan db:seed --class=InvoiceColorSeeder</code>
             </p>
             <p v-if="selectedColor" class="text-sm text-gray-500">
                 {{ selectedColor.name }}

@@ -8,6 +8,6 @@ class DuplicateInvoiceNumberException extends Exception
 {
     public function __construct(string $number)
     {
-        parent::__construct("Invoice number [{$number}] is already used.");
+        parent::__construct("Číslo faktúry [{$number}] je už použité.");
     }
 }

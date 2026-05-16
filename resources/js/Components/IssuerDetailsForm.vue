@@ -28,7 +28,7 @@ const countries = computed(() => {
     try {
         if (typeof Intl.supportedValuesOf !== 'function') return FALLBACK_COUNTRY_LIST;
         const codes = Intl.supportedValuesOf('region').filter((c) => c.length === 2 && c !== 'FX');
-        const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
+        const displayNames = new Intl.DisplayNames(['sk'], { type: 'region' });
         return codes
             .map((code) => ({ code, name: displayNames.of(code) || code }))
             .sort((a, b) => a.name.localeCompare(b.name));
@@ -49,17 +49,17 @@ const selectClass =
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Billing details
+                Fakturačné údaje
             </h2>
             <p class="mt-1 text-sm text-gray-600">
-                Issuer address as it appears on the invoice.
+                Adresa vystaviteľa na faktúre.
             </p>
         </header>
 
         <div class="mt-6 space-y-6">
             <div class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('name')" value="Name / company" />
+                    <InputLabel :for="id('name')" value="Názov / firma" />
                     <TextInput
                         :id="id('name')"
                         type="text"
@@ -71,7 +71,7 @@ const selectClass =
                     <InputError class="mt-2" :message="errors.issuer_name" />
                 </div>
                 <div>
-                    <InputLabel :for="id('ico')" value="Company ID" />
+                    <InputLabel :for="id('ico')" value="IČO" />
                     <TextInput
                         :id="id('ico')"
                         type="text"
@@ -82,7 +82,7 @@ const selectClass =
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('dic')" value="Tax ID" />
+                    <InputLabel :for="id('dic')" value="DIČ" />
                     <TextInput
                         :id="id('dic')"
                         type="text"
@@ -93,7 +93,7 @@ const selectClass =
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('ic_dph')" value="VAT ID" />
+                    <InputLabel :for="id('ic_dph')" value="IČ DPH" />
                     <TextInput
                         :id="id('ic_dph')"
                         type="text"
@@ -104,7 +104,7 @@ const selectClass =
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('street')" value="Street" />
+                    <InputLabel :for="id('street')" value="Ulica" />
                     <TextInput
                         :id="id('street')"
                         type="text"
@@ -115,7 +115,7 @@ const selectClass =
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('street_num')" value="Number" />
+                    <InputLabel :for="id('street_num')" value="Číslo" />
                     <TextInput
                         :id="id('street_num')"
                         type="text"
@@ -126,7 +126,7 @@ const selectClass =
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('city')" value="City" />
+                    <InputLabel :for="id('city')" value="Mesto" />
                     <TextInput
                         :id="id('city')"
                         type="text"
@@ -137,7 +137,7 @@ const selectClass =
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('zip')" value="ZIP" />
+                    <InputLabel :for="id('zip')" value="PSČ" />
                     <TextInput
                         :id="id('zip')"
                         type="text"
@@ -148,7 +148,7 @@ const selectClass =
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('state')" value="Country" />
+                    <InputLabel :for="id('state')" value="Krajina" />
                     <select
                         :id="id('state')"
                         v-model="modelValue.state"
@@ -156,7 +156,7 @@ const selectClass =
                         :disabled="readonly"
                         autocomplete="country"
                     >
-                        <option value="">Select country</option>
+                        <option value="">Vyberte krajinu</option>
                         <option v-for="c in countries" :key="c.code" :value="c.code">
                             {{ c.name }}
                         </option>

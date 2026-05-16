@@ -60,7 +60,7 @@ function submit() {
 }
 
 function recipientLabel(r) {
-    return r.company_name || r.name || `Recipient #${r.id}`;
+    return r.company_name || r.name || `Odberateľ #${r.id}`;
 }
 
 const selectClass =
@@ -71,18 +71,18 @@ const selectClass =
     <Modal :show="show" @close="emit('close')" max-width="lg">
         <form @submit.prevent="submit" class="p-6">
             <h2 class="text-lg font-medium text-gray-900">
-                {{ editingAutomatization ? 'Edit automatization' : 'New automatization' }}
+                {{ editingAutomatization ? 'Upraviť automatizáciu' : 'Nová automatizácia' }}
             </h2>
 
             <div class="mt-6 space-y-4">
                 <div>
-                    <InputLabel for="auto-recipient" value="Recipient" />
+                    <InputLabel for="auto-recipient" value="Odberateľ" />
                     <select
                         id="auto-recipient"
                         v-model="form.recipient_id"
                         :class="selectClass"
                     >
-                        <option value="">Select recipient</option>
+                        <option value="">Vyberte odberateľa</option>
                         <option
                             v-for="r in recipients"
                             :key="r.id"
@@ -95,19 +95,19 @@ const selectClass =
                 </div>
 
                 <div>
-                    <InputLabel for="auto-type" value="Type" />
+                    <InputLabel for="auto-type" value="Typ" />
                     <select
                         id="auto-type"
                         v-model="form.type"
                         :class="selectClass"
                     >
-                        <option value="invoice_auto_gen">Invoice auto-generation</option>
+                        <option value="invoice_auto_gen">Automatické generovanie faktúr</option>
                     </select>
                     <InputError class="mt-2" :message="form.errors.type" />
                 </div>
 
                 <div>
-                    <InputLabel for="auto-trigger" value="First trigger date" />
+                    <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
                     <input
                         id="auto-trigger"
                         type="date"
@@ -124,14 +124,14 @@ const selectClass =
                         v-model="form.is_active"
                         class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                     />
-                    <InputLabel for="auto-active" value="Active" />
+                    <InputLabel for="auto-active" value="Aktívne" />
                 </div>
             </div>
 
             <div class="mt-6 flex justify-end gap-3">
-                <SecondaryButton @click="emit('close')">Cancel</SecondaryButton>
+                <SecondaryButton @click="emit('close')">Zrušiť</SecondaryButton>
                 <PrimaryButton :disabled="form.processing">
-                    {{ editingAutomatization ? 'Update' : 'Create' }}
+                    {{ editingAutomatization ? 'Uložiť' : 'Vytvoriť' }}
                 </PrimaryButton>
             </div>
         </form>
