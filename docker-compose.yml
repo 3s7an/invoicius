@@ -20,6 +20,8 @@ services:
       CACHE_STORE: database
       QUEUE_CONNECTION: database
       RUN_SEED: "${RUN_SEED:-false}"
+      N8N_USER: "${N8N_USER:-n8n-user}"
+      N8N_TOKEN: "${N8N_TOKEN:-change-me}"
     volumes:
       - app_storage:/var/www/html/storage/app
     depends_on:
@@ -45,6 +47,26 @@ services:
       retries: 20
     restart: unless-stopped
 
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      N8N_PROTOCOL: http
+      WEBHOOK_URL: http://localhost:${N8N_PORT:-5678}/
+      GENERIC_TIMEZONE: "${TZ:-Europe/Bratislava}"
+      TZ: "${TZ:-Europe/Bratislava}"
+      N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY:-}"
+      N8N_BASIC_AUTH_ACTIVE: "${N8N_BASIC_AUTH_ACTIVE:-true}"
+      N8N_BASIC_AUTH_USER: "${N8N_BASIC_AUTH_USER:-admin}"
+      N8N_BASIC_AUTH_PASSWORD: "${N8N_BASIC_AUTH_PASSWORD:-admin}"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: unless-stopped
+
 volumes:
   mysql_data:
   app_storage:
+  n8n_data:

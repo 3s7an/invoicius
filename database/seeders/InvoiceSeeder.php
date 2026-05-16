@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\InvoiceStatus;
 use App\Models\User;
+use App\Models\VatType;
 use Illuminate\Database\Seeder;
 
 class InvoiceSeeder extends Seeder
@@ -12,49 +15,61 @@ class InvoiceSeeder extends Seeder
     public function run(): void
     {
         $user = User::first();
-        if (!$user) {
-            $this->command->warn('Žiadny používateľ. Najprv sa zaregistruj alebo spusti User factory v DatabaseSeeder.');
+        if (! $user) {
+            $this->command->warn('Žiadny používateľ. Najprv sa zaregistruj alebo spusti DatabaseSeeder.');
+
             return;
         }
+
+        if (Invoice::where('user_id', $user->id)->exists()) {
+            $this->command->warn('Faktúry pre používateľa už existujú, preskakujem InvoiceSeeder.');
+
+            return;
+        }
+
+        $statusIds = InvoiceStatus::pluck('id', 'code');
+        $currencyId = Currency::where('symbol', '€')->value('id');
+        $vatTypeId = VatType::where('code', '23')->value('id');
 
         $invoicesData = [
             [
                 'number' => '2026-001',
                 'recipient_name' => 'Firma s.r.o.',
                 'payment_type' => 'PREVOD',
-                'status' => Invoice::STATUS_PAID,
+                'status_code' => 'paid',
                 'items' => [
-                    ['name' => 'Konzultácie', 'unit' => 'hod', 'quantity' => 10, 'unit_price' => 50.00, 'vat' => 20, 'line_total' => 600.00],
-                    ['name' => 'Hosting 1 rok', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 120.00, 'vat' => 20, 'line_total' => 144.00],
+                    ['name' => 'Konzultácie', 'unit' => 'hod', 'quantity' => 10, 'unit_price' => 50.00, 'vat' => 23, 'line_total' => 600.00],
+                    ['name' => 'Hosting 1 rok', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 120.00, 'vat' => 23, 'line_total' => 144.00],
                 ],
             ],
             [
                 'number' => '2026-002',
                 'recipient_name' => 'Zákazník XY',
                 'payment_type' => 'PLATOBNOU KARTOU',
-                'status' => Invoice::STATUS_SENT,
+                'status_code' => 'sent',
                 'items' => [
-                    ['name' => 'Dizajn loga', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 250.00, 'vat' => 20, 'line_total' => 300.00],
-                    ['name' => 'Úpravy', 'unit' => 'hod', 'quantity' => 2, 'unit_price' => 40.00, 'vat' => 20, 'line_total' => 96.00],
+                    ['name' => 'Dizajn loga', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 250.00, 'vat' => 23, 'line_total' => 300.00],
+                    ['name' => 'Úpravy', 'unit' => 'hod', 'quantity' => 2, 'unit_price' => 40.00, 'vat' => 23, 'line_total' => 96.00],
                 ],
             ],
             [
                 'number' => '2026-003',
                 'recipient_name' => 'Občan A',
                 'payment_type' => 'HOTOVOST',
-                'status' => Invoice::STATUS_DRAFT,
+                'status_code' => 'draft',
                 'items' => [
-                    ['name' => 'Oprava PC', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 80.00, 'vat' => 20, 'line_total' => 96.00],
-                    ['name' => 'Čistenie', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 25.00, 'vat' => 20, 'line_total' => 30.00],
+                    ['name' => 'Oprava PC', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 80.00, 'vat' => 23, 'line_total' => 96.00],
+                    ['name' => 'Čistenie', 'unit' => 'ks', 'quantity' => 1, 'unit_price' => 25.00, 'vat' => 23, 'line_total' => 30.00],
                 ],
             ],
         ];
 
-        $vatRate = 0.20; // 20 %
+        $vatRate = 0.23;
 
         foreach ($invoicesData as $data) {
             $itemsData = $data['items'];
-            unset($data['items']);
+            $statusCode = $data['status_code'];
+            unset($data['items'], $data['status_code']);
 
             $issueDate = now()->subDays(rand(5, 60));
             $dueDate = $issueDate->copy()->addDays(14);
@@ -75,7 +90,8 @@ class InvoiceSeeder extends Seeder
                 'total_price' => $totalPrice,
                 'vat_price' => $vatPrice,
                 'wo_vat_price' => $woVatPrice,
-                'currency' => 'EUR',
+                'invoice_status_id' => $statusIds[$statusCode] ?? null,
+                'currency_id' => $currencyId,
                 'notes' => null,
                 'sequence_number' => (int) substr($data['number'], -3),
                 'year' => (int) substr($data['number'], 0, 4),
@@ -84,6 +100,7 @@ class InvoiceSeeder extends Seeder
             foreach ($itemsData as $position => $item) {
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
+                    'vat_type_id' => $vatTypeId,
                     'name' => $item['name'],
                     'unit' => $item['unit'],
                     'quantity' => $item['quantity'],

@@ -23,9 +23,11 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $unique = str_replace('.', '', uniqid('', true));
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => 'User',
+            'email' => "user-{$unique}@example.com",
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
