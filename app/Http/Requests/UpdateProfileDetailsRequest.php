@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\InvoiceColor;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileDetailsRequest extends FormRequest
@@ -26,7 +25,6 @@ class UpdateProfileDetailsRequest extends FormRequest
             'iban' => ['nullable', 'string', 'max:34'],
             'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
             'default_vat_type_id' => ['nullable', 'integer', 'exists:vat_types,id'],
-            'invoice_color_id' => ['nullable', 'integer', 'exists:invoice_colors,id'],
             'company_logo' => ['nullable', 'image', 'max:2048'],
         ];
     }
@@ -37,9 +35,6 @@ class UpdateProfileDetailsRequest extends FormRequest
             'currency_id' => $this->input('currency_id') === '' || $this->input('currency_id') === null
                 ? null
                 : (int) $this->input('currency_id'),
-            'invoice_color_id' => $this->input('invoice_color_id') === '' || $this->input('invoice_color_id') === null
-                ? (InvoiceColor::orderBy('id')->value('id') ?? 1)
-                : (int) $this->input('invoice_color_id'),
             'default_vat_type_id' => $this->input('default_vat_type_id') === '' || $this->input('default_vat_type_id') === null
                 ? null
                 : (int) $this->input('default_vat_type_id'),

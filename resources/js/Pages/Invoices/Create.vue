@@ -35,18 +35,9 @@ const props = defineProps({
         type: [Number, String],
         default: null,
     },
-    invoice_colors: {
-        type: Array,
-        default: () => [],
-    },
 });
 
 const user = usePage().props.auth?.user;
-
-const invoiceColorsList = computed(() => {
-    const list = props.invoice_colors ?? [];
-    return Array.isArray(list) ? list : [];
-});
 
 // Add display label for AutoComplete (company_name || name)
 const recipientsWithLabel = computed(() =>
@@ -116,7 +107,6 @@ const invoice = reactive({
     issue_date: today,
     due_date: defaultDue,
     currency_id: props.default_currency_id ?? (props.currencies?.[0]?.id ?? ''),
-    invoice_color_id: user?.invoice_color_id ?? (props.invoice_colors?.[0]?.id ?? ''),
 });
 
 const currencySymbol = computed(() => {
@@ -236,21 +226,12 @@ function createInvoice() {
                     id-prefix="invoice"
                 />
 
-                <!-- Invoice settings (logo + color) -->
                 <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-                    <h3 class="text-lg font-medium text-gray-900">Nastavenia faktúry</h3>
-                    <p class="mt-1 text-sm text-gray-600">
-                        Logo firmy a farba tejto faktúry.
-                    </p>
-                    <div class="mt-6">
-                        <InvoiceSettings
-                            mode="invoice"
-                            :model="invoice"
-                            :user="user"
-                            :invoice-colors="invoiceColorsList"
-                            id-prefix="invoice-settings"
-                        />
-                    </div>
+                    <InvoiceSettings
+                        mode="invoice"
+                        :user="user"
+                        id-prefix="invoice-settings"
+                    />
                 </div>
 
                 <!-- Billing details (issuer) -->

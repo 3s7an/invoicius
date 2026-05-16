@@ -19,10 +19,6 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
-    invoice_colors: {
-        type: Array,
-        default: () => [],
-    },
     vat_types: {
         type: Array,
         default: () => [],
@@ -32,7 +28,6 @@ const props = defineProps({
 const user = usePage().props.auth?.user;
 
 const invoiceSettingsForm = useForm({
-    invoice_color_id: user?.invoice_color_id ?? '',
     company_logo: null,
     _method: 'patch',
 });
@@ -80,14 +75,13 @@ const billingDetailsForm = useForm({
                             Nastavenia faktúry
                         </h2>
                         <p class="mt-1 text-sm text-gray-600">
-                            Logo firmy a predvolená farba faktúry.
+                            Logo zobrazené na PDF faktúrach.
                         </p>
                         <div class="mt-6">
                             <InvoiceSettings
                                 mode="profile"
                                 :form="invoiceSettingsForm"
                                 :user="user"
-                                :invoice-colors="invoice_colors"
                                 id-prefix="profile-invoice"
                             />
                         </div>

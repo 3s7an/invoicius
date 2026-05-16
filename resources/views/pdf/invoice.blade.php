@@ -8,252 +8,173 @@
 
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 11px;
-            color: #1f2937;
-            line-height: 1.5;
-            margin: 0;
+            font-size: 10pxinv
+            font-weight: normal;
+            color: #27272a;
+            line-height: 1.45;
             padding: 40px 44px;
-            background: #fff;
         }
 
-        .header { width: 100%; margin-bottom: 36px; border-bottom: 2px solid {{ $accentColor }}; padding-bottom: 20px; }
-        .header td { vertical-align: bottom; }
-        .header .title {
-            font-size: 22px;
-            font-weight: 700;
-            color: {{ $accentColor }};
-        }
-        .header .number {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 3px;
-        }
-        .header .logo {
-            max-height: 48px;
-            max-width: 160px;
-            object-fit: contain;
-        }
+        table { border-collapse: collapse; }
 
-        .parties { width: 100%; margin-bottom: 30px; }
-        .parties td { vertical-align: top; width: 50%; }
-        .parties td:first-child { padding-right: 24px; }
-        .parties td:last-child { padding-left: 24px; }
+        .muted { color: #a1a1aa; }
 
-        .section-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 6px;
-        }
-        .party-name {
-            font-size: 12px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 3px;
-        }
-        .party-info {
-            font-size: 10.5px;
-            color: #374151;
-            line-height: 1.65;
-        }
-        .party-meta {
-            margin-top: 6px;
-            font-size: 10px;
-            color: #6b7280;
-            line-height: 1.65;
-        }
+        /* Header */
+        .head { width: 100%; margin-bottom: 36px; }
+        .head td { vertical-align: top; }
+        .head .logo { max-height: 40px; max-width: 130px; }
+        .head .right { text-align: right; }
+        .head .num { margin-top: 4px; }
 
-        .details { width: 100%; margin-bottom: 30px; border-collapse: collapse; }
-        .details td {
-            padding: 7px 0;
-            border-bottom: 1px solid #e5e7eb;
+        /* Meta */
+        .meta { width: 100%; margin-bottom: 32px; }
+        .meta td {
+            padding: 0 24px 0 0;
             vertical-align: top;
-            font-size: 11px;
         }
-        .details tr:last-child td { border-bottom: none; }
-        .details .dt {
-            width: 140px;
-            color: #6b7280;
-            font-weight: 600;
-        }
-        .details .dd {
-            color: #111827;
-            font-weight: 600;
-        }
+        .meta td:last-child { padding-right: 0; }
 
-        table.items { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
-        table.items thead th {
-            font-size: 10px;
-            font-weight: 700;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+        /* Parties */
+        .parties { width: 100%; margin-bottom: 32px; }
+        .parties td {
+            width: 50%;
+            vertical-align: top;
+            padding-right: 24px;
+        }
+        .parties td:last-child { padding-right: 0; padding-left: 24px; }
+        .parties .block { margin-top: 14px; }
+
+        /* Items */
+        .items { width: 100%; margin-bottom: 24px; }
+        .items th {
             text-align: left;
-            padding: 8px 10px;
-            background: #f9fafb;
-            border-bottom: 2px solid {{ $accentColor }};
+            padding: 0 8px 6px 0;
+            border-bottom: 1px solid #27272a;
+            color: #a1a1aa;
         }
-        table.items thead th.r { text-align: right; }
-        table.items tbody td {
-            padding: 10px 10px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 11px;
-            color: #374151;
+        .items th.r { text-align: right; padding-right: 0; padding-left: 8px; }
+        .items td {
+            padding: 8px 8px 8px 0;
+            border-bottom: 1px solid #e4e4e7;
+            vertical-align: top;
         }
-        table.items tbody td.r { text-align: right; }
-        table.items tbody td.name { font-weight: 600; color: #111827; }
+        .items td.r {
+            text-align: right;
+            padding-right: 0;
+            padding-left: 8px;
+            white-space: nowrap;
+        }
+        .items tr:last-child td { border-bottom: 1px solid #27272a; }
 
-        .summary { width: 100%; margin-top: 8px; }
-        .summary td.empty { width: 58%; }
-        .summary-table { width: 100%; border-collapse: collapse; }
-        .summary-table td { padding: 6px 10px; font-size: 11px; }
-        .summary-table .lbl { text-align: right; color: #6b7280; }
-        .summary-table .val { text-align: right; font-weight: 600; color: #1f2937; }
-        .summary-table .total td {
+        /* Totals */
+        .sum { width: 100%; }
+        .sum .gap { width: 55%; }
+        .sum-inner { width: 100%; }
+        .sum-inner td {
+            padding: 4px 0;
+            text-align: right;
+        }
+        .sum-inner .lbl { padding-right: 20px; color: #a1a1aa; }
+        .sum-inner .due td {
             padding-top: 10px;
-            border-top: 2px solid {{ $accentColor }};
-        }
-        .summary-table .total .lbl {
-            font-weight: 700;
-            font-size: 12px;
-            color: #111827;
-        }
-        .summary-table .total .val {
-            font-size: 15px;
-            font-weight: 700;
-            color: {{ $accentColor }};
+            border-top: 1px solid #27272a;
         }
 
-        .footer {
-            margin-top: 36px;
-            padding-top: 14px;
-            border-top: 1px solid #e5e7eb;
-            font-size: 10px;
-            color: #6b7280;
-            line-height: 1.7;
+        /* Payment */
+        .pay { width: 100%; margin-top: 28px; }
+        .pay-box {
+            padding: 16px;
+            border: 1px solid #e4e4e7;
         }
+        .pay-inner td { vertical-align: top; }
+        .pay .qr { width: 100px; padding-right: 16px; }
+        .pay .qr img { width: 92px; height: 92px; display: block; }
+        .pay .line { margin-bottom: 3px; }
+        .pay .sub { margin-top: 8px; color: #a1a1aa; }
 
-        .payment-block { width: 100%; margin-top: 28px; border-collapse: collapse; }
-        .payment-block td { vertical-align: middle; }
-        .payment-block .qr-cell { width: 130px; padding-right: 20px; }
-        .payment-block .qr-image {
-            width: 120px;
-            height: 120px;
-            display: block;
-        }
-        .payment-block .payment-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 6px;
-        }
-        .payment-block .payment-detail {
-            font-size: 10.5px;
-            color: #374151;
-            line-height: 1.65;
-        }
-        .payment-block .payment-hint {
-            margin-top: 6px;
-            font-size: 9.5px;
-            color: #6b7280;
+        .notes {
+            margin-top: 28px;
+            padding-top: 12px;
+            border-top: 1px solid #e4e4e7;
+            color: #a1a1aa;
         }
     </style>
 </head>
 <body>
 
-    <table class="header">
+    <table class="head">
         <tr>
             <td>
-                <div class="title">Faktúra</div>
-                <div class="number">{{ $invoice->number }}</div>
+                @if(!empty($logoDataUrl))
+                    <img src="{{ $logoDataUrl }}" alt="" class="logo" />
+                @endif
             </td>
-            @if(!empty($logoDataUrl))
-            <td style="text-align: right;">
-                <img src="{{ $logoDataUrl }}" alt="" class="logo" />
+            <td class="right">
+                <span class="muted">Faktúra</span><br>
+                <span class="num">{{ $invoice->number }}</span>
             </td>
-            @endif
+        </tr>
+    </table>
+
+    <table class="meta">
+        <tr>
+            <td>
+                <span class="muted">Dátum vystavenia</span><br>
+                {{ $invoice->issue_date?->format('d.m.Y') }}
+            </td>
+            <td>
+                <span class="muted">Dátum splatnosti</span><br>
+                {{ $invoice->due_date?->format('d.m.Y') }}
+            </td>
+            <td>
+                <span class="muted">Variabilný symbol</span><br>
+                {{ $invoice->varsym }}
+            </td>
         </tr>
     </table>
 
     <table class="parties">
         <tr>
             <td>
-                <div class="section-label">Dodávateľ</div>
-                <div class="party-name">{{ $issuer->company_name ?: $issuer->name }}</div>
-                <div class="party-info">
+                <span class="muted">Dodávateľ</span>
+                <div class="block">
+                    {{ $issuer->company_name ?: $issuer->name }}<br>
                     @if($issuer->company_name)
                         {{ $issuer->name }}<br>
                     @endif
                     {{ $issuer->street }} {{ $issuer->street_num }}<br>
-                    {{ $issuer->zip }} {{ $issuer->city }}
-                    @if($issuer->state)
-                        , {{ $issuer->state }}
+                    {{ $issuer->zip }} {{ $issuer->city }}@if($issuer->state), {{ $issuer->state }}@endif
+                    @if($issuer->ico || $issuer->dic || $issuer->ic_dph)
+                        <br>
+                        @if($issuer->ico)IČO {{ $issuer->ico }}@endif
+                        @if($issuer->dic) · DIČ {{ $issuer->dic }}@endif
+                        @if($issuer->ic_dph) · IČ DPH {{ $issuer->ic_dph }}@endif
                     @endif
                 </div>
-                @if($issuer->ico || $issuer->dic || $issuer->ic_dph)
-                <div class="party-meta">
-                    @if($issuer->ico)
-                        IČO: {{ $issuer->ico }}<br>
-                    @endif
-                    @if($issuer->dic)
-                        DIČ: {{ $issuer->dic }}<br>
-                    @endif
-                    @if($issuer->ic_dph)
-                        IČ DPH: {{ $issuer->ic_dph }}
-                    @endif
-                </div>
-                @endif
             </td>
             <td>
-                <div class="section-label">Odberateľ</div>
-                <div class="party-name">{{ $invoice->recipient_name }}</div>
-                <div class="party-info">
+                <span class="muted">Odberateľ</span>
+                <div class="block">
+                    {{ $invoice->recipient_name }}<br>
                     @if($invoice->recipient_street)
                         {{ $invoice->recipient_street }} {{ $invoice->recipient_street_num }}<br>
                     @endif
                     @if($invoice->recipient_city)
-                        {{ $invoice->recipient_city }}
-                        @if($invoice->recipient_state)
-                            , {{ $invoice->recipient_state }}
-                        @endif
+                        {{ $invoice->recipient_city }}@if($invoice->recipient_state), {{ $invoice->recipient_state }}@endif
+                    @endif
+                    @php
+                        $buyerIco = $invoice->recipient_ico ?? $invoice->recipient?->ico;
+                        $buyerDic = $invoice->recipient_dic ?? $invoice->recipient?->dic;
+                        $buyerIcDph = $invoice->recipient_ic_dph ?? $invoice->recipient?->ic_dph;
+                    @endphp
+                    @if(!empty($buyerIco) || !empty($buyerDic) || !empty($buyerIcDph))
+                        <br>
+                        @if(!empty($buyerIco))IČO {{ $buyerIco }}@endif
+                        @if(!empty($buyerDic)) · DIČ {{ $buyerDic }}@endif
+                        @if(!empty($buyerIcDph)) · IČ DPH {{ $buyerIcDph }}@endif
                     @endif
                 </div>
-                @php
-                    $buyerIco = $invoice->recipient_ico ?? $invoice->recipient?->ico;
-                    $buyerDic = $invoice->recipient_dic ?? $invoice->recipient?->dic;
-                    $buyerIcDph = $invoice->recipient_ic_dph ?? $invoice->recipient?->ic_dph;
-                @endphp
-                @if(!empty($buyerIco) || !empty($buyerDic) || !empty($buyerIcDph))
-                <div class="party-meta">
-                    @if(!empty($buyerIco))
-                        IČO: {{ $buyerIco }}<br>
-                    @endif
-                    @if(!empty($buyerDic))
-                        DIČ: {{ $buyerDic }}<br>
-                    @endif
-                    @if(!empty($buyerIcDph))
-                        IČ DPH: {{ $buyerIcDph }}
-                    @endif
-                </div>
-                @endif
             </td>
-        </tr>
-    </table>
-
-    <table class="details">
-        <tr>
-            <td class="dt">Dátum vystavenia</td>
-            <td class="dd">{{ $invoice->issue_date?->format('d.m.Y') }}</td>
-        </tr>
-        <tr>
-            <td class="dt">Dátum splatnosti</td>
-            <td class="dd">{{ $invoice->due_date?->format('d.m.Y') }}</td>
-        </tr>
-        <tr>
-            <td class="dt">Variabilný symbol</td>
-            <td class="dd">{{ $invoice->varsym }}</td>
         </tr>
     </table>
 
@@ -261,45 +182,43 @@
         <thead>
             <tr>
                 <th>Popis</th>
-                <th class="r">Množ.</th>
-                <th>Mj.</th>
+                <th class="r">Množstvo</th>
                 <th class="r">Jedn. cena</th>
-                <th class="r">Základ</th>
-                <th class="r">DPH</th>
                 <th class="r">Celkom</th>
             </tr>
         </thead>
         <tbody>
             @foreach($invoice->items as $item)
+            @php
+                $unit = $unitLabels[$item->unit ?? 'pcs'] ?? ($item->unit ?? 'ks');
+                $qty = number_format($item->quantity, 2, ',', ' ');
+            @endphp
             <tr>
-                <td class="name">{{ $item->name }}</td>
-                <td class="r">{{ number_format($item->quantity, 2, ',', ' ') }}</td>
-                <td>{{ $unitLabels[$item->unit ?? 'pcs'] ?? ($item->unit ?? 'ks') }}</td>
+                <td>{{ $item->name }}</td>
+                <td class="r muted">{{ $qty }} {{ $unit }}</td>
                 <td class="r">{{ number_format($item->unit_price, 2, ',', ' ') }} {{ $currencySymbol }}</td>
-                <td class="r">{{ number_format($item->line_wo_vat ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
-                <td class="r">{{ number_format($item->vat ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                 <td class="r">{{ number_format($item->line_total ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
 
-    <table class="summary">
+    <table class="sum">
         <tr>
-            <td class="empty">&nbsp;</td>
+            <td class="gap"></td>
             <td>
-                <table class="summary-table">
+                <table class="sum-inner">
                     <tr>
-                        <td class="lbl">Medzisúčet</td>
-                        <td class="val">{{ number_format($invoice->wo_vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
+                        <td class="lbl">Medzisúčet bez DPH</td>
+                        <td>{{ number_format($invoice->wo_vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
                     <tr>
                         <td class="lbl">DPH</td>
-                        <td class="val">{{ number_format($invoice->vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
+                        <td>{{ number_format($invoice->vat_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
-                    <tr class="total">
+                    <tr class="due">
                         <td class="lbl">Na úhradu</td>
-                        <td class="val">{{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
+                        <td>{{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</td>
                     </tr>
                 </table>
             </td>
@@ -307,35 +226,39 @@
     </table>
 
     @if(!empty($paymentQrDataUrl) || !empty($paymentIban))
-    <table class="payment-block">
+    <table class="pay">
         <tr>
-            @if(!empty($paymentQrDataUrl))
-            <td class="qr-cell">
-                <img src="{{ $paymentQrDataUrl }}" alt="Platobný QR kód" class="qr-image" />
-            </td>
-            @endif
-            <td>
-                <div class="payment-title">Naskenujte na úhradu</div>
-                @if(!empty($paymentIban))
-                <div class="payment-detail">
-                    IBAN: {{ trim(chunk_split($paymentIban, 4, ' ')) }}<br>
-                    Suma: {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}<br>
-                    @if($invoice->varsym)
-                        Variabilný symbol: {{ $invoice->varsym }}<br>
-                    @endif
-                    Príjemca: {{ $issuer->company_name ?: $issuer->name }}
-                </div>
-                <div class="payment-hint">Kompatibilné so slovenskými bankovými aplikáciami (Pay by Square) a SEPA QR platbami.</div>
-                @endif
+            <td class="pay-box">
+                <table class="pay-inner">
+                    <tr>
+                        @if(!empty($paymentQrDataUrl))
+                        <td class="qr">
+                            <img src="{{ $paymentQrDataUrl }}" alt="" />
+                        </td>
+                        @endif
+                        <td>
+                            <span class="muted">Platba</span><br>
+                            @if(!empty($paymentIban))
+                            <div class="block">
+                                <div class="line">IBAN {{ trim(chunk_split($paymentIban, 4, ' ')) }}</div>
+                                <div class="line">Suma {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</div>
+                                @if($invoice->varsym)
+                                <div class="line">VS {{ $invoice->varsym }}</div>
+                                @endif
+                                <div class="line">{{ $issuer->company_name ?: $issuer->name }}</div>
+                            </div>
+                            <div class="sub">QR platba (Pay by Square, SEPA)</div>
+                            @endif
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
     @endif
 
     @if($invoice->notes)
-    <div class="footer">
-        {{ $invoice->notes }}
-    </div>
+    <div class="notes">{{ $invoice->notes }}</div>
     @endif
 
 </body>

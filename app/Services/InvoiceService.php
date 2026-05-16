@@ -10,7 +10,6 @@ use App\DTOs\CreateInvoiceRecipientData;
 use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Currency;
 use App\Models\Invoice;
-use App\Models\InvoiceColor;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceStatus;
 use App\Models\Recipient;
@@ -294,9 +293,8 @@ class InvoiceService implements InvoiceServiceInterface
      */
     public function getPdfDownloadResponse(Invoice $invoice)
     {
-        $invoice->load(['items', 'currency', 'recipient', 'user.invoiceColor', 'user.companyLogo']);
+        $invoice->load(['items', 'currency', 'recipient', 'user.companyLogo']);
         $issuer = $invoice->user;
-        $accentColor = $issuer->invoiceColor?->hex ?? '#2563eb';
         $currencySymbol = $invoice->currency?->symbol ?? '€';
 
         $logoDataUrl = null;
@@ -316,7 +314,6 @@ class InvoiceService implements InvoiceServiceInterface
         return Pdf::view('pdf.invoice', [
             'invoice' => $invoice,
             'issuer' => $issuer,
-            'accentColor' => $accentColor,
             'currencySymbol' => $currencySymbol,
             'logoDataUrl' => $logoDataUrl,
             'paymentIban' => $paymentIban,
@@ -358,7 +355,6 @@ class InvoiceService implements InvoiceServiceInterface
             'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
             'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
             'default_currency_id' => $user?->currency_id,
-            'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
         ];
     }
 
@@ -372,7 +368,6 @@ class InvoiceService implements InvoiceServiceInterface
             'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
             'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
             'default_currency_id' => $invoice->currency_id,
-            'invoice_colors' => InvoiceColor::orderBy('name')->get(['id', 'name', 'hex']),
         ];
     }
 
