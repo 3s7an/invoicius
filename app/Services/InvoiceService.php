@@ -28,6 +28,7 @@ class InvoiceService implements InvoiceServiceInterface
 {
     public function __construct(
         private readonly RecipientServiceInterface $recipientService,
+        private readonly PaymentQrService $paymentQrService,
     ) {
     }
 
@@ -307,12 +308,19 @@ class InvoiceService implements InvoiceServiceInterface
             }
         }
 
+        $paymentIban = $this->paymentQrService->normalizeIban($issuer->iban);
+        $paymentQrDataUrl = $paymentIban !== null
+            ? $this->paymentQrService->generateDataUriForInvoice($invoice, $issuer)
+            : null;
+
         return Pdf::view('pdf.invoice', [
             'invoice' => $invoice,
             'issuer' => $issuer,
             'accentColor' => $accentColor,
             'currencySymbol' => $currencySymbol,
             'logoDataUrl' => $logoDataUrl,
+            'paymentIban' => $paymentIban,
+            'paymentQrDataUrl' => $paymentQrDataUrl,
         ])
             ->name('invoice-' . preg_replace('/[^a-z0-9-]/i', '-', $invoice->number) . '.pdf')
             ->download();

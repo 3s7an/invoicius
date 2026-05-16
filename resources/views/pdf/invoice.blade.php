@@ -134,6 +134,31 @@
             color: #6b7280;
             line-height: 1.7;
         }
+
+        .payment-block { width: 100%; margin-top: 28px; border-collapse: collapse; }
+        .payment-block td { vertical-align: middle; }
+        .payment-block .qr-cell { width: 130px; padding-right: 20px; }
+        .payment-block .qr-image {
+            width: 120px;
+            height: 120px;
+            display: block;
+        }
+        .payment-block .payment-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+        .payment-block .payment-detail {
+            font-size: 10.5px;
+            color: #374151;
+            line-height: 1.65;
+        }
+        .payment-block .payment-hint {
+            margin-top: 6px;
+            font-size: 9.5px;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body>
@@ -213,9 +238,6 @@
                     @endif
                 </div>
                 @endif
-                @if($invoice->iban)
-                <div class="party-meta">IBAN: {{ $invoice->iban }}</div>
-                @endif
             </td>
         </tr>
     </table>
@@ -284,14 +306,35 @@
         </tr>
     </table>
 
-    @if($invoice->iban || $invoice->notes)
+    @if(!empty($paymentQrDataUrl) || !empty($paymentIban))
+    <table class="payment-block">
+        <tr>
+            @if(!empty($paymentQrDataUrl))
+            <td class="qr-cell">
+                <img src="{{ $paymentQrDataUrl }}" alt="Payment QR code" class="qr-image" />
+            </td>
+            @endif
+            <td>
+                <div class="payment-title">Scan to pay</div>
+                @if(!empty($paymentIban))
+                <div class="payment-detail">
+                    IBAN: {{ trim(chunk_split($paymentIban, 4, ' ')) }}<br>
+                    Amount: {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}<br>
+                    @if($invoice->varsym)
+                        Variable symbol: {{ $invoice->varsym }}<br>
+                    @endif
+                    Beneficiary: {{ $issuer->company_name ?: $issuer->name }}
+                </div>
+                <div class="payment-hint">Compatible with Slovak banking apps (Pay by Square) and SEPA QR payments.</div>
+                @endif
+            </td>
+        </tr>
+    </table>
+    @endif
+
+    @if($invoice->notes)
     <div class="footer">
-        @if($invoice->iban)
-            Payment account: {{ $invoice->iban }}<br>
-        @endif
-        @if($invoice->notes)
-            {{ $invoice->notes }}
-        @endif
+        {{ $invoice->notes }}
     </div>
     @endif
 

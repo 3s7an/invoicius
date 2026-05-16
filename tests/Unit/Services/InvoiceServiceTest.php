@@ -33,7 +33,7 @@ class InvoiceServiceTest extends TestCase
 
         $this->user = User::factory()->create();
         $recipientService = $this->app->make(RecipientServiceInterface::class);
-        $this->service = new InvoiceService($recipientService);
+        $this->service = new InvoiceService($recipientService, new \App\Services\PaymentQrService);
     }
 
     public function test_suggested_number_returns_date_format(): void

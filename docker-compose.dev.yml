@@ -11,9 +11,7 @@ services:
       - app_vendor:/app/vendor
     command: >
       sh -c "
-        if [ ! -f vendor/tightenco/ziggy/package.json ]; then
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;
-        fi
+        composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
       "
     restart: "no"
 
