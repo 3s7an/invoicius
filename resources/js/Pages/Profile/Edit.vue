@@ -46,6 +46,7 @@ const billingDetailsForm = useForm({
     ico: user?.ico ?? '',
     dic: user?.dic ?? '',
     ic_dph: user?.ic_dph ?? '',
+    iban: user?.iban ?? '',
     currency_id: user?.currency_id ?? '',
     default_vat_type_id: user?.default_vat_type_id ?? '',
     _method: 'patch',

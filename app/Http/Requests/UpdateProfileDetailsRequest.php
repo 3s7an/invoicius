@@ -23,6 +23,7 @@ class UpdateProfileDetailsRequest extends FormRequest
             'ico' => ['nullable', 'string', 'max:20'],
             'dic' => ['nullable', 'string', 'max:20'],
             'ic_dph' => ['nullable', 'string', 'max:20'],
+            'iban' => ['nullable', 'string', 'max:34'],
             'currency_id' => ['nullable', 'integer', 'exists:currencies,id'],
             'default_vat_type_id' => ['nullable', 'integer', 'exists:vat_types,id'],
             'invoice_color_id' => ['nullable', 'integer', 'exists:invoice_colors,id'],

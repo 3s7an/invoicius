@@ -1,0 +1,66 @@
+# Development overlay: live Vue/CSS via Vite (HMR). Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# Or: npm run docker:dev
+
+services:
+  vendor-init:
+    image: composer:2
+    working_dir: /app
+    volumes:
+      - .:/app
+      - app_vendor:/app/vendor
+    command: >
+      sh -c "
+        if [ ! -f vendor/tightenco/ziggy/package.json ]; then
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader;
+        fi
+      "
+    restart: "no"
+
+  app:
+    depends_on:
+      vendor-init:
+        condition: service_completed_successfully
+    environment:
+      VITE_DEV_SERVER_URL: http://localhost:${VITE_PORT:-5173}
+    volumes:
+      - ./app:/var/www/html/app
+      - ./routes:/var/www/html/routes
+      - ./resources:/var/www/html/resources
+      - ./public:/var/www/html/public
+      - ./vite.config.js:/var/www/html/vite.config.js
+      - ./tailwind.config.js:/var/www/html/tailwind.config.js
+      - ./postcss.config.js:/var/www/html/postcss.config.js
+      - ./jsconfig.json:/var/www/html/jsconfig.json
+      - app_vendor:/var/www/html/vendor
+      - app_storage:/var/www/html/storage/app
+
+  vite:
+    image: node:20-bookworm-slim
+    working_dir: /var/www/html
+    depends_on:
+      vendor-init:
+        condition: service_completed_successfully
+    ports:
+      - "${VITE_PORT:-5173}:5173"
+    volumes:
+      - ./resources:/var/www/html/resources
+      - ./public:/var/www/html/public
+      - ./vite.config.js:/var/www/html/vite.config.js
+      - ./tailwind.config.js:/var/www/html/tailwind.config.js
+      - ./postcss.config.js:/var/www/html/postcss.config.js
+      - ./jsconfig.json:/var/www/html/jsconfig.json
+      - ./package.json:/var/www/html/package.json
+      - ./package-lock.json:/var/www/html/package-lock.json
+      - ./docker/vite-dev.sh:/docker/vite-dev.sh:ro
+      - app_vendor:/var/www/html/vendor:ro
+      - vite_node_modules:/var/www/html/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+    command: sh /docker/vite-dev.sh
+    restart: unless-stopped
+
+volumes:
+  app_vendor:
+  vite_node_modules:

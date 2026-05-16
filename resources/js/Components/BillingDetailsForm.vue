@@ -53,7 +53,7 @@ const selectClass =
                 Billing details
             </h2>
             <p class="mt-1 text-sm text-gray-600">
-                Address used as issuer on invoices (street, city, state).
+                Issuer details on invoices (address, tax IDs, payment account).
             </p>
         </header>
 
@@ -127,6 +127,17 @@ const selectClass =
                         autocomplete="off"
                     />
                     <InputError class="mt-2" :message="form.errors.ic_dph" />
+                </div>
+                <div class="sm:col-span-2">
+                    <InputLabel :for="id('iban')" value="IBAN" />
+                    <TextInput
+                        :id="id('iban')"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.iban"
+                        autocomplete="off"
+                    />
+                    <InputError class="mt-2" :message="form.errors.iban" />
                 </div>
                 <div>
                     <InputLabel :for="id('street')" value="Street" />

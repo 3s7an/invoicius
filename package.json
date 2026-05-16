@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up",
+        "docker:dev:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",
