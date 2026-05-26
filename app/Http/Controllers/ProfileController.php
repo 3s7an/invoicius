@@ -47,9 +47,8 @@ class ProfileController extends Controller
 
     public function updateDetails(UpdateProfileDetailsRequest $request): RedirectResponse
     {
-        $user = $request->user();
         $this->profileService->updateDetails(
-            $user,
+            $request->user(),
             $request->validated(),
             $request->file('company_logo'),
         );
@@ -59,9 +58,8 @@ class ProfileController extends Controller
 
     public function updateInvoiceSettings(UpdateInvoiceSettingsRequest $request): RedirectResponse
     {
-        $user = $request->user();
         $this->profileService->updateDetails(
-            $user,
+            $request->user(),
             $request->validated(),
             $request->file('company_logo'),
         );
@@ -74,8 +72,7 @@ class ProfileController extends Controller
      */
     public function destroy(DeleteAccountRequest $request): RedirectResponse
     {
-        $user = $request->user();
-        $this->profileService->deleteAccount($user);
+        $this->profileService->deleteAccount($request->user());
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

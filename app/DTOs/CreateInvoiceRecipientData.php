@@ -23,15 +23,15 @@ final readonly class CreateInvoiceRecipientData
     public static function fromArray(array $data): self
     {
         return new self(
-            recipientName: $data['recipient_name'] ?? null,
-            recipientStreet: $data['recipient_street'] ?? null,
-            recipientStreetNum: $data['recipient_street_num'] ?? null,
-            recipientCity: $data['recipient_city'] ?? null,
-            recipientState: $data['recipient_state'] ?? null,
-            recipientIco: $data['recipient_ico'] ?? null,
-            recipientDic: $data['recipient_dic'] ?? null,
-            recipientIcDph: $data['recipient_ic_dph'] ?? null,
-            recipientIban: $data['recipient_iban'] ?? null,
+            recipientName: $data['recipient_name'],
+            recipientStreet: $data['recipient_street'],
+            recipientStreetNum: $data['recipient_street_num'],
+            recipientCity: $data['recipient_city'],
+            recipientState: $data['recipient_state'],
+            recipientIco: $data['recipient_ico'],
+            recipientDic: $data['recipient_dic'],
+            recipientIcDph: $data['recipient_ic_dph'],
+            recipientIban: $data['recipient_iban'],
         );
     }
 }

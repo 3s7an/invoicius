@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelPdf\Facades\Pdf;
-
+use Illuminate\Validation\ValidationException;
 class InvoiceService implements InvoiceServiceInterface
 {
     public function __construct(
@@ -45,34 +45,42 @@ class InvoiceService implements InvoiceServiceInterface
     public function getInvoiceStats(int $userId): array
     {
         $base = Invoice::forUser($userId);
-        $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-        $paidStatusId = $paidStatus?->id;
-        $draftStatusId = $draftStatus?->id;
+        $paidStatusId = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID)?->id;
+        $draftStatusId = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT)?->id;
+        
         $today = now()->startOfDay();
 
         $totalInvoiced = (clone $base)->sum('total_price');
-        $paid = $paidStatusId
-            ? (clone $base)->where('invoice_status_id', $paidStatusId)->sum('total_price')
-            : 0.0;
+        $paid = 0.0; 
+        
+        if($paidStatusId) {
+            $paid = (clone $base)->where('invoice_status_id', $paidStatusId)->sum('total_price');
+        } 
 
         $overdueQuery = (clone $base)->whereDate('due_date', '<', $today);
+
         if ($paidStatusId !== null) {
             $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $paidStatusId);
         }
+
         if ($draftStatusId !== null) {
             $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $draftStatusId);
         }
+
         $overdue = (float) $overdueQuery->sum('total_price');
 
         $excludeIds = array_filter([$paidStatusId, $draftStatusId]);
+
         $awaitingQuery = clone $base;
+
         if ($excludeIds) {
             $awaitingQuery = $awaitingQuery->whereNotIn('invoice_status_id', $excludeIds);
         }
+
         $awaitingQuery = $awaitingQuery->where(function ($q) use ($today) {
             $q->whereNull('due_date')->orWhereDate('due_date', '>=', $today);
         });
+
         $awaiting = (float) $awaitingQuery->sum('total_price');
 
         return [
@@ -86,14 +94,12 @@ class InvoiceService implements InvoiceServiceInterface
 
     private function calculateLineVat(float $lineWoVat, ?int $vatTypeId): float
     {
-        if (! $vatTypeId) {
-            return 0.0;
-        }
         $vatType = VatType::find($vatTypeId);
-        if (! $vatType || in_array(strtoupper((string) $vatType->code), ['MIMO', 'OSVO'], true)) {
+    
+        if ($vatType === null || in_array(strtoupper((string) $vatType->code), ['MIMO', 'OSVO'], true)) {
             return 0.0;
         }
-
+    
         return $lineWoVat * ($vatType->rate / 100);
     }
 
@@ -114,168 +120,127 @@ class InvoiceService implements InvoiceServiceInterface
 
     public function createInvoice(CreateInvoiceData $data): Invoice
     {
-        if ($data->recipientId !== null) {
-            $recipientBelongsToUser = Recipient::forUser($data->userId)
-                ->where('id', $data->recipientId)
-                ->exists();
+        $this->ensureRecipientBelongsToUser($data->recipientId, $data->userId);
 
-            if (! $recipientBelongsToUser) {
-                abort(403, 'Odberateľ nepatrí tomuto používateľovi.');
+        return DB::transaction(function () use ($data) {
+            $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+
+            $woVatTotal = 0.0;
+            $vatTotal = 0.0;
+            $itemRows = [];
+
+            foreach ($data->items as $position => $item) {
+                $lineWoVat = round($item->quantity * $item->unitPrice, 2);
+                $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
+
+                $woVatTotal += $lineWoVat;
+                $vatTotal += $lineVat;
+
+                $itemRows[] = [
+                    'vat_type_id' => $item->vatTypeId,
+                    'name' => $item->name,
+                    'unit' => $item->unit,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unitPrice,
+                    'unit_wo_vat' => $item->unitPrice,
+                    'position' => $position,
+                    'line_wo_vat' => $lineWoVat,
+                    'vat' => $lineVat,
+                    'line_total' => $lineTotalWithVat,
+                ];
             }
-        }
 
-        try {
-            return DB::transaction(function () use ($data) {
-                $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-
-                $woVatTotal = 0.0;
-                $vatTotal = 0.0;
-                $itemRows = [];
-
-                foreach ($data->items as $position => $item) {
-                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
-                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
-
-                    $woVatTotal += $lineWoVat;
-                    $vatTotal += $lineVat;
-
-                    $itemRows[] = [
-                        'vat_type_id' => $item->vatTypeId,
-                        'name' => $item->name,
-                        'unit' => $item->unit,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unitPrice,
-                        'unit_wo_vat' => $item->unitPrice,
-                        'position' => $position,
-                        'line_wo_vat' => $lineWoVat,
-                        'vat' => $lineVat,
-                        'line_total' => $lineTotalWithVat,
-                    ];
-                }
-
-                $invoice = Invoice::create([
-                    'user_id' => $data->userId,
-                    'recipient_id' => $data->recipientId,
-                    'number' => $data->number,
-                    'varsym' => $data->variableSymbol,
-                    'issue_date' => $data->issueDate,
-                    'due_date' => $data->dueDate,
-                    'currency_id' => $data->currencyId,
-                    'recipient_name' => $data->recipient->recipientName,
-                    'recipient_street' => $data->recipient->recipientStreet,
-                    'recipient_street_num' => $data->recipient->recipientStreetNum,
-                    'recipient_city' => $data->recipient->recipientCity,
-                    'recipient_state' => $data->recipient->recipientState,
-                    'recipient_ico' => $data->recipient->recipientIco,
-                    'recipient_dic' => $data->recipient->recipientDic,
-                    'recipient_ic_dph' => $data->recipient->recipientIcDph,
-                    'iban' => $data->recipient->recipientIban,
-                    'wo_vat_price' => round($woVatTotal, 2),
-                    'vat_price' => round($vatTotal, 2),
-                    'total_price' => round($woVatTotal + $vatTotal, 2),
-                    'invoice_status_id' => $draftStatus?->id,
-                ]);
-
-                foreach ($itemRows as $row) {
-                    $invoice->items()->create($row);
-                }
-
-                return $invoice;
-            });
-        } catch (UniqueConstraintViolationException $e) {
-            throw new DuplicateInvoiceNumberException($data->number);
-        } catch (\Throwable $e) {
-            Log::error('Failed to create invoice', [
+            $invoice = Invoice::create([
                 'user_id' => $data->userId,
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'recipient_id' => $data->recipientId,
+                'number' => $data->number,
+                'varsym' => $data->variableSymbol,
+                'issue_date' => $data->issueDate,
+                'due_date' => $data->dueDate,
+                'currency_id' => $data->currencyId,
+                'recipient_name' => $data->recipient->recipientName,
+                'recipient_street' => $data->recipient->recipientStreet,
+                'recipient_street_num' => $data->recipient->recipientStreetNum,
+                'recipient_city' => $data->recipient->recipientCity,
+                'recipient_state' => $data->recipient->recipientState,
+                'recipient_ico' => $data->recipient->recipientIco,
+                'recipient_dic' => $data->recipient->recipientDic,
+                'recipient_ic_dph' => $data->recipient->recipientIcDph,
+                'iban' => $data->recipient->recipientIban,
+                'wo_vat_price' => round($woVatTotal, 2),
+                'vat_price' => round($vatTotal, 2),
+                'total_price' => round($woVatTotal + $vatTotal, 2),
+                'invoice_status_id' => $draftStatus?->id,
             ]);
 
-            throw $e;
-        }
+            foreach ($itemRows as $row) {
+                $invoice->items()->create($row);
+            }
+
+            return $invoice;
+        });
     }
 
     public function updateInvoice(Invoice $invoice, CreateInvoiceData $data): Invoice
     {
-        if ($data->recipientId !== null) {
-            $recipientBelongsToUser = Recipient::forUser($data->userId)
-                ->where('id', $data->recipientId)
-                ->exists();
+        $this->ensureRecipientBelongsToUser($data->recipientId, $data->userId);
 
-            if (! $recipientBelongsToUser) {
-                abort(403, 'Odberateľ nepatrí tomuto používateľovi.');
+        return DB::transaction(function () use ($invoice, $data) {
+            $woVatTotal = 0.0;
+            $vatTotal = 0.0;
+            $itemRows = [];
+
+            foreach ($data->items as $position => $item) {
+                $lineWoVat = round($item->quantity * $item->unitPrice, 2);
+                $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
+
+                $woVatTotal += $lineWoVat;
+                $vatTotal += $lineVat;
+
+                $itemRows[] = [
+                    'vat_type_id' => $item->vatTypeId,
+                    'name' => $item->name,
+                    'unit' => $item->unit,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unitPrice,
+                    'unit_wo_vat' => $item->unitPrice,
+                    'position' => $position,
+                    'line_wo_vat' => $lineWoVat,
+                    'vat' => $lineVat,
+                    'line_total' => $lineTotalWithVat,
+                ];
             }
-        }
 
-        try {
-            return DB::transaction(function () use ($invoice, $data) {
-                $woVatTotal = 0.0;
-                $vatTotal = 0.0;
-                $itemRows = [];
-
-                foreach ($data->items as $position => $item) {
-                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
-                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
-
-                    $woVatTotal += $lineWoVat;
-                    $vatTotal += $lineVat;
-
-                    $itemRows[] = [
-                        'vat_type_id' => $item->vatTypeId,
-                        'name' => $item->name,
-                        'unit' => $item->unit,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unitPrice,
-                        'unit_wo_vat' => $item->unitPrice,
-                        'position' => $position,
-                        'line_wo_vat' => $lineWoVat,
-                        'vat' => $lineVat,
-                        'line_total' => $lineTotalWithVat,
-                    ];
-                }
-
-                $invoice->update([
-                    'recipient_id' => $data->recipientId,
-                    'number' => $data->number,
-                    'varsym' => $data->variableSymbol,
-                    'issue_date' => $data->issueDate,
-                    'due_date' => $data->dueDate,
-                    'currency_id' => $data->currencyId,
-                    'recipient_name' => $data->recipient->recipientName,
-                    'recipient_street' => $data->recipient->recipientStreet,
-                    'recipient_street_num' => $data->recipient->recipientStreetNum,
-                    'recipient_city' => $data->recipient->recipientCity,
-                    'recipient_state' => $data->recipient->recipientState,
-                    'recipient_ico' => $data->recipient->recipientIco,
-                    'recipient_dic' => $data->recipient->recipientDic,
-                    'recipient_ic_dph' => $data->recipient->recipientIcDph,
-                    'iban' => $data->recipient->recipientIban,
-                    'wo_vat_price' => round($woVatTotal, 2),
-                    'vat_price' => round($vatTotal, 2),
-                    'total_price' => round($woVatTotal + $vatTotal, 2),
-                ]);
-
-                $invoice->items()->delete();
-                foreach ($itemRows as $row) {
-                    $invoice->items()->create($row);
-                }
-
-                return $invoice->fresh('items');
-            });
-        } catch (UniqueConstraintViolationException $e) {
-            throw new DuplicateInvoiceNumberException($data->number);
-        } catch (\Throwable $e) {
-            Log::error('Failed to update invoice', [
-                'invoice_id' => $invoice->id,
-                'user_id' => $data->userId,
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+            $invoice->update([
+                'recipient_id' => $data->recipientId,
+                'number' => $data->number,
+                'varsym' => $data->variableSymbol,
+                'issue_date' => $data->issueDate,
+                'due_date' => $data->dueDate,
+                'currency_id' => $data->currencyId,
+                'recipient_name' => $data->recipient->recipientName,
+                'recipient_street' => $data->recipient->recipientStreet,
+                'recipient_street_num' => $data->recipient->recipientStreetNum,
+                'recipient_city' => $data->recipient->recipientCity,
+                'recipient_state' => $data->recipient->recipientState,
+                'recipient_ico' => $data->recipient->recipientIco,
+                'recipient_dic' => $data->recipient->recipientDic,
+                'recipient_ic_dph' => $data->recipient->recipientIcDph,
+                'iban' => $data->recipient->recipientIban,
+                'wo_vat_price' => round($woVatTotal, 2),
+                'vat_price' => round($vatTotal, 2),
+                'total_price' => round($woVatTotal + $vatTotal, 2),
             ]);
 
-            throw $e;
-        }
+            $invoice->items()->delete();
+            foreach ($itemRows as $row) {
+                $invoice->items()->create($row);
+            }
+
+            return $invoice->fresh('items');
+        });
     }
 
     public function updateStatus(Invoice $invoice, int $invoiceStatusId): void
@@ -411,4 +376,21 @@ class InvoiceService implements InvoiceServiceInterface
 
         return $this->createInvoice($data);
     }
+
+    private function ensureRecipientBelongsToUser(?int $recipientId, int $userId): void
+{
+    if ($recipientId === null) {
+        return;
+    }
+
+    $recipientBelongsToUser = Recipient::forUser($userId)
+        ->where('id', $recipientId)
+        ->exists();
+
+    if (! $recipientBelongsToUser) {
+        throw ValidationException::withMessages([
+            'recipient_id' => 'Vybraný odberateľ nepatrí tvojmu účtu.',
+        ]);
+    }
+}
 }

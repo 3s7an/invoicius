@@ -166,6 +166,15 @@ const hasAtLeastOneItem = computed(() =>
 
 const validationErrors = ref({});
 
+function invoiceItemsForSubmit() {
+    return items.value
+        .filter((item) => hasValidItem(item))
+        .map((item) => ({
+            ...item,
+            vat_type_id: item.vat_type_id === '' ? null : item.vat_type_id,
+        }));
+}
+
 function validateForm() {
     const err = {};
     if (String(invoice.number ?? '').trim() === '') err.number = 'Číslo faktúry je povinné.';
@@ -202,7 +211,7 @@ function updateInvoice() {
         recipient_id: selectedRecipient.value?.id ?? inv.recipient_id ?? null,
         issuer: { ...issuer },
         recipient: { ...recipient },
-        items: items.value.filter((item) => hasValidItem(item)),
+        items: invoiceItemsForSubmit(),
     }, {
         preserveScroll: true,
         onFinish: () => { saving.value = false; },

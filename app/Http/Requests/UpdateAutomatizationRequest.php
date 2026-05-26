@@ -7,11 +7,6 @@ use Illuminate\Validation\Rule;
 
 class UpdateAutomatizationRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return $this->user() !== null && $this->user()->can('update', $this->route('automatization'));
-    }
-
     public function rules(): array
     {
         return [

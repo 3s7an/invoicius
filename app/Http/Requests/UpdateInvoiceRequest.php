@@ -7,17 +7,6 @@ use Illuminate\Validation\Rule;
 
 class UpdateInvoiceRequest extends FormRequest
 {
-    protected function prepareForValidation(): void
-    {
-        $items = $this->input('items', []);
-        foreach ($items as $i => $item) {
-            if (isset($item['vat_type_id']) && $item['vat_type_id'] === '') {
-                $items[$i]['vat_type_id'] = null;
-            }
-        }
-        $this->merge(['items' => $items]);
-    }
-
     /**
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
@@ -53,7 +42,7 @@ class UpdateInvoiceRequest extends FormRequest
             'items' => ['required', 'array', 'min:1'],
             'items.*.name' => ['required', 'string', 'max:255'],
             'items.*.quantity' => ['required', 'numeric', 'min:0'],
-            'items.*.unit' => ['nullable', 'string', 'max:20'],
+            'items.*.unit' => ['required', 'string', 'max:20'],
             'items.*.unit_price' => ['required', 'numeric', 'min:0'],
             'items.*.vat_type_id' => ['nullable', 'integer', 'exists:vat_types,id'],
         ];

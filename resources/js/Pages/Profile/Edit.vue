@@ -46,6 +46,19 @@ const billingDetailsForm = useForm({
     default_vat_type_id: user?.default_vat_type_id ?? '',
     _method: 'patch',
 });
+
+function optionalSelectValue(value) {
+    return value === '' || value === null ? null : value;
+}
+
+function billingDetailsForSubmit(data) {
+    return {
+        ...data,
+        currency_id: optionalSelectValue(data.currency_id),
+        default_vat_type_id: optionalSelectValue(data.default_vat_type_id),
+        _method: 'patch',
+    };
+}
 </script>
 
 <template>
@@ -103,8 +116,7 @@ const billingDetailsForm = useForm({
 
                 <form
                     @submit.prevent="billingDetailsForm.post(route('profile.details.update'), {
-    forceFormData: true,
-    transform: (data) => ({ ...data, _method: 'patch' })
+    transform: billingDetailsForSubmit
 })"
                 >
                     <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">

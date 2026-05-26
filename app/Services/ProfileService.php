@@ -40,33 +40,30 @@ class ProfileService implements ProfileServiceInterface
         $user->fill($data);
         $user->save();
 
-        if ($companyLogo === null) {
-            return;
+        if ($companyLogo !== null) {
+            $this->updateCompanyLogo($user, $companyLogo);
         }
+    }
 
+    private function updateCompanyLogo(User $user, UploadedFile $companyLogo): void
+    {
         $dir = 'company-logos/' . $user->id;
         $path = $companyLogo->store($dir, 'public');
         $fileName = $companyLogo->getClientOriginalName();
-
         $logo = $user->companyLogo;
-
         if ($logo) {
             Storage::disk('public')->delete($logo->link);
-
             $logo->update([
                 'link' => $path,
                 'file_name' => $fileName,
             ]);
-
             return;
         }
-
         $logo = UserCompanyLogo::create([
             'user_id' => $user->id,
             'link' => $path,
             'file_name' => $fileName,
         ]);
-
         $user->update(['company_logo_id' => $logo->id]);
     }
 

@@ -11,8 +11,6 @@ interface RecipientServiceInterface
 
     public function createForUser(int $userId, array $validated): Recipient;
 
-    public function findForUserOrFail(int $userId, int $recipientId): Recipient;
-
     public function update(Recipient $recipient, array $validated): Recipient;
 
     public function delete(Recipient $recipient): void;

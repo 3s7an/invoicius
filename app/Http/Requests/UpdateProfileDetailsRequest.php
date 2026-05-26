@@ -28,17 +28,5 @@ class UpdateProfileDetailsRequest extends FormRequest
             'company_logo' => ['nullable', 'image', 'max:2048'],
         ];
     }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'currency_id' => $this->input('currency_id') === '' || $this->input('currency_id') === null
-                ? null
-                : (int) $this->input('currency_id'),
-            'default_vat_type_id' => $this->input('default_vat_type_id') === '' || $this->input('default_vat_type_id') === null
-                ? null
-                : (int) $this->input('default_vat_type_id'),
-        ]);
-    }
 }
 

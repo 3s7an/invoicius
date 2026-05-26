@@ -21,7 +21,7 @@ final readonly class CreateAutomatizationData
     {
         return new self(
             userId: $userId,
-            recipientId: isset($validated['recipient_id']) ? (int) $validated['recipient_id'] : null,
+            recipientId: (int) $validated['recipient_id'],
             type: $validated['type'],
             dateTrigger: Carbon::parse($validated['date_trigger']),
         );

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\RecipientServiceInterface;
 use App\Models\Recipient;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class RecipientService implements RecipientServiceInterface
 {
@@ -28,7 +29,9 @@ class RecipientService implements RecipientServiceInterface
         $recipient = Recipient::findOrFail($recipientId);
 
         if ($recipient->user_id !== $userId) {
-            abort(403);
+            throw ValidationException::withMessages([
+                'recipient_id' => 'Vybraný odberateľ nepatrí tvojmu účtu.',
+            ]);
         }
 
         return $recipient;
