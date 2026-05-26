@@ -3,7 +3,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-lg font-medium text-gray-900">{{ heading }}</h1>
             <Link :href="route('invoices')">
-                <Button label="SpĂ¤ĹĄ na faktĂşry" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                <Button label="Späť na faktúry" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
             </Link>
         </div>
 
@@ -252,8 +252,8 @@ const processing = ref(false);
 
 const heading = computed(() =>
     isEdit.value
-        ? `UpraviĹĄ faktĂşru ${sourceInvoice.value?.number ?? ''}`
-        : 'NovĂˇ faktĂşra'
+        ? `Upraviť faktúru ${sourceInvoice.value?.number ?? ''}`
+        : 'Nová faktúra'
 );
 const recipientDescription = computed(() =>
     isEdit.value
