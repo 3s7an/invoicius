@@ -25,13 +25,13 @@
                             scope="col"
                             class="py-3 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-6"
                         >
-                            NĂˇzov
+                            Názov
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            MnoĹľstvo
+                            Množstvo
                         </th>
                         <th
                             scope="col"
@@ -43,7 +43,7 @@
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            JednotkovĂˇ cena
+                            Jednotková cena
                         </th>
                         <th
                             v-if="vatTypesList.length"
@@ -100,11 +100,11 @@
                                 class="block w-full rounded-md border-gray-300 py-1.5 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             >
                                 <option
-                                    v-for="u in UNITS"
-                                    :key="u.value"
-                                    :value="u.value"
+                                    v-for="unit in UNITS"
+                                    :key="unit.value"
+                                    :value="unit.value"
                                 >
-                                    {{ u.label }}
+                                    {{ unit.label }}
                                 </option>
                             </select>
                         </td>
@@ -124,17 +124,15 @@
                             >
                                 <option value="">-</option>
                                 <option
-                                    v-for="v in vatTypesList"
-                                    :key="v.id"
-                                    :value="v.id"
+                                    v-for="vatType in vatTypesList"
+                                    :key="vatType.id"
+                                    :value="vatType.id"
                                 >
-                                    {{ formatVatTypeLabel(v) }}
+                                    {{ formatVatTypeLabel(vatType) }}
                                 </option>
                             </select>
                         </td>
-                        <td
-                            class="whitespace-nowrap px-3 py-3 text-right text-sm tabular-nums text-gray-700"
-                        >
+                        <td class="whitespace-nowrap px-3 py-3 text-right text-sm tabular-nums text-gray-700">
                             {{ currencySymbol }} {{ lineTotal(item).toFixed(2) }}
                         </td>
                         <td
@@ -143,20 +141,16 @@
                         >
                             {{ currencySymbol }} {{ lineVatAmount(item).toFixed(2) }}
                         </td>
-                        <td
-                            class="whitespace-nowrap px-3 py-3 text-right text-sm font-medium tabular-nums text-gray-900"
-                        >
+                        <td class="whitespace-nowrap px-3 py-3 text-right text-sm font-medium tabular-nums text-gray-900">
                             {{ currencySymbol }} {{ (lineTotal(item) + lineVatAmount(item)).toFixed(2) }}
                         </td>
-                        <td
-                            class="relative whitespace-nowrap py-3 pl-3 pr-4 text-right sm:pr-6"
-                        >
+                        <td class="relative whitespace-nowrap py-3 pl-3 pr-4 text-right sm:pr-6">
                             <button
                                 type="button"
                                 @click="removeItem(index)"
                                 :disabled="items.length <= minRows"
                                 class="text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                title="OdstrĂˇniĹĄ riadok"
+                                title="Odstrániť riadok"
                             >
                                 <span aria-hidden="true">×</span>
                             </button>
@@ -198,9 +192,8 @@
     </div>
 </template>
 
-
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
@@ -212,7 +205,7 @@ const props = defineProps({
     },
     currencySymbol: {
         type: String,
-        default: 'â‚¬',
+        default: '€',
     },
     vatTypes: {
         type: Array,
@@ -236,10 +229,10 @@ const UNITS = [
     { value: 'days', label: 'dni' },
     { value: 'kg', label: 'kg' },
     { value: 'm', label: 'm' },
-    { value: 'mÂ˛', label: 'mÂ˛' },
+    { value: 'm²', label: 'm²' },
 ];
 
-const vatTypesList = computed(() => (props.vatTypes ?? []));
+const vatTypesList = computed(() => props.vatTypes ?? []);
 
 function defaultItem() {
     return {
@@ -253,21 +246,17 @@ function defaultItem() {
 
 const items = ref(
     props.modelValue?.length
-        ? props.modelValue.map((i) => ({ ...defaultItem(), ...i }))
+        ? props.modelValue.map((item) => ({ ...defaultItem(), ...item }))
         : [defaultItem()]
 );
 
-let debounceTimer = null;
 watch(
     items,
     () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            emit(
-                'update:modelValue',
-                items.value.map((i) => ({ ...i }))
-            );
-        }, 150);
+        emit(
+            'update:modelValue',
+            items.value.map((item) => ({ ...item }))
+        );
     },
     { deep: true }
 );
@@ -282,19 +271,23 @@ function removeItem(index) {
 }
 
 function lineTotal(item) {
-    const q = Number.parseFloat(item.quantity) || 0;
-    const p = Number.parseFloat(item.unit_price) || 0;
-    return q * p;
+    const quantity = Number.parseFloat(item.quantity) || 0;
+    const unitPrice = Number.parseFloat(item.unit_price) || 0;
+
+    return quantity * unitPrice;
 }
 
 function lineVatAmount(item) {
     const lineWoVat = lineTotal(item);
     const vatId = item.vat_type_id != null ? Number(item.vat_type_id) : null;
     if (vatId == null) return 0;
-    const vatType = vatTypesList.value.find((v) => Number(v.id) === vatId);
+
+    const vatType = vatTypesList.value.find((type) => Number(type.id) === vatId);
     if (!vatType) return 0;
+
     const code = String(vatType.code || '').toUpperCase();
     if (code === 'MIMO' || code === 'OSVO') return 0;
+
     const rate = Number.parseFloat(vatType.rate ?? vatType.code) || 0;
     return lineWoVat * (rate / 100);
 }
@@ -307,8 +300,7 @@ const totalVat = computed(() =>
 );
 const invoiceTotal = computed(() => totalWoVat.value + totalVat.value);
 
-function formatNum(x) {
-    return Number(x).toFixed(2).replace('.', ',');
+function formatNum(value) {
+    return Number(value).toFixed(2).replace('.', ',');
 }
 </script>
-

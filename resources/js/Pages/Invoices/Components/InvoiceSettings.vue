@@ -4,7 +4,6 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 
 const props = defineProps({
-    /** 'profile' = upload logo; 'invoice' = read-only preview */
     mode: {
         type: String,
         default: 'profile',
