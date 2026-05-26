@@ -34,20 +34,20 @@
             </div>
 
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-                <h3 class="text-lg font-medium text-gray-900">OdberateÄľ</h3>
+                <h3 class="text-lg font-medium text-gray-900">Odberateľ</h3>
                 <p class="mt-1 text-sm text-gray-600">
                     {{ recipientDescription }}
                 </p>
                 <div class="mt-6">
                     <label for="invoice-recipient-search" class="block text-sm font-medium text-gray-700">
-                        HÄľadaĹĄ odberateÄľa
+                        Vyberte odberateľa alebo vytvorte nového
                     </label>
                     <AutoComplete
                         id="invoice-recipient-search"
                         v-model="selectedRecipient"
                         :suggestions="filteredRecipients"
                         option-label="_label"
-                        placeholder="ZaÄŤnite pĂ­saĹĄâ€¦"
+                        placeholder="Začnite písať..."
                         class="mt-1 w-full"
                         fluid
                         @complete="searchRecipients"
@@ -66,7 +66,7 @@
                                 :href="route('recipients.create') + '?from_invoice=1'"
                                 class="block px-3 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
                             >
-                                + PridaĹĄ novĂ©ho odberateÄľa
+                                + Pridať nového odberateľa
                             </Link>
                         </template>
                     </AutoComplete>
@@ -257,11 +257,11 @@ const heading = computed(() =>
 );
 const recipientDescription = computed(() =>
     isEdit.value
-        ? 'VyhÄľadajte a vyberte odberateÄľa alebo upravte Ăşdaje niĹľĹˇie.'
-        : 'VyhÄľadajte a vyberte odberateÄľa alebo pridajte novĂ©ho.'
+        ? 'Vyhľadajte a vyberte odberateľa alebo upravte údaje nižšie.'
+        : 'Vyhľadajte a vyberte odberateľa alebo pridajte nového.'
 );
-const submitLabel = computed(() => (isEdit.value ? 'UloĹľiĹĄ faktĂşru' : 'VytvoriĹĄ faktĂşru'));
-const processingLabel = computed(() => (isEdit.value ? 'UkladĂˇmâ€¦' : 'VytvĂˇramâ€¦'));
+const submitLabel = computed(() => (isEdit.value ? 'Uložiť faktúru' : 'Vytvoriť faktúru'));
+const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
 
 function searchRecipients(event) {
     recipientQuery.value = event.query ?? '';
@@ -348,22 +348,22 @@ function payload() {
 function validateForm() {
     const errors = {};
 
-    if (String(invoice.number ?? '').trim() === '') errors.number = 'ÄŚĂ­slo faktĂşry je povinnĂ©.';
-    if (String(invoice.number ?? '').length > 50) errors.number = 'ÄŚĂ­slo faktĂşry mĂ´Ĺľe maĹĄ najviac 50 znakov.';
-    if (String(invoice.variable_symbol ?? '').trim() === '') errors.variable_symbol = 'VariabilnĂ˝ symbol je povinnĂ˝.';
+    if (String(invoice.number ?? '').trim() === '') errors.number = 'Číslo faktúry je povinné.';
+    if (String(invoice.number ?? '').length > 50) errors.number = 'Číslo faktúry môže mať najviac 50 znakov.';
+    if (String(invoice.variable_symbol ?? '').trim() === '') errors.variable_symbol = 'Variabilný symbol je povinný.';
     if (String(invoice.variable_symbol ?? '').length > 50) {
-        errors.variable_symbol = 'VariabilnĂ˝ symbol mĂ´Ĺľe maĹĄ najviac 50 znakov.';
+        errors.variable_symbol = 'Variabilný symbol môže mať najviac 50 znakov.';
     }
-    if (String(invoice.issue_date ?? '').trim() === '') errors.issue_date = 'DĂˇtum vystavenia je povinnĂ˝.';
-    if (String(invoice.due_date ?? '').trim() === '') errors.due_date = 'DĂˇtum splatnosti je povinnĂ˝.';
+    if (String(invoice.issue_date ?? '').trim() === '') errors.issue_date = 'Dátum vystavenia je povinný.';
+    if (String(invoice.due_date ?? '').trim() === '') errors.due_date = 'Dátum splatnosti je povinný.';
     if (invoice.issue_date && invoice.due_date && invoice.due_date < invoice.issue_date) {
-        errors.due_date = 'DĂˇtum splatnosti musĂ­ byĹĄ v deĹ vystavenia alebo po Ĺom.';
+        errors.due_date = 'Dátum splatnosti musí byť v deň vystavenia alebo po ňom.';
     }
-    if (!invoice.currency_id) errors.currency_id = 'Mena je povinnĂˇ.';
-    if (String(issuer.name ?? '').trim() === '') errors.issuer_name = 'Meno alebo firma vystaviteÄľa je povinnĂ©.';
-    if (String(recipient.recipient_name ?? '').trim() === '') errors.recipient_name = 'OdberateÄľ je povinnĂ˝.';
+    if (!invoice.currency_id) errors.currency_id = 'Mena je povinná.';
+    if (String(issuer.name ?? '').trim() === '') errors.issuer_name = 'Meno alebo firma vystaviteľa je povinné.';
+    if (String(recipient.recipient_name ?? '').trim() === '') errors.recipient_name = 'Odberateľ je povinný.';
     if (!hasAtLeastOneItem.value) {
-        errors.items = 'Pridajte aspoĹ jednu poloĹľku s nĂˇzvom, mnoĹľstvom a jednotkovou cenou.';
+        errors.items = 'Pridajte aspoň jednu položku s názvom, množstvom a jednotkovou cenou.';
     }
 
     return errors;
