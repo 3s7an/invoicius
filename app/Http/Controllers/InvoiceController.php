@@ -25,7 +25,7 @@ class InvoiceController extends Controller
     {
         $data = $this->invoiceService->getIndexData($request->user()->id);
 
-        return Inertia::render('Invoices', [
+        return Inertia::render('Invoices/Index', [
             'invoices' => $data['invoices'],
             'invoice_stats' => $data['invoice_stats'],
             'invoice_statuses' => $data['invoice_statuses'],

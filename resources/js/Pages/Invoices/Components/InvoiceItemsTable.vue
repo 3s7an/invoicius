@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, computed, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -11,7 +11,7 @@ const props = defineProps({
     },
     currencySymbol: {
         type: String,
-        default: '€',
+        default: 'â‚¬',
     },
     vatTypes: {
         type: Array,
@@ -35,7 +35,7 @@ const UNITS = [
     { value: 'days', label: 'dni' },
     { value: 'kg', label: 'kg' },
     { value: 'm', label: 'm' },
-    { value: 'm²', label: 'm²' },
+    { value: 'mÂ˛', label: 'mÂ˛' },
 ];
 
 const vatTypesList = computed(() => (props.vatTypes ?? []));
@@ -115,9 +115,9 @@ function formatNum(x) {
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h3 class="text-lg font-medium text-gray-900">Položky faktúry</h3>
+                <h3 class="text-lg font-medium text-gray-900">PoloĹľky faktĂşry</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Pridajte jednu alebo viac položiek s názvom, množstvom, jednotkou a cenou.
+                    Pridajte jednu alebo viac poloĹľiek s nĂˇzvom, mnoĹľstvom, jednotkou a cenou.
                 </p>
                 <InputError v-if="error" class="mt-2" :message="error" />
             </div>
@@ -126,7 +126,7 @@ function formatNum(x) {
                 @click="addItem"
                 class="rounded-md bg-gray-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900"
             >
-                Pridať položku
+                PridaĹĄ poloĹľku
             </button>
         </div>
 
@@ -138,13 +138,13 @@ function formatNum(x) {
                             scope="col"
                             class="py-3 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-6"
                         >
-                            Názov
+                            NĂˇzov
                         </th>
                         <th
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Množstvo
+                            MnoĹľstvo
                         </th>
                         <th
                             scope="col"
@@ -156,7 +156,7 @@ function formatNum(x) {
                             scope="col"
                             class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500"
                         >
-                            Jednotková cena
+                            JednotkovĂˇ cena
                         </th>
                         <th
                             v-if="vatTypesList.length"
@@ -185,7 +185,7 @@ function formatNum(x) {
                             Celkom
                         </th>
                         <th scope="col" class="relative py-3 pl-3 pr-4 sm:pr-6">
-                            <span class="sr-only">Odstrániť</span>
+                            <span class="sr-only">OdstrĂˇniĹĄ</span>
                         </th>
                     </tr>
                 </thead>
@@ -235,7 +235,7 @@ function formatNum(x) {
                                 v-model="item.vat_type_id"
                                 class="block w-full rounded-md border-gray-300 py-1.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             >
-                                <option value="">—</option>
+                                <option value="">â€”</option>
                                 <option
                                     v-for="v in vatTypesList"
                                     :key="v.id"
@@ -269,9 +269,9 @@ function formatNum(x) {
                                 @click="removeItem(index)"
                                 :disabled="items.length <= minRows"
                                 class="text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                title="Odstrániť riadok"
+                                title="OdstrĂˇniĹĄ riadok"
                             >
-                                <span aria-hidden="true">×</span>
+                                <span aria-hidden="true">Ă—</span>
                             </button>
                         </td>
                     </tr>
@@ -279,10 +279,9 @@ function formatNum(x) {
             </table>
         </div>
 
-        <!-- Zhrnutie: medzisúčet bez DPH, DPH, celkom -->
         <div class="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-6 sm:max-w-xs sm:ml-auto">
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">Medzisúčet (bez DPH)</label>
+                <label class="text-sm font-medium text-gray-700">MedzisĂşÄŤet (bez DPH)</label>
                 <input
                     :value="formatNum(totalWoVat)"
                     type="text"

@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import RecipientDetailsForm from '@/Components/RecipientDetailsForm.vue';
+import RecipientDetailsForm from '@/Pages/Invoices/Components/RecipientDetailsForm.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Button from 'primevue/button';
 import { Head, Link, useForm } from '@inertiajs/vue3';

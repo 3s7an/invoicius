@@ -49,7 +49,6 @@ function id(name) {
         </header>
 
         <div class="mt-6 space-y-6">
-            <!-- Invoice mode: recipient_* (name, address, tax ids, IBAN) -->
             <div v-if="mode === 'invoice'" class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
                     <InputLabel :for="id('name')" value="Názov / firma" />
@@ -144,7 +143,6 @@ function id(name) {
                 </div>
             </div>
 
-            <!-- Recipient mode: full form (name/company = one field, street, ...) -->
             <div v-else class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
                     <InputLabel :for="id('name')" value="Názov / obchodné meno" />
