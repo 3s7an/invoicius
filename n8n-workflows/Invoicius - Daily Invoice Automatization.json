@@ -1,0 +1,179 @@
+{
+  "name": "Invoicius - Daily Invoice Automatization",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily",
+      "name": "Daily 8:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://invoicius.online/api/automatizations/process",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=3stan",
+              "value": "=r54lV9L0capUKkNHUqd0vukR9BNavl3d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-process",
+      "name": "Process Automatizations",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        288,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "options": {}
+      },
+      "id": "split-results",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        560,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "success-true",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-success",
+      "name": "Only Successful",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.data.user_email }}",
+        "subject": "Automatická faktúra bola vytvorená",
+        "emailType": "text",
+        "message": "=Dobrý deň,\n\nbola pre vás automaticky vytvorená nová faktúra č. {{ $json.data.invoice_number }} pre odberateľa {{ $json.data.recipient_name }}.\n\nPrihláste sa do Invoicius: https://invoicius.online\n\nS pozdravom,\nInvoicius",
+        "options": {}
+      },
+      "id": "gmail-notify",
+      "name": "Notify User (Gmail)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        304
+      ],
+      "webhookId": "b47ffedf-de02-40d0-9d12-830c9a0571d6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ts4TbfgKdps7zIo3",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily 8:00": {
+      "main": [
+        [
+          {
+            "node": "Process Automatizations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Automatizations": {
+      "main": [
+        [
+          {
+            "node": "Split Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Results": {
+      "main": [
+        [
+          {
+            "node": "Only Successful",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Successful": {
+      "main": [
+        [
+          {
+            "node": "Notify User (Gmail)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timezone": "Europe/Bratislava"
+  },
+  "versionId": "5d0c78c7-627d-4bcd-8772-4eaa3effff44",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "38e3634f194e0dd8cce139a4d681df85e98afc4e27c5604925d2cc1e4ff676e8"
+  },
+  "id": "IuBaFMUQvFUf2UHW",
+  "tags": []
+}
