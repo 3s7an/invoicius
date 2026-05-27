@@ -1,47 +1,3 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import InvoiceOverviewCards from '@/Components/InvoiceOverviewCards.vue';
-import { computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import Button from 'primevue/button';
-import { formatAmount, formatDate } from '@/utils/formatters';
-
-const props = defineProps({
-    invoices: {
-        type: Array,
-        default: () => [],
-    },
-    invoice_stats: {
-        type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0 }),
-    },
-    invoice_statuses: {
-        type: Array,
-        default: () => [],
-    },
-});
-
-const statusOptions = computed(() =>
-    (props.invoice_statuses || []).map((s) => ({
-        value: s.id,
-        label: s.name || s.code || String(s.id),
-    }))
-);
-
-function updateStatus(invoice, newStatusId) {
-    const id = newStatusId != null ? Number(newStatusId) : null;
-    if (id === invoice.invoice_status_id) return;
-    router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
-}
-
-function confirmDeleteInvoice(invoice) {
-    if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
-    router.delete(route('invoices.destroy', invoice.id));
-}
-</script>
-
 <template>
     <Head title="Faktúry" />
 
@@ -101,3 +57,47 @@ function confirmDeleteInvoice(invoice) {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import InvoiceOverviewCards from '@/Components/InvoiceOverviewCards.vue';
+import { computed } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import Button from 'primevue/button';
+import { formatAmount, formatDate } from '@/utils/formatters';
+
+const props = defineProps({
+    invoices: {
+        type: Array,
+        default: () => [],
+    },
+    invoice_stats: {
+        type: Object,
+        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0 }),
+    },
+    invoice_statuses: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const statusOptions = computed(() =>
+    (props.invoice_statuses || []).map((s) => ({
+        value: s.id,
+        label: s.name || s.code || String(s.id),
+    }))
+);
+
+function updateStatus(invoice, newStatusId) {
+    const id = newStatusId != null ? Number(newStatusId) : null;
+    if (id === invoice.invoice_status_id) return;
+    router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
+}
+
+function confirmDeleteInvoice(invoice) {
+    if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
+    router.delete(route('invoices.destroy', invoice.id));
+}
+</script>
