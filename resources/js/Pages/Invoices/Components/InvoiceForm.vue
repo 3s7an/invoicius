@@ -26,7 +26,6 @@
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <IssuerDetailsForm
                     :model-value="form.issuer"
-                    :readonly="hasUserBillingDetails"
                     :errors="errors"
                     id-prefix="invoice-issuer"
                 />

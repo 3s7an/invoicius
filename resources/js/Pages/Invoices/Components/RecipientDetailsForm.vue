@@ -2,6 +2,7 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     /** Reactive object to bind. Invoice: recipient_name, recipient_street, ...; Recipient: name, company_name, street, ... */
@@ -27,9 +28,7 @@ const props = defineProps({
     },
 });
 
-function id(name) {
-    return `${props.idPrefix}-${name}`;
-}
+const id = (name) => prefixedId(props.idPrefix, name);
 </script>
 
 <template>

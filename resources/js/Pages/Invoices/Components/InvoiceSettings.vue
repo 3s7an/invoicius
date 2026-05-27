@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
+import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     mode: {
@@ -34,9 +35,7 @@ function isFile(value) {
     return typeof File !== 'undefined' && value instanceof File;
 }
 
-function id(name) {
-    return `${props.idPrefix}-${name}`;
-}
+const id = (name) => prefixedId(props.idPrefix, name);
 </script>
 
 <template>

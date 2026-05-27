@@ -4,6 +4,7 @@ import { FALLBACK_COUNTRY_LIST } from '@/utils/countries';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     modelValue: {
@@ -13,10 +14,6 @@ const props = defineProps({
     idPrefix: {
         type: String,
         default: 'issuer',
-    },
-    readonly: {
-        type: Boolean,
-        default: false,
     },
     errors: {
         type: Object,
@@ -37,9 +34,7 @@ const countries = computed(() => {
     }
 });
 
-function id(name) {
-    return `${props.idPrefix}-${name}`;
-}
+const id = (name) => prefixedId(props.idPrefix, name);
 
 const selectClass =
     'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
@@ -66,7 +61,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.name"
                         autocomplete="name"
-                        :readonly="readonly"
                     />
                     <InputError class="mt-2" :message="errors.issuer_name" />
                 </div>
@@ -78,7 +72,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.ico"
                         autocomplete="off"
-                        :readonly="readonly"
                     />
                 </div>
                 <div>
@@ -89,7 +82,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.dic"
                         autocomplete="off"
-                        :readonly="readonly"
                     />
                 </div>
                 <div class="sm:col-span-2">
@@ -100,7 +92,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.ic_dph"
                         autocomplete="off"
-                        :readonly="readonly"
                     />
                 </div>
                 <div>
@@ -111,7 +102,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.street"
                         autocomplete="street-address"
-                        :readonly="readonly"
                     />
                 </div>
                 <div>
@@ -122,7 +112,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.street_num"
                         autocomplete="off"
-                        :readonly="readonly"
                     />
                 </div>
                 <div>
@@ -133,7 +122,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.city"
                         autocomplete="address-level2"
-                        :readonly="readonly"
                     />
                 </div>
                 <div>
@@ -144,7 +132,6 @@ const selectClass =
                         class="mt-1 block w-full"
                         v-model="modelValue.zip"
                         autocomplete="postal-code"
-                        :readonly="readonly"
                     />
                 </div>
                 <div class="sm:col-span-2">
@@ -153,7 +140,6 @@ const selectClass =
                         :id="id('state')"
                         v-model="modelValue.state"
                         :class="selectClass"
-                        :disabled="readonly"
                         autocomplete="country"
                     >
                         <option value="">Vyberte krajinu</option>

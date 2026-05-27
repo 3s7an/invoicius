@@ -197,6 +197,8 @@ import { computed, ref, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
+import { defaultInvoiceItem } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
+import { UNITS } from '@/utils/units';
 
 const props = defineProps({
     modelValue: {
@@ -223,31 +225,12 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const UNITS = [
-    { value: 'pcs', label: 'ks' },
-    { value: 'hrs', label: 'hod' },
-    { value: 'days', label: 'dni' },
-    { value: 'kg', label: 'kg' },
-    { value: 'm', label: 'm' },
-    { value: 'm²', label: 'm²' },
-];
-
 const vatTypesList = computed(() => props.vatTypes ?? []);
-
-function defaultItem() {
-    return {
-        name: '',
-        quantity: 1,
-        unit: 'pcs',
-        unit_price: '',
-        vat_type_id: vatTypesList.value?.[0]?.id ?? '',
-    };
-}
 
 const items = ref(
     props.modelValue?.length
-        ? props.modelValue.map((item) => ({ ...defaultItem(), ...item }))
-        : [defaultItem()]
+        ? props.modelValue.map((item) => ({ ...defaultInvoiceItem(vatTypesList.value), ...item }))
+        : [defaultInvoiceItem(vatTypesList.value)]
 );
 
 watch(
@@ -262,7 +245,7 @@ watch(
 );
 
 function addItem() {
-    items.value.push(defaultItem());
+    items.value.push(defaultInvoiceItem(vatTypesList.value));
 }
 
 function removeItem(index) {

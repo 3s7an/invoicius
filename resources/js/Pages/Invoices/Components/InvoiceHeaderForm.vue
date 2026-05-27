@@ -3,24 +3,13 @@ import { ref, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-
-const toYMD = (d) => (d instanceof Date ? d.toISOString().slice(0, 10) : d);
-const today = toYMD(new Date());
-const defaultDue = toYMD(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000));
+import { defaultInvoiceHeader } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
+import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     modelValue: {
         type: Object,
-        default: () => {
-            const toYMD = (d) => (d instanceof Date ? d.toISOString().slice(0, 10) : d);
-            return {
-                number: '',
-                variable_symbol: '',
-                issue_date: toYMD(new Date()),
-                due_date: toYMD(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)),
-                currency_id: '',
-            };
-        },
+        default: () => ({}),
     },
     currencies: {
         type: Array,
@@ -38,18 +27,8 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-function defaultHeader() {
-    return {
-        number: '',
-        variable_symbol: '',
-        issue_date: today,
-        due_date: defaultDue,
-        currency_id: props.currencies?.[0]?.id ?? '',
-    };
-}
-
 const header = ref({
-    ...defaultHeader(),
+    ...defaultInvoiceHeader({ currencies: props.currencies }),
     ...props.modelValue,
 });
 
@@ -57,7 +36,7 @@ watch(
     () => props.modelValue,
     (val) => {
         if (val && typeof val === 'object') {
-            header.value = { ...defaultHeader(), ...val };
+            header.value = { ...defaultInvoiceHeader({ currencies: props.currencies }), ...val };
         }
     },
     { deep: true }
@@ -71,9 +50,7 @@ watch(
     { deep: true }
 );
 
-function id(name) {
-    return props.idPrefix ? `${props.idPrefix}-${name}` : name;
-}
+const id = (name) => prefixedId(props.idPrefix, name);
 </script>
 
 <template>

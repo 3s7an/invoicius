@@ -1,6 +1,16 @@
-const toYMD = (date) => date.toISOString().slice(0, 10);
-const formatDate = (date) => (date ? String(date).slice(0, 10) : '');
-const nullIfBlank = (value) => (value === '' || value == null ? null : value);
+import { defaultDueYMD, formatDate, nullIfBlank, todayYMD } from '@/Pages/Invoices/Utils/helpers';
+
+export function defaultInvoiceHeader({ currencies } = {}) {
+    const today = todayYMD();
+
+    return {
+        number: '',
+        variable_symbol: '',
+        issue_date: today,
+        due_date: defaultDueYMD(),
+        currency_id: currencies?.[0]?.id ?? '',
+    };
+}
 
 export function recipientOptionLabel(recipient) {
     return (recipient?.company_name || recipient?.name || '').trim() || '-';
@@ -17,7 +27,7 @@ export function defaultInvoiceItem(vatTypes = []) {
     return {
         name: '',
         quantity: 1,
-        unit: 'pcs',
+        unit: 'hrs',
         unit_price: '',
         vat_type_id: vatTypes?.[0]?.id ?? null,
     };
@@ -78,8 +88,8 @@ export function createInvoiceFormDefaults({
 }) {
     const isEdit = mode === 'edit';
     const sourceInvoice = invoice ?? {};
-    const today = toYMD(new Date());
-    const defaultDue = toYMD(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000));
+    const today = todayYMD();
+    const defaultDue = defaultDueYMD();
 
     return {
         number: isEdit ? (sourceInvoice.number ?? '') : (suggestedNumber || today),
