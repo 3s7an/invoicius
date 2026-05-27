@@ -48,8 +48,26 @@
                             </div>
 
                             <div :class="!isInvoice ? 'sm:col-span-2' : ''">
-                                <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Štát / krajina'" />
-                                <TextInput :id="id('state')" type="text" class="mt-1 block w-full" v-model="state" />
+                                <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Krajina'" />
+                                <TextInput
+                                    v-if="isInvoice"
+                                    :id="id('state')"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    v-model="state"
+                                />
+                                <select
+                                    v-else
+                                    :id="id('state')"
+                                    v-model="state"
+                                    :class="selectClass"
+                                    autocomplete="country"
+                                >
+                                    <option value="">Vyberte krajinu</option>
+                                    <option v-for="c in countries" :key="c.code" :value="c.code">
+                                        {{ c.name }}
+                                    </option>
+                                </select>
                                 <InputError class="mt-2" :message="err('state')" />
                             </div>
 
@@ -121,8 +139,26 @@
         </div>
 
         <div :class="!isInvoice ? 'sm:col-span-2' : ''">
-            <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Štát / krajina'" />
-            <TextInput :id="id('state')" type="text" class="mt-1 block w-full" v-model="state" />
+            <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Krajina'" />
+            <TextInput
+                v-if="isInvoice"
+                :id="id('state')"
+                type="text"
+                class="mt-1 block w-full"
+                v-model="state"
+            />
+            <select
+                v-else
+                :id="id('state')"
+                v-model="state"
+                :class="selectClass"
+                autocomplete="country"
+            >
+                <option value="">Vyberte krajinu</option>
+                <option v-for="c in countries" :key="c.code" :value="c.code">
+                    {{ c.name }}
+                </option>
+            </select>
         </div>
 
         <div>
@@ -154,7 +190,7 @@ import { Link } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import { useRecipientForm } from '../Composables/useRecipientForm';
 
 const props = defineProps({
@@ -211,6 +247,10 @@ function id(name) {
 }
 
 const isInvoice = computed(() => props.fieldsMode === 'invoice');
+
+const countries = computed(() => getCountriesSk());
+const selectClass =
+    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 
 function proxy(getKey, setKey) {
     return computed({
