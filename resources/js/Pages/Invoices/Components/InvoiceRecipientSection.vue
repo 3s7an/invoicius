@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import AutoComplete from 'primevue/autocomplete';
 import { Link } from '@inertiajs/vue3';
 import RecipientForm from '@/Pages/Recipients/Components/RecipientForm.vue';
@@ -127,6 +127,21 @@ function applyRecipient(selected) {
 function onRecipientSelect(event) {
     applyRecipient(event.value);
 }
+
+watch(
+    selectedRecipient,
+    (value) => {
+        if (!value) {
+            emit('update:recipientId', null);
+            return;
+        }
+
+        if (typeof value === 'object' && value.id != null) {
+            applyRecipient(value);
+        }
+    },
+    { flush: 'sync' }
+);
 
 onMounted(() => {
     if (props.recipientId) {

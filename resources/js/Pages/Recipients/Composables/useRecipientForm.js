@@ -4,6 +4,7 @@ import { createRecipientFormDefaults, recipientPayload } from '../Utils/recipien
 
 export function useRecipientForm(props) {
     const isEdit = computed(() => props.mode === 'edit');
+    const sourceRecipient = computed(() => props.recipient ?? {});
 
     const form = useForm(
         createRecipientFormDefaults({
