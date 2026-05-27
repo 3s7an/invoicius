@@ -51,7 +51,7 @@
                                 <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Krajina'" />
                                 <TextInput
                                     v-if="isInvoice"
-                                    :id="id('state')"
+                                    :id="id('state')" 
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="state"
