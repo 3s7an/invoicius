@@ -11,7 +11,8 @@ class StoreAutomatizationRequest extends FormRequest
     {
         return [
             'recipient_id' => [
-                'required',
+                Rule::requiredIf(fn () => $this->input('type') === 'invoice_auto_gen'),
+                'nullable',
                 'integer',
                 Rule::exists('recipients', 'id')->where('user_id', $this->user()?->id),
             ],

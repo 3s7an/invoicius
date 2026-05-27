@@ -32,6 +32,7 @@ function toggleActive(automatization) {
 
 function typeLabel(type) {
     if (type === 'invoice_auto_gen') return 'Automatické generovanie faktúr';
+    if (type === 'invoice_report') return 'Mesačný report faktúr';
     return type;
 }
 

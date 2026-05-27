@@ -67,6 +67,7 @@ class InvoiceReportHandler implements AutomatizationHandlerInterface
             success: true,
             data: [
                 'user_id' => $userId,
+                'user_email' => $automatization->user->email,
                 'period' => [
                     'from' => $periodStart->toDateString(),
                     'to' => $periodEnd->toDateString(),

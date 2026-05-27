@@ -19,9 +19,13 @@ final readonly class CreateAutomatizationData
      */
     public static function fromValidated(array $validated, int $userId): self
     {
+        $recipientId = $validated['recipient_id'] ?? null;
+
         return new self(
             userId: $userId,
-            recipientId: (int) $validated['recipient_id'],
+            recipientId: ($recipientId === null || $recipientId === '' || (int) $recipientId === 0)
+                ? null
+                : (int) $recipientId,
             type: $validated['type'],
             dateTrigger: Carbon::parse($validated['date_trigger']),
         );

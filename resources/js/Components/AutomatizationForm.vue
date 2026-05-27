@@ -28,6 +28,12 @@ const form = useForm({
     is_active: true,
 });
 
+watch(() => form.type, (type) => {
+    if (type === 'invoice_report') {
+        form.recipient_id = '';
+    }
+});
+
 watch(() => props.show, (open) => {
     if (!open) return;
 
@@ -75,7 +81,7 @@ const selectClass =
             </h2>
 
             <div class="mt-6 space-y-4">
-                <div>
+                <div v-if="form.type === 'invoice_auto_gen'">
                     <InputLabel for="auto-recipient" value="Odberateľ" />
                     <select
                         id="auto-recipient"
@@ -102,6 +108,7 @@ const selectClass =
                         :class="selectClass"
                     >
                         <option value="invoice_auto_gen">Automatické generovanie faktúr</option>
+                        <option value="invoice_report">Mesačný report faktúr</option>
                     </select>
                     <InputError class="mt-2" :message="form.errors.type" />
                 </div>
@@ -114,6 +121,9 @@ const selectClass =
                         v-model="form.date_trigger"
                         :class="selectClass"
                     />
+                    <p v-if="form.type === 'invoice_report'" class="mt-1 text-sm text-gray-500">
+                        Report sa odošle v tento deň v mesiaci (za predchádzajúci kalendárny mesiac).
+                    </p>
                     <InputError class="mt-2" :message="form.errors.date_trigger" />
                 </div>
 
