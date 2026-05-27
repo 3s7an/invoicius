@@ -1,10 +1,9 @@
 <script setup>
 import { computed } from 'vue';
-import { FALLBACK_COUNTRY_LIST } from '@/utils/countries';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     modelValue: {
@@ -21,18 +20,7 @@ const props = defineProps({
     },
 });
 
-const countries = computed(() => {
-    try {
-        if (typeof Intl.supportedValuesOf !== 'function') return FALLBACK_COUNTRY_LIST;
-        const codes = Intl.supportedValuesOf('region').filter((c) => c.length === 2 && c !== 'FX');
-        const displayNames = new Intl.DisplayNames(['sk'], { type: 'region' });
-        return codes
-            .map((code) => ({ code, name: displayNames.of(code) || code }))
-            .sort((a, b) => a.name.localeCompare(b.name));
-    } catch {
-        return FALLBACK_COUNTRY_LIST;
-    }
-});
+const countries = computed(() => getCountriesSk());
 
 const id = (name) => prefixedId(props.idPrefix, name);
 

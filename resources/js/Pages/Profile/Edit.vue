@@ -1,12 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import BillingDetailsForm from '@/Components/BillingDetailsForm.vue';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import InvoiceSettings from '@/Pages/Invoices/Components/InvoiceSettings.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
+import DeleteUserForm from './Components/DeleteUserForm.vue';
+import BillingDetailsForm from './Components/BillingDetailsForm.vue';
+import ProfileInvoiceSettingsSection from './Components/ProfileInvoiceSettingsSection.vue';
+import UpdatePasswordForm from './Components/UpdatePasswordForm.vue';
+import UpdateProfileInformationForm from './Components/UpdateProfileInformationForm.vue';
+import { useProfileForms } from './Composables/useProfileForms';
 
 const props = defineProps({
     mustVerifyEmail: {
@@ -25,40 +25,13 @@ const props = defineProps({
     },
 });
 
-const user = usePage().props.auth?.user;
-
-const invoiceSettingsForm = useForm({
-    company_logo: null,
-    _method: 'patch',
-});
-
-const billingDetailsForm = useForm({
-    street: user?.street ?? '',
-    street_num: user?.street_num ?? '',
-    city: user?.city ?? '',
-    zip: user?.zip ?? '',
-    state: user?.state ?? '',
-    ico: user?.ico ?? '',
-    dic: user?.dic ?? '',
-    ic_dph: user?.ic_dph ?? '',
-    iban: user?.iban ?? '',
-    currency_id: user?.currency_id ?? '',
-    default_vat_type_id: user?.default_vat_type_id ?? '',
-    _method: 'patch',
-});
-
-function optionalSelectValue(value) {
-    return value === '' || value === null ? null : value;
-}
-
-function billingDetailsForSubmit(data) {
-    return {
-        ...data,
-        currency_id: optionalSelectValue(data.currency_id),
-        default_vat_type_id: optionalSelectValue(data.default_vat_type_id),
-        _method: 'patch',
-    };
-}
+const {
+    user,
+    invoiceSettingsForm,
+    billingDetailsForm,
+    submitInvoiceSettings,
+    submitBillingDetails,
+} = useProfileForms();
 </script>
 
 <template>
@@ -77,57 +50,19 @@ function billingDetailsForSubmit(data) {
                     />
                 </div>
 
-                <form
-                    @submit.prevent="invoiceSettingsForm.post(route('profile.invoice-settings.update'), {
-    forceFormData: true,
-    transform: (data) => ({ ...data, _method: 'patch' })
-})"
-                >
-                    <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <h2 class="text-lg font-medium text-gray-900">
-                            Nastavenia faktúry
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-600">
-                            Logo zobrazené na PDF faktúrach.
-                        </p>
-                        <div class="mt-6">
-                            <InvoiceSettings
-                                mode="profile"
-                                :form="invoiceSettingsForm"
-                                :user="user"
-                                id-prefix="profile-invoice"
-                            />
-                        </div>
-                        <div class="mt-6 flex items-center gap-4">
-                            <PrimaryButton :disabled="invoiceSettingsForm.processing">Uložiť</PrimaryButton>
-                            <Transition
-                                enter-active-class="transition ease-in-out"
-                                enter-from-class="opacity-0"
-                                leave-active-class="transition ease-in-out"
-                                leave-to-class="opacity-0"
-                            >
-                                <p v-if="invoiceSettingsForm.recentlySuccessful" class="text-sm text-gray-600">
-                                    Uložené.
-                                </p>
-                            </Transition>
-                        </div>
-                    </div>
-                </form>
+                <ProfileInvoiceSettingsSection
+                    :form="invoiceSettingsForm"
+                    :user="user"
+                    :on-submit="submitInvoiceSettings"
+                />
 
-                <form
-                    @submit.prevent="billingDetailsForm.post(route('profile.details.update'), {
-    transform: billingDetailsForSubmit
-})"
-                >
-                    <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <BillingDetailsForm
-                            :form="billingDetailsForm"
-                                id-prefix="profile-billing"
-                            :currencies="currencies"
-                            :vat-types="vat_types"
-                            class="max-w-xl"
-                        />
-                    </div>
+                <form @submit.prevent="submitBillingDetails">
+                    <BillingDetailsForm
+                        :form="billingDetailsForm"
+                        id-prefix="profile-billing"
+                        :currencies="currencies"
+                        :vat-types="vat_types"
+                    />
                 </form>
 
                 <div
