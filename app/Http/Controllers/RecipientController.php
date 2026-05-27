@@ -52,16 +52,6 @@ class RecipientController extends Controller
             ->with('success', 'Odberateľ bol vytvorený.');
     }
 
-    public function show(Recipient $recipient): Response
-    {
-        $this->authorize('view', $recipient);
-        $recipient->load('invoices');
-
-        return Inertia::render('Recipients/Show', [
-            'recipient' => $recipient,
-        ]);
-    }
-
     public function edit(Recipient $recipient): Response
     {
         $this->authorize('update', $recipient);

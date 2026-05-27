@@ -40,8 +40,9 @@
         </div>
 
         <div class="mt-6 border-t border-gray-200 pt-6">
-            <RecipientDetailsForm
-                mode="invoice"
+            <RecipientForm
+                variant="section"
+                fields-mode="invoice"
                 :model-value="recipient"
                 :errors="errors"
                 id-prefix="invoice-recipient"
@@ -54,7 +55,7 @@
 import { computed, onMounted, ref } from 'vue';
 import AutoComplete from 'primevue/autocomplete';
 import { Link } from '@inertiajs/vue3';
-import RecipientDetailsForm from './RecipientDetailsForm.vue';
+import RecipientForm from '@/Pages/Recipients/Components/RecipientForm.vue';
 import {
     recipientDetailsFromRecipient,
     withRecipientLabel,

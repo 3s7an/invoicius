@@ -31,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::resource('recipients', RecipientController::class);
+    Route::resource('recipients', RecipientController::class)->except(['show']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
