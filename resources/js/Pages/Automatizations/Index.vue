@@ -33,11 +33,11 @@ defineProps({
 
             <div v-if="automatizations.length">
                 <AutomatizationCardList class="lg:hidden" :automatizations="automatizations" />
-                <div class="app-card hidden overflow-hidden lg:block">
+                <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
                     <AutomatizationList :automatizations="automatizations" />
                 </div>
             </div>
-            <div v-else class="app-card p-6">
+            <div v-else class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 <p class="app-muted">
                     Zatiaľ nemáte žiadne automatizácie. Vytvorte jednu na automatické generovanie faktúr alebo mesačný report.
                 </p>
