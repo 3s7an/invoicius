@@ -1,5 +1,5 @@
 <script setup>
-import { router } from '@inertiajs/vue3';
+import { router, Link } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -10,8 +10,6 @@ defineProps({
         default: () => [],
     },
 });
-
-const emit = defineEmits(['edit']);
 
 function recipientName(automatization) {
     const r = automatization.recipient;
@@ -44,15 +42,8 @@ function confirmDelete(automatization) {
 
 <template>
     <DataTable :value="automatizations" tableStyle="min-width: 40rem">
-        <Column header="Odberateľ">
-            <template #body="{ data }">{{ recipientName(data) }}</template>
-        </Column>
-        <Column field="type" header="Typ">
-            <template #body="{ data }">
-                <span class="rounded bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
-                    {{ typeLabel(data.type) }}
-                </span>
-            </template>
+        <Column field="type" header="Názov">
+            <template #body="{ data }">{{ typeLabel(data.type) }}</template>
         </Column>
         <Column header="Nasledujúce spustenie">
             <template #body="{ data }">{{ formatDate(data.date_trigger) }}</template>
@@ -69,9 +60,6 @@ function confirmDelete(automatization) {
                 </span>
             </template>
         </Column>
-        <Column header="Posledné spustenie">
-            <template #body="{ data }">{{ formatDate(data.last_run_at) }}</template>
-        </Column>
         <Column header="Akcie">
             <template #body="{ data }">
                 <Button
@@ -80,12 +68,13 @@ function confirmDelete(automatization) {
                     :title="data.is_active ? 'Deaktivovať' : 'Aktivovať'"
                     @click="toggleActive(data)"
                 />
-                <Button
-                    icon="pi pi-pencil"
-                    class="p-button-text p-button-sm"
-                    title="Upraviť"
-                    @click="emit('edit', data)"
-                />
+                <Link :href="route('automatizations.edit', data.id)">
+                    <Button
+                        icon="pi pi-pencil"
+                        class="p-button-text p-button-sm"
+                        title="Upraviť"
+                    />
+                </Link>
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"

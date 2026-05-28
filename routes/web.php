@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('automatizations', AutomatizationController::class)
-        ->only(['store', 'update', 'destroy']);
+        ->except(['show']);
 });
 
 Route::middleware('auth')->group(function () {

@@ -59,6 +59,12 @@ onMounted(() => {
                                 >
                                     Odberatelia
                                 </NavLink>
+                                <NavLink
+                                    :href="route('automatizations.index')"
+                                    :active="route().current('automatizations.*')"
+                                >
+                                    Automatizácie
+                                </NavLink>
                             </div>
                         </div>
 

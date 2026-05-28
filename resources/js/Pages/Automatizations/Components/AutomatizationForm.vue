@@ -1,0 +1,133 @@
+<script setup>
+import { computed, watch } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+
+const props = defineProps({
+    mode: {
+        type: String,
+        default: 'create',
+        validator: (v) => ['create', 'edit'].includes(v),
+    },
+    automatization: {
+        type: Object,
+        default: null,
+    },
+    recipients: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const isEdit = computed(() => props.mode === 'edit');
+
+const form = useForm(defaultAutomatizationForm(props.automatization));
+
+watch(
+    () => form.type,
+    (type) => {
+        if (type === 'invoice_report') {
+            form.recipient_id = '';
+        }
+    }
+);
+
+const recipientLabel = (r) => r.company_name || r.name;
+
+const inputClass =
+    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
+
+function submit() {
+    if (isEdit.value) {
+        form.patch(route('automatizations.update', props.automatization.id));
+        return;
+    }
+
+    form.post(route('automatizations.store'));
+}
+</script>
+
+<template>
+    <form class="space-y-8" @submit.prevent="submit">
+        <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
+            <section>
+                <header>
+                    <h2 class="text-lg font-medium text-gray-900">Nastavenia automatizácie</h2>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Nastavte automatické generovanie faktúr alebo mesačný report.
+                    </p>
+                </header>
+
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <InputLabel for="auto-type" value="Typ" />
+                        <select
+                            id="auto-type"
+                            v-model="form.type"
+                            :class="inputClass"
+                        >
+                            <option value="invoice_auto_gen">Automatické generovanie faktúr</option>
+                            <option value="invoice_report">Mesačný report faktúr</option>
+                        </select>
+                        <InputError class="mt-2" :message="form.errors.type" />
+                    </div>
+
+                    <div v-if="form.type === 'invoice_auto_gen'">
+                        <InputLabel for="auto-recipient" value="Odberateľ" />
+                        <select
+                            id="auto-recipient"
+                            v-model="form.recipient_id"
+                            :class="inputClass"
+                        >
+                            <option value="">Vyberte odberateľa</option>
+                            <option
+                                v-for="r in recipients"
+                                :key="r.id"
+                                :value="r.id"
+                            >
+                                {{ recipientLabel(r) }}
+                            </option>
+                        </select>
+                        <InputError class="mt-2" :message="form.errors.recipient_id" />
+                    </div>
+
+                    <div>
+                        <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
+                        <input
+                            id="auto-trigger"
+                            type="date"
+                            v-model="form.date_trigger"
+                            :class="inputClass"
+                        />
+                        <p v-if="form.type === 'invoice_report'" class="mt-1 text-sm text-gray-500">
+                            Report sa odošle v tento deň v mesiaci (za predchádzajúci kalendárny mesiac).
+                        </p>
+                        <InputError class="mt-2" :message="form.errors.date_trigger" />
+                    </div>
+
+                    <div v-if="isEdit" class="flex items-center gap-2">
+                        <input
+                            id="auto-active"
+                            type="checkbox"
+                            v-model="form.is_active"
+                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                        />
+                        <InputLabel for="auto-active" value="Aktívne" />
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="flex justify-end">
+            <button
+                type="submit"
+                :disabled="form.processing"
+                class="w-full min-w-[200px] rounded-lg bg-gray-800 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            >
+                {{ form.processing ? 'Ukladám...' : (isEdit ? 'Uložiť' : 'Vytvoriť automatizáciu') }}
+            </button>
+        </div>
+    </form>
+</template>

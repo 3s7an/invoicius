@@ -3,17 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\AutomatizationServiceInterface;
+use App\Contracts\RecipientServiceInterface;
 use App\DTOs\CreateAutomatizationData;
 use App\Http\Requests\StoreAutomatizationRequest;
 use App\Http\Requests\UpdateAutomatizationRequest;
 use App\Models\Automatization;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AutomatizationController extends Controller
 {
     public function __construct(
         private readonly AutomatizationServiceInterface $automatizationService,
+        private readonly RecipientServiceInterface $recipientService,
     ) {
+    }
+
+    public function index(Request $request): Response
+    {
+        $automatizations = $this->automatizationService->listForUser($request->user()->id);
+
+        return Inertia::render('Automatizations/Index', [
+            'automatizations' => $automatizations,
+        ]);
+    }
+
+    public function create(Request $request): Response
+    {
+        $recipients = $this->recipientService->listForUser($request->user()->id);
+
+        return Inertia::render('Automatizations/Create', [
+            'recipients' => $recipients,
+        ]);
+    }
+
+    public function edit(Request $request, Automatization $automatization): Response
+    {
+        $this->authorize('update', $automatization);
+
+        $recipients = $this->recipientService->listForUser($request->user()->id);
+
+        $automatization->loadMissing(['recipient']);
+
+        return Inertia::render('Automatizations/Edit', [
+            'automatization' => $automatization,
+            'recipients' => $recipients,
+        ]);
     }
 
     public function store(StoreAutomatizationRequest $request): RedirectResponse
@@ -23,7 +60,7 @@ class AutomatizationController extends Controller
         );
 
         return redirect()
-            ->route('dashboard')
+            ->route('automatizations.index')
             ->with('success', 'Automatizácia bola vytvorená.');
     }
 
@@ -34,7 +71,7 @@ class AutomatizationController extends Controller
         $this->automatizationService->update($automatization, $request->validated());
 
         return redirect()
-            ->route('dashboard')
+            ->route('automatizations.index')
             ->with('success', 'Automatizácia bola upravená.');
     }
 
@@ -45,7 +82,7 @@ class AutomatizationController extends Controller
         $this->automatizationService->delete($automatization);
 
         return redirect()
-            ->route('dashboard')
+            ->route('automatizations.index')
             ->with('success', 'Automatizácia bola zmazaná.');
     }
 }
