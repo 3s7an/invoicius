@@ -6,7 +6,7 @@ use App\Http\Requests\DeleteAccountRequest;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdateInvoiceSettingsRequest;
 use App\Http\Requests\UpdateProfileDetailsRequest;
-use App\Contracts\ProfileServiceInterface;
+use App\Services\ProfileService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ use Inertia\Response;
 class ProfileController extends Controller
 {
     public function __construct(
-        private readonly ProfileServiceInterface $profileService,
+        private readonly ProfileService $profileService,
     ) {
     }
 

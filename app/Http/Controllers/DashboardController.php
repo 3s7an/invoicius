@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\InvoiceServiceInterface;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -10,7 +10,7 @@ use Inertia\Response;
 class DashboardController extends Controller
 {
     public function __construct(
-        private readonly InvoiceServiceInterface $invoiceService,
+        private readonly InvoiceService $invoiceService,
     ) {
     }
 

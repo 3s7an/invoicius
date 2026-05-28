@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
-use App\Contracts\RecipientServiceInterface;
 use App\Models\Recipient;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
-class RecipientService implements RecipientServiceInterface
+class RecipientService
 {
     public function listForUser(int $userId): Collection
     {

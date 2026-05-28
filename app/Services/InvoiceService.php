@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Contracts\InvoiceServiceInterface;
-use App\Contracts\RecipientServiceInterface;
+use App\Services\RecipientService;
 use App\DTOs\CreateInvoiceData;
 use App\DTOs\CreateInvoiceItemData;
 use App\DTOs\CreateInvoiceRecipientData;
@@ -23,10 +22,10 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelPdf\Facades\Pdf;
 use Illuminate\Validation\ValidationException;
-class InvoiceService implements InvoiceServiceInterface
+class InvoiceService
 {
     public function __construct(
-        private readonly RecipientServiceInterface $recipientService,
+        private readonly RecipientService $recipientService,
         private readonly PaymentQrService $paymentQrService,
     ) {
     }

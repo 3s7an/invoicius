@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Services;
 
-use App\Contracts\RecipientServiceInterface;
 use App\DTOs\CreateInvoiceData;
 use App\DTOs\CreateInvoiceItemData;
 use App\DTOs\CreateInvoiceRecipientData;
@@ -13,6 +12,7 @@ use App\Models\Recipient;
 use App\Models\User;
 use App\Models\VatType;
 use App\Services\InvoiceService;
+use App\Services\RecipientService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,7 +32,7 @@ class InvoiceServiceTest extends TestCase
         $this->seed(\Database\Seeders\VatTypeSeeder::class);
 
         $this->user = User::factory()->create();
-        $recipientService = $this->app->make(RecipientServiceInterface::class);
+        $recipientService = $this->app->make(RecipientService::class);
         $this->service = new InvoiceService($recipientService, new \App\Services\PaymentQrService);
     }
 

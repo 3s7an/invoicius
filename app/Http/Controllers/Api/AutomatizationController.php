@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Contracts\AutomatizationServiceInterface;
+use App\Services\AutomatizationProcessor;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\VerifiesN8nRequests;
 use Illuminate\Http\JsonResponse;
@@ -13,7 +13,7 @@ class AutomatizationController extends Controller
     use VerifiesN8nRequests;
 
     public function __construct(
-        private readonly AutomatizationServiceInterface $automatizationService,
+        private readonly AutomatizationProcessor $automatizationProcessor,
     ) {
     }
 
@@ -21,7 +21,7 @@ class AutomatizationController extends Controller
     {
         $this->verifyN8nRequest($request);
 
-        $results = $this->automatizationService->processDueAutomatizations();
+        $results = $this->automatizationProcessor->processDueAutomatizations();
 
         return response()->json([
             'processed' => count($results),

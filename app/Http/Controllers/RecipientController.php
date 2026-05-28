@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\RecipientServiceInterface;
+use App\Services\RecipientService;
 use App\Http\Requests\StoreRecipientRequest;
 use App\Http\Requests\UpdateRecipientRequest;
 use App\Models\Recipient;
@@ -14,7 +14,7 @@ use Inertia\Response;
 class RecipientController extends Controller
 {
     public function __construct(
-        private readonly RecipientServiceInterface $recipientService,
+        private readonly RecipientService $recipientService,
     ) {
     }
 

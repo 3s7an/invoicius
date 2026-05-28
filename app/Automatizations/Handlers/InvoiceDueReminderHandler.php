@@ -3,7 +3,7 @@
 namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
-use App\Contracts\InvoiceServiceInterface;
+use App\Services\InvoiceService;
 use App\DTOs\AutomatizationResult;
 use App\Models\Automatization;
 use App\Models\InvoiceStatus;
@@ -11,7 +11,7 @@ use App\Models\InvoiceStatus;
 class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
 {
     public function __construct(
-        private readonly InvoiceServiceInterface $invoiceService,
+        private readonly InvoiceService $invoiceService,
     ) {
     }
 

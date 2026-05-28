@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\InvoiceServiceInterface;
+use App\Services\InvoiceService;
 use App\DTOs\CreateInvoiceData;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
@@ -17,7 +17,7 @@ use Inertia\Response;
 class InvoiceController extends Controller
 {
     public function __construct(
-        private readonly InvoiceServiceInterface $invoiceService,
+        private readonly InvoiceService $invoiceService,
     ) {
     }
 

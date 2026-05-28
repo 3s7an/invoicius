@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\AutomatizationServiceInterface;
-use App\Contracts\RecipientServiceInterface;
+use App\Services\AutomatizationService;
+use App\Services\RecipientService;
 use App\DTOs\CreateAutomatizationData;
 use App\Http\Requests\StoreAutomatizationRequest;
 use App\Http\Requests\UpdateAutomatizationRequest;
@@ -16,8 +16,8 @@ use Inertia\Response;
 class AutomatizationController extends Controller
 {
     public function __construct(
-        private readonly AutomatizationServiceInterface $automatizationService,
-        private readonly RecipientServiceInterface $recipientService,
+        private readonly AutomatizationService $automatizationService,
+        private readonly RecipientService $recipientService,
     ) {
     }
 

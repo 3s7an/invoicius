@@ -5,20 +5,14 @@ namespace App\Providers;
 use App\Automatizations\Handlers\InvoiceAutoGenHandler;
 use App\Automatizations\Handlers\InvoiceDueReminderHandler;
 use App\Automatizations\Handlers\InvoiceReportHandler;
-use App\Contracts\AutomatizationServiceInterface;
-use App\Contracts\InvoiceServiceInterface;
-use App\Contracts\ProfileServiceInterface;
-use App\Contracts\RecipientServiceInterface;
 use App\Models\Automatization;
 use App\Models\Invoice;
 use App\Models\Recipient;
 use App\Policies\AutomatizationPolicy;
 use App\Policies\InvoicePolicy;
 use App\Policies\RecipientPolicy;
+use App\Services\AutomatizationProcessor;
 use App\Services\AutomatizationService;
-use App\Services\InvoiceService;
-use App\Services\ProfileService;
-use App\Services\RecipientService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
@@ -31,17 +25,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(InvoiceServiceInterface::class, InvoiceService::class);
-        $this->app->bind(RecipientServiceInterface::class, RecipientService::class);
-        $this->app->bind(ProfileServiceInterface::class, ProfileService::class);
+        $this->app->singleton(AutomatizationProcessor::class, function ($app) {
+            $processor = new AutomatizationProcessor();
+            $processor->registerHandler($app->make(InvoiceAutoGenHandler::class));
+            $processor->registerHandler($app->make(InvoiceReportHandler::class));
+            $processor->registerHandler($app->make(InvoiceDueReminderHandler::class));
 
-        $this->app->singleton(AutomatizationServiceInterface::class, function ($app) {
-            $service = new AutomatizationService();
-            $service->registerHandler($app->make(InvoiceAutoGenHandler::class));
-            $service->registerHandler($app->make(InvoiceReportHandler::class));
-            $service->registerHandler($app->make(InvoiceDueReminderHandler::class));
-
-            return $service;
+            return $processor;
         });
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Contracts\ProfileServiceInterface;
 use App\Models\Currency;
 use App\Models\VatType;
 use App\Models\User;
@@ -12,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-class ProfileService implements ProfileServiceInterface
+class ProfileService
 {
     public function getEditData(): array
     {
