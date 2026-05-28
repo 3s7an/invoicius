@@ -10,7 +10,13 @@
                     </Link>
                 </template>
             </PageHeader>
-            <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+            <InvoiceCardList
+                class="lg:hidden"
+                :invoices="invoices"
+                :invoice_statuses="invoice_statuses"
+            />
+
+            <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
                     <DataTable :value="invoices" tableStyle="min-width: 50rem">
                     <Column field="number" header="Číslo faktúry"></Column>
                     <Column field="recipient_name" header="Klient"></Column>
@@ -61,8 +67,8 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import InvoiceOverviewCards from '@/Components/InvoiceOverviewCards.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import InvoiceCardList from '@/Pages/Invoices/Components/InvoiceCardList.vue';
 import { computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';

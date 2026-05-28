@@ -1,0 +1,103 @@
+<script setup>
+import { computed } from 'vue';
+import { Link, router } from '@inertiajs/vue3';
+import Button from 'primevue/button';
+import { formatAmount, formatDate } from '@/utils/formatters';
+
+const props = defineProps({
+    invoices: {
+        type: Array,
+        default: () => [],
+    },
+    invoice_statuses: {
+        type: Array,
+        default: () => [],
+    },
+});
+
+const statusOptions = computed(() =>
+    (props.invoice_statuses || []).map((s) => ({
+        value: s.id,
+        label: s.name || s.code || String(s.id),
+    })),
+);
+
+function updateStatus(invoice, newStatusId) {
+    const id = newStatusId != null ? Number(newStatusId) : null;
+    if (id === invoice.invoice_status_id) return;
+    router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
+}
+
+function confirmDeleteInvoice(invoice) {
+    if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
+    router.delete(route('invoices.destroy', invoice.id));
+}
+</script>
+
+<template>
+    <div v-if="invoices.length === 0" class="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm">
+        Zatiaľ nemáte žiadne faktúry.
+    </div>
+
+    <div v-else class="space-y-3">
+        <article
+            v-for="invoice in invoices"
+            :key="invoice.id"
+            class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+        >
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <p class="truncate text-base font-semibold text-gray-900">{{ invoice.number }}</p>
+                    <p class="mt-0.5 truncate text-sm text-gray-600">{{ invoice.recipient_name || '—' }}</p>
+                </div>
+                <p class="shrink-0 text-base font-semibold text-gray-900">
+                    {{ formatAmount(invoice.total_price) }} €
+                </p>
+            </div>
+
+            <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">Vytvorené</dt>
+                    <dd class="mt-0.5 text-gray-900">
+                        {{ invoice.created_at ? formatDate(invoice.created_at) : '—' }}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">Stav</dt>
+                    <dd class="mt-0.5">
+                        <select
+                            :value="invoice.invoice_status_id"
+                            class="w-full rounded-md border-gray-300 py-1.5 pl-2 pr-8 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                            @change="updateStatus(invoice, $event.target.value)"
+                        >
+                            <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
+                                {{ opt.label }}
+                            </option>
+                        </select>
+                    </dd>
+                </div>
+            </dl>
+
+            <div class="mt-4 flex items-center justify-end gap-1 border-t border-gray-100 pt-3">
+                <a
+                    :href="route('invoices.pdf', invoice.id)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex"
+                    title="Stiahnuť PDF"
+                >
+                    <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
+                </a>
+                <Link :href="route('invoices.edit', invoice.id)">
+                    <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
+                </Link>
+                <Button
+                    icon="pi pi-trash"
+                    class="p-button-text p-button-sm p-button-danger"
+                    title="Zmazať"
+                    @click="confirmDeleteInvoice(invoice)"
+                />
+            </div>
+        </article>
+    </div>
+</template>

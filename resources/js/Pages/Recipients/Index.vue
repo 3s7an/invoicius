@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
+import RecipientCardList from '@/Pages/Recipients/Components/RecipientCardList.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -35,6 +36,9 @@ function confirmDeleteRecipient(recipient) {
                     </Link>
                 </template>
             </PageHeader>
+            <RecipientCardList class="lg:hidden" :recipients="recipients" />
+
+            <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
             <DataTable :value="recipients" tableStyle="min-width: 50rem">
                 <Column field="company_name" header="Názov / obchodné meno">
                     <template #body="{ data }">{{ displayName(data) }}</template>
@@ -61,7 +65,8 @@ function confirmDeleteRecipient(recipient) {
                         />
                     </template>
                 </Column>
-            </DataTable>
+                </DataTable>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

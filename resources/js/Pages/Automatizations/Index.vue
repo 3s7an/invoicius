@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AutomatizationList from '@/Components/AutomatizationList.vue';
+import AutomatizationCardList from '@/Pages/Automatizations/Components/AutomatizationCardList.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
@@ -30,8 +31,11 @@ defineProps({
                 </template>
             </PageHeader>
 
-            <div v-if="automatizations.length" class="app-card overflow-hidden">
-                <AutomatizationList :automatizations="automatizations" />
+            <div v-if="automatizations.length">
+                <AutomatizationCardList class="lg:hidden" :automatizations="automatizations" />
+                <div class="app-card hidden overflow-hidden lg:block">
+                    <AutomatizationList :automatizations="automatizations" />
+                </div>
             </div>
             <div v-else class="app-card p-6">
                 <p class="app-muted">

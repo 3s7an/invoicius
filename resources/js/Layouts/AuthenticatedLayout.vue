@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -19,6 +19,13 @@ onMounted(() => {
         setTimeout(() => { showFlash.value = false; }, 4000);
     }
 });
+
+watch(
+    () => page.url,
+    () => {
+        showingNavigationDropdown.value = false;
+    },
+);
 </script>
 
 <template>
@@ -39,7 +46,7 @@ onMounted(() => {
                             </div>
 
                             <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-8 lg:-my-px lg:ms-10 lg:flex"
                             >
                                 <NavLink
                                     :href="route('dashboard')"
@@ -68,7 +75,7 @@ onMounted(() => {
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden lg:ms-6 lg:flex lg:items-center">
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
@@ -113,13 +120,16 @@ onMounted(() => {
                             </div>
                         </div>
 
-                        <div class="-me-2 flex items-center sm:hidden">
+                        <div class="-me-2 flex items-center lg:hidden">
                             <button
+                                type="button"
+                                :aria-expanded="showingNavigationDropdown"
+                                aria-label="Menu"
                                 @click="
                                     showingNavigationDropdown =
                                         !showingNavigationDropdown
                                 "
-                                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none"
+                                class="inline-flex items-center justify-center rounded-lg p-2 text-white transition duration-150 ease-in-out hover:bg-white/10 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/40"
                             >
                                 <svg
                                     class="h-6 w-6"
@@ -156,13 +166,10 @@ onMounted(() => {
                 </div>
 
                 <div
-                    :class="{
-                        block: showingNavigationDropdown,
-                        hidden: !showingNavigationDropdown,
-                    }"
-                    class="sm:hidden"
+                    v-show="showingNavigationDropdown"
+                    class="border-t border-white/20 bg-emerald-600 lg:hidden"
                 >
-                    <div class="space-y-1 pb-3 pt-2">
+                    <div class="space-y-1 px-2 pb-2 pt-3">
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
@@ -181,23 +188,25 @@ onMounted(() => {
                         >
                             Klienti
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            :href="route('automatizations.index')"
+                            :active="route().current('automatizations.*')"
+                        >
+                            Automatizácie
+                        </ResponsiveNavLink>
                     </div>
 
-                    <div
-                        class="border-t border-gray-200 pb-1 pt-4"
-                    >
-                        <div class="px-4">
-                            <div
-                                class="text-base font-medium text-gray-800"
-                            >
+                    <div class="border-t border-white/20 px-2 pb-3 pt-3">
+                        <div class="px-3 py-2">
+                            <p class="truncate text-base font-semibold text-white">
                                 {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="text-sm font-medium text-gray-500">
+                            </p>
+                            <p class="mt-0.5 truncate text-sm text-white/75">
                                 {{ $page.props.auth.user.email }}
-                            </div>
+                            </p>
                         </div>
 
-                        <div class="mt-3 space-y-1">
+                        <div class="mt-1 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">
                                 Profil
                             </ResponsiveNavLink>
