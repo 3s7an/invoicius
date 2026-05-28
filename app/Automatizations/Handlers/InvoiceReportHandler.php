@@ -22,13 +22,6 @@ class InvoiceReportHandler implements AutomatizationHandlerInterface
 
     public function handle(Automatization $automatization): AutomatizationResult
     {
-        if (! $automatization->user_id || ! $automatization->user) {
-            return new AutomatizationResult(
-                success: false,
-                error: 'No user assigned to automatization.',
-            );
-        }
-
         $userId = $automatization->user_id;
 
         $periodStart = now()->subMonthNoOverflow()->startOfMonth();

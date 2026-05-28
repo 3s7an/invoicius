@@ -21,20 +21,6 @@ class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
 
     public function handle(Automatization $automatization): AutomatizationResult
     {
-        if (! $automatization->recipient_id) {
-            return new AutomatizationResult(
-                success: false,
-                error: 'No recipient assigned to automatization.',
-            );
-        }
-
-        if (! $automatization->recipient) {
-            return new AutomatizationResult(
-                success: false,
-                error: "Recipient #{$automatization->recipient_id} not found.",
-            );
-        }
-
         $invoice = $this->invoiceService->generateFromAutomatization(
             $automatization->user_id,
             $automatization->recipient_id,

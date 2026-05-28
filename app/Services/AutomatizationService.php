@@ -30,6 +30,17 @@ class AutomatizationService implements AutomatizationServiceInterface
 
         foreach ($due as $automatization) {
             try {
+                if (! $this->ensureUserOrAppendError($automatization, $results)) {
+                    continue;
+                }
+
+                if (
+                    $automatization->type === 'invoice_auto_gen'
+                    && ! $this->ensureRecipientOrAppendError($automatization, $results)
+                ) {
+                    continue;
+                }
+
                 $handler = $this->resolveHandler($automatization->type);
                 $result = $handler->handle($automatization);
 
@@ -120,6 +131,61 @@ class AutomatizationService implements AutomatizationServiceInterface
     {
         return $this->handlers[$type]
             ?? throw new \InvalidArgumentException("No handler registered for type: {$type}");
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $results
+     */
+    private function ensureUserOrAppendError(Automatization $automatization, array &$results): bool
+    {
+        if ($automatization->user_id && $automatization->user) {
+            return true;
+        }
+
+        $results[] = [
+            'automatization_id' => $automatization->id,
+            'type' => $automatization->type,
+            'success' => false,
+            'data' => [],
+            'error' => 'No user assigned to automatization.',
+            'next_trigger' => null,
+        ];
+
+        return false;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $results
+     */
+    private function ensureRecipientOrAppendError(Automatization $automatization, array &$results): bool
+    {
+        if (! $automatization->recipient_id) {
+            $results[] = [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'success' => false,
+                'data' => [],
+                'error' => 'No recipient assigned to automatization.',
+                'next_trigger' => null,
+            ];
+
+            return false;
+        }
+
+        if (! $automatization->recipient) {
+            $results[] = [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'success' => false,
+                'data' => [],
+                'error' => "Recipient #{$automatization->recipient_id} not found.",
+                'next_trigger' => null,
+            ];
+
+            return false;
+        }
+
+        return true;
     }
 
     private function markAsRun(Automatization $automatization, AutomatizationResult $result): void

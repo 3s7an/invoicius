@@ -22,13 +22,6 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
 
     public function handle(Automatization $automatization): AutomatizationResult
     {
-        if (! $automatization->user_id || ! $automatization->user) {
-            return new AutomatizationResult(
-                success: false,
-                error: 'No user assigned to automatization.',
-            );
-        }
-
         $offsetDays = (int) ($automatization->due_offset_days ?? 0);
         $targetDate = now()->startOfDay()->addDays($offsetDays);
 
@@ -47,7 +40,7 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
 
             $code = $invoice->invoiceStatus->code;
 
-            if ($code === InvoiceStatus::CODE_PAID || $code === InvoiceStatus::CODE_DRAFT) {
+            if ($code === InvoiceStatus::CODE_PAID) {
                 return false;
             }
 
