@@ -17,6 +17,7 @@ class Automatization extends Model
         'recipient_id',
         'type',
         'date_trigger',
+        'due_offset_days',
         'is_active',
         'last_run_at',
         'result_data',
@@ -25,7 +26,8 @@ class Automatization extends Model
     protected function casts(): array
     {
         return [
-            'date_trigger' => 'date',
+            'date_trigger' => 'date:Y-m-d',
+            'due_offset_days' => 'integer',
             'is_active' => 'boolean',
             'last_run_at' => 'datetime',
             'result_data' => 'array',

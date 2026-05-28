@@ -1,5 +1,6 @@
 <script setup>
 import { router, Link } from '@inertiajs/vue3';
+import { formatDate } from '@/utils/formatters';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -17,11 +18,6 @@ function recipientName(automatization) {
     return r.company_name || r.name || '—';
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return '—';
-    return new Date(dateStr).toLocaleDateString('sk-SK');
-}
-
 function toggleActive(automatization) {
     router.patch(route('automatizations.update', automatization.id), {
         is_active: !automatization.is_active,
@@ -31,6 +27,7 @@ function toggleActive(automatization) {
 function typeLabel(type) {
     if (type === 'invoice_auto_gen') return 'Automatické generovanie faktúr';
     if (type === 'invoice_report') return 'Mesačný report faktúr';
+    if (type === 'invoice_due_reminder') return 'Upozornenie na splatnosť';
     return type;
 }
 

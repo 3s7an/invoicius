@@ -17,6 +17,7 @@ class UpdateAutomatizationRequest extends FormRequest
             ],
             'type' => ['nullable', 'string', 'max:100'],
             'date_trigger' => ['nullable', 'date'],
+            'due_offset_days' => ['nullable', 'integer', 'min:-365', 'max:365'],
             'is_active' => ['nullable', 'boolean'],
         ];
     }

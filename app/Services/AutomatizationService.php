@@ -93,12 +93,19 @@ class AutomatizationService implements AutomatizationServiceInterface
             'recipient_id' => $data->recipientId,
             'type' => $data->type,
             'date_trigger' => $data->dateTrigger,
+            'due_offset_days' => $data->dueOffsetDays,
             'is_active' => true,
         ]);
     }
 
     public function update(Automatization $automatization, array $validated): Automatization
     {
+        $type = $validated['type'] ?? $automatization->type;
+
+        if ($type === 'invoice_due_reminder') {
+            $validated['date_trigger'] = now()->startOfDay();
+        }
+
         $automatization->update($validated);
 
         return $automatization;
@@ -117,9 +124,13 @@ class AutomatizationService implements AutomatizationServiceInterface
 
     private function markAsRun(Automatization $automatization, AutomatizationResult $result): void
     {
+        $nextTrigger = $automatization->type === 'invoice_due_reminder'
+            ? now()->addDay()
+            : now()->addMonth();
+
         $automatization->update([
             'last_run_at' => now(),
-            'date_trigger' => now()->addMonth(),
+            'date_trigger' => $nextTrigger,
             'result_data' => $result->data,
         ]);
     }

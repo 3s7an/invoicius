@@ -11,6 +11,7 @@ final readonly class CreateAutomatizationData
         public ?int $recipientId,
         public string $type,
         public Carbon $dateTrigger,
+        public ?int $dueOffsetDays,
     ) {
     }
 
@@ -20,14 +21,19 @@ final readonly class CreateAutomatizationData
     public static function fromValidated(array $validated, int $userId): self
     {
         $recipientId = $validated['recipient_id'] ?? null;
+        $dueOffsetDays = $validated['due_offset_days'] ?? null;
+        $type = (string) $validated['type'];
 
         return new self(
             userId: $userId,
             recipientId: ($recipientId === null || $recipientId === '' || (int) $recipientId === 0)
                 ? null
                 : (int) $recipientId,
-            type: $validated['type'],
-            dateTrigger: Carbon::parse($validated['date_trigger']),
+            type: $type,
+            dateTrigger: $type === 'invoice_due_reminder'
+                ? now()->startOfDay()
+                : Carbon::parse($validated['date_trigger']),
+            dueOffsetDays: ($dueOffsetDays === null || $dueOffsetDays === '' ? null : (int) $dueOffsetDays),
         );
     }
 }

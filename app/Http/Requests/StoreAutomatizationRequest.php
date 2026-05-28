@@ -18,6 +18,13 @@ class StoreAutomatizationRequest extends FormRequest
             ],
             'type' => ['required', 'string', 'max:100'],
             'date_trigger' => ['required', 'date', 'after_or_equal:today'],
+            'due_offset_days' => [
+                Rule::requiredIf(fn () => $this->input('type') === 'invoice_due_reminder'),
+                'nullable',
+                'integer',
+                'min:-365',
+                'max:365',
+            ],
         ];
     }
 }

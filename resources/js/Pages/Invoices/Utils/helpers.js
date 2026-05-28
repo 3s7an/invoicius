@@ -5,11 +5,11 @@ export function prefixedId(prefix, name) {
     return `${prefix}-${name}`;
 }
 
-export const toYMD = (date) => date.toISOString().slice(0, 10);
-export const todayYMD = () => toYMD(new Date());
-export const defaultDueYMD = (days = 14) => toYMD(new Date(Date.now() + days * 24 * 60 * 60 * 1000));
-
-export const formatDate = (date) => (date ? String(date).slice(0, 10) : '');
+export const toYMD = (d = new Date()) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const todayYMD = () => toYMD();
+export const defaultDueYMD = (days = 14) => toYMD(new Date(Date.now() + days * 864e5));
+export const formatDate = (v) => (v ? String(v).slice(0, 10) : '');
 export const nullIfBlank = (value) => (value === '' || value == null ? null : value);
 
 

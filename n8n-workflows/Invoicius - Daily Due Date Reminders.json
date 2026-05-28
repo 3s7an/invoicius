@@ -1,0 +1,139 @@
+{
+  "name": "Invoicius - Daily Due Date Reminders",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 8,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily",
+      "name": "Daily 8:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://invoicius.online/api/automatizations/process",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "={{ $env.INVOICIUS_N8N_HEADER || '3stan' }}",
+              "value": "={{ $env.INVOICIUS_N8N_TOKEN }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-process",
+      "name": "Process Automatizations",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "results",
+        "include": "noOtherFields"
+      },
+      "id": "split-results",
+      "name": "Split Results",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [560, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "success-true",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            },
+            {
+              "id": "type-reminder",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "invoice_due_reminder",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "filter-reminder",
+      "name": "Reminder Only",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [840, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data.invoices",
+        "include": "allFields"
+      },
+      "id": "split-invoices",
+      "name": "Split Invoices",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.data.user_email }}",
+        "subject": "=Upozornenie na splatnosť faktúry {{ $json.data.invoices.number }}",
+        "emailType": "text",
+        "message": "=Dobrý deň,\\n\\n{{ $json.data.due_offset_days < 0 ? ('O ' + Math.abs($json.data.due_offset_days) + ' dní bude splatná') : ($json.data.due_offset_days > 0 ? ('Faktúra je ' + $json.data.due_offset_days + ' dní po splatnosti') : 'Dnes je splatná') }} faktúra č. {{ $json.data.invoices.number }} pre odberateľa {{ $json.data.invoices.recipient_name || '—' }}.\\n\\nSplatnosť: {{ $json.data.invoices.due_date }}\\n\\nPrehľad nájdete po prihlásení: https://invoicius.online\\n\\nS pozdravom,\\nInvoicius",
+        "options": {}
+      },
+      "id": "gmail-reminder",
+      "name": "Send Due Reminder",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1400, 300]
+    }
+  ],
+  "connections": {
+    "Daily 8:00": {
+      "main": [[{ "node": "Process Automatizations", "type": "main", "index": 0 }]]
+    },
+    "Process Automatizations": {
+      "main": [[{ "node": "Split Results", "type": "main", "index": 0 }]]
+    },
+    "Split Results": {
+      "main": [[{ "node": "Reminder Only", "type": "main", "index": 0 }]]
+    },
+    "Reminder Only": {
+      "main": [[{ "node": "Split Invoices", "type": "main", "index": 0 }]]
+    },
+    "Split Invoices": {
+      "main": [[{ "node": "Send Due Reminder", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Bratislava"
+  },
+  "tags": []
+}
+

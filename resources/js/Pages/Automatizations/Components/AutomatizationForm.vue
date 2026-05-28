@@ -4,6 +4,7 @@ import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+import { todayYMD } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     mode: {
@@ -30,6 +31,11 @@ watch(
     (type) => {
         if (type === 'invoice_report') {
             form.recipient_id = '';
+        }
+        if (type !== 'invoice_due_reminder') {
+            form.due_offset_days = '';
+        } else {
+            form.date_trigger = todayYMD();
         }
     }
 );
@@ -70,6 +76,7 @@ function submit() {
                         >
                             <option value="invoice_auto_gen">Automatické generovanie faktúr</option>
                             <option value="invoice_report">Mesačný report faktúr</option>
+                            <option value="invoice_due_reminder">Upozornenie na splatnosť</option>
                         </select>
                         <InputError class="mt-2" :message="form.errors.type" />
                     </div>
@@ -93,7 +100,7 @@ function submit() {
                         <InputError class="mt-2" :message="form.errors.recipient_id" />
                     </div>
 
-                    <div>
+                    <div v-if="form.type !== 'invoice_due_reminder'">
                         <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
                         <input
                             id="auto-trigger"
@@ -105,6 +112,30 @@ function submit() {
                             Report sa odošle v tento deň v mesiaci (za predchádzajúci kalendárny mesiac).
                         </p>
                         <InputError class="mt-2" :message="form.errors.date_trigger" />
+                    </div>
+
+                    <div v-else>
+                        <input type="hidden" v-model="form.date_trigger" />
+                        <p class="text-sm text-gray-600">
+                            Táto automatizácia sa spúšťa denne od dnešného dňa.
+                        </p>
+                    </div>
+
+                    <div v-if="form.type === 'invoice_due_reminder'">
+                        <InputLabel for="auto-offset" value="Koľko dní pred/po splatnosti" />
+                        <input
+                            id="auto-offset"
+                            type="number"
+                            step="1"
+                            min="-365"
+                            max="365"
+                            v-model="form.due_offset_days"
+                            :class="inputClass"
+                        />
+                        <p class="mt-1 text-sm text-gray-500">
+                            Zadajte záporné číslo pre upozornenie pred splatnosťou (napr. -3), kladné po splatnosti (napr. 2), alebo 0 v deň splatnosti.
+                        </p>
+                        <InputError class="mt-2" :message="form.errors.due_offset_days" />
                     </div>
 
                     <div v-if="isEdit" class="flex items-center gap-2">
