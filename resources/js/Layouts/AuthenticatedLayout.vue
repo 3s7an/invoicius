@@ -25,7 +25,7 @@ onMounted(() => {
     <div>
         <div class="min-h-screen bg-gray-100">
             <nav
-                class="border-b border-gray-100 bg-white"
+                class="border-b bg-emerald-500"
             >
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div class="flex h-16 justify-between">
@@ -33,7 +33,7 @@ onMounted(() => {
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')" class="flex items-center">
                                     <ApplicationLogo
-                                        class="h-9 w-auto fill-current text-gray-800"
+                                        class="h-9 w-auto fill-current text-white"
                                     />
                                 </Link>
                             </div>
@@ -75,7 +75,7 @@ onMounted(() => {
                                         <span class="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-transparent px-3 py-2 text-sm font-medium leading-4 text-white/90 transition duration-150 ease-in-out hover:text-white focus:outline-none"
                                             >
                                                 {{ $page.props.auth.user.name }}
 
