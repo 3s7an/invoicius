@@ -14,8 +14,8 @@ export function useRecipientForm(props) {
         })
     );
 
-    const heading = computed(() => (isEdit.value ? 'Upraviť odberateľa' : 'Nový odberateľ'));
-    const submitLabel = computed(() => (isEdit.value ? 'Uložiť odberateľa' : 'Vytvoriť odberateľa'));
+    const heading = computed(() => (isEdit.value ? 'Upraviť klienta' : 'Nový klient'));
+    const submitLabel = computed(() => (isEdit.value ? 'Uložiť klienta' : 'Vytvoriť klienta'));
     const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
 
     function submit() {

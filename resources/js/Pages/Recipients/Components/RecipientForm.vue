@@ -3,7 +3,7 @@
         <div class="flex flex-wrap items-center justify-between gap-3">
             <h1 class="text-lg font-medium text-gray-900">{{ heading }}</h1>
             <Link :href="route('recipients.index')">
-                <Button label="Späť na odberateľov" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                <Button label="Späť na klientov" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
             </Link>
         </div>
 
@@ -11,8 +11,8 @@
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <section>
                     <header>
-                        <h2 class="text-lg font-medium text-gray-900">Údaje o odberateľovi</h2>
-                        <p class="mt-1 text-sm text-gray-600">Názov, adresa a identifikátory odberateľa.</p>
+                        <h2 class="text-lg font-medium text-gray-900">Údaje o klientovi</h2>
+                        <p class="mt-1 text-sm text-gray-600">Názov, adresa a identifikátory klienta.</p>
                     </header>
 
                     <div class="mt-6 space-y-6">

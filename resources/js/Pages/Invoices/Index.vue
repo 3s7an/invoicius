@@ -12,7 +12,7 @@
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                     <DataTable :value="invoices" tableStyle="min-width: 50rem">
                     <Column field="number" header="Číslo faktúry"></Column>
-                    <Column field="recipient_name" header="Odberateľ"></Column>
+                    <Column field="recipient_name" header="Klient"></Column>
                     <Column field="created_at" header="Vytvorené">
                         <template #body="{ data }">{{ formatDate(data.created_at) }}</template>
                     </Column>

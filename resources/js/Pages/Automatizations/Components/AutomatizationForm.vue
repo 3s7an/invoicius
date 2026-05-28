@@ -82,13 +82,13 @@ function submit() {
                     </div>
 
                     <div v-if="form.type === 'invoice_auto_gen'">
-                        <InputLabel for="auto-recipient" value="Odberateľ" />
+                        <InputLabel for="auto-recipient" value="Klient" />
                         <select
                             id="auto-recipient"
                             v-model="form.recipient_id"
                             :class="inputClass"
                         >
-                            <option value="">Vyberte odberateľa</option>
+                            <option value="">Vyberte klienta</option>
                             <option
                                 v-for="r in recipients"
                                 :key="r.id"
@@ -109,7 +109,7 @@ function submit() {
                             :class="inputClass"
                         />
                         <p v-if="form.type === 'invoice_report'" class="mt-1 text-sm text-gray-500">
-                            Report sa odošle v tento deň v mesiaci (za predchádzajúci kalendárny mesiac).
+                            Report je za predošlý mesiac od tohto dátumu.
                         </p>
                         <InputError class="mt-2" :message="form.errors.date_trigger" />
                     </div>
@@ -133,7 +133,9 @@ function submit() {
                             :class="inputClass"
                         />
                         <p class="mt-1 text-sm text-gray-500">
-                            Zadajte záporné číslo pre upozornenie pred splatnosťou (napr. -3), kladné po splatnosti (napr. 2), alebo 0 v deň splatnosti.
+                            - pred splatnosťou <br />
+                            +  po splatnosti <br />
+                            0 v deň splatnosti
                         </p>
                         <InputError class="mt-2" :message="form.errors.due_offset_days" />
                     </div>

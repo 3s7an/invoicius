@@ -72,8 +72,8 @@ export function useInvoiceForm(props, user) {
 
     const recipientDescription = computed(() =>
         isEdit.value
-            ? 'Vyhľadajte a vyberte odberateľa alebo upravte údaje nižšie.'
-            : 'Vyhľadajte a vyberte odberateľa alebo pridajte nového.'
+            ? 'Vyhľadajte a vyberte klienta alebo upravte údaje nižšie.'
+            : 'Vyhľadajte a vyberte klienta alebo pridajte nového.'
     );
 
     const submitLabel = computed(() => (isEdit.value ? 'Uložiť faktúru' : 'Vytvoriť faktúru'));

@@ -1,5 +1,5 @@
 <template>
-    <Head :title="'Upraviť: ' + (recipient.company_name || recipient.name || 'Odberateľ')" />
+    <Head :title="'Upraviť: ' + (recipient.company_name || recipient.name || 'Klient')" />
 
     <AuthenticatedLayout>
         <RecipientForm mode="edit" :recipient="recipient" />

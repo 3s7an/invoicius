@@ -23,14 +23,14 @@ function confirmDeleteRecipient(recipient) {
 </script>
 
 <template>
-    <Head title="Odberatelia" />
+    <Head title="Klienti" />
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Odberatelia</h1>
+                <h1 class="text-lg font-medium text-gray-900">Klienti</h1>
                 <Link :href="route('recipients.create')">
-                    <Button label="Nový odberateľ" icon="pi pi-plus" class="p-button-raised p-button-sm" />
+                    <Button label="Nový klient" icon="pi pi-plus" class="p-button-raised p-button-sm" />
                 </Link>
             </div>
                 <DataTable :value="recipients" tableStyle="min-width: 50rem">

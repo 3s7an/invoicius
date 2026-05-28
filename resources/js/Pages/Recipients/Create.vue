@@ -1,5 +1,5 @@
 <template>
-    <Head title="Nový odberateľ" />
+    <Head title="Nový klient" />
 
     <AuthenticatedLayout>
         <RecipientForm mode="create" :from-invoice="from_invoice" />

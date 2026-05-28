@@ -57,7 +57,7 @@ onMounted(() => {
                                     :href="route('recipients.index')"
                                     :active="route().current('recipients.*')"
                                 >
-                                    Odberatelia
+                                    Klienti
                                 </NavLink>
                                 <NavLink
                                     :href="route('automatizations.index')"
@@ -179,7 +179,7 @@ onMounted(() => {
                             :href="route('recipients.index')"
                             :active="route().current('recipients.*')"
                         >
-                            Odberatelia
+                            Klienti
                         </ResponsiveNavLink>
                     </div>
 

@@ -1,13 +1,13 @@
 <template>
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-        <h3 class="text-lg font-medium text-gray-900">Odberateľ</h3>
+        <h3 class="text-lg font-medium text-gray-900">Klient</h3>
         <p class="mt-1 text-sm text-gray-600">
             {{ description }}
         </p>
 
         <div class="mt-6">
             <label for="invoice-recipient-search" class="block text-sm font-medium text-gray-700">
-                Vyberte odberateľa alebo vytvorte nového
+                Vyberte klienta alebo vytvorte nového
             </label>
             <AutoComplete
                 id="invoice-recipient-search"
@@ -33,7 +33,7 @@
                         :href="route('recipients.create') + '?from_invoice=1'"
                         class="block px-3 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
                     >
-                        + Pridať nového odberateľa
+                        + Pridať nového klienta
                     </Link>
                 </template>
             </AutoComplete>
