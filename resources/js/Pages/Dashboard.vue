@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
 import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecentInvoices.vue';
 import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -34,11 +35,7 @@ defineProps({
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                    <h1 class="app-page-title">Prehľad</h1>
-                </div>
-            </div>
+            <PageHeader title="Prehľad" />
 
             <DashboardHero :invoice_stats="invoice_stats" :currency_symbol="currency_symbol" :counts="counts" />
 

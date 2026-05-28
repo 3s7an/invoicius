@@ -3,12 +3,13 @@
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Faktúry</h1>
-                <Link :href="route('invoices.create')">
-                    <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" />
-                </Link>
-            </div>
+            <PageHeader title="Faktúry">
+                <template #actions>
+                    <Link :href="route('invoices.create')">
+                        <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" />
+                    </Link>
+                </template>
+            </PageHeader>
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                     <DataTable :value="invoices" tableStyle="min-width: 50rem">
                     <Column field="number" header="Číslo faktúry"></Column>
@@ -61,6 +62,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceOverviewCards from '@/Components/InvoiceOverviewCards.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';

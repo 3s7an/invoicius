@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { Head } from '@inertiajs/vue3';
 import DeleteUserForm from './Components/DeleteUserForm.vue';
 import BillingDetailsForm from './Components/BillingDetailsForm.vue';
@@ -39,7 +40,7 @@ const {
 
     <AuthenticatedLayout>
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="mb-6 text-lg font-medium text-gray-900">Profil</h1>
+            <PageHeader title="Profil" />
                 <div
                     class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
                 >

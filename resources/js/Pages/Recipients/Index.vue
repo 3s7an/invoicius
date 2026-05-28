@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -26,40 +27,41 @@ function confirmDeleteRecipient(recipient) {
     <Head title="Klienti" />
 
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <h1 class="text-lg font-medium text-gray-900">Klienti</h1>
-                <Link :href="route('recipients.create')">
-                    <Button label="Nový klient" icon="pi pi-plus" class="p-button-raised p-button-sm" />
-                </Link>
-            </div>
-                <DataTable :value="recipients" tableStyle="min-width: 50rem">
-                    <Column field="company_name" header="Názov / obchodné meno">
-                        <template #body="{ data }">{{ displayName(data) }}</template>
-                    </Column>
-                    <Column field="city" header="Mesto">
-                        <template #body="{ data }">{{ data.city || '—' }}</template>
-                    </Column>
-                    <Column field="street" header="Ulica">
-                        <template #body="{ data }">{{ data.street || '—' }}</template>
-                    </Column>
-                    <Column field="street_num" header="Číslo ulice">
-                        <template #body="{ data }">{{ data.street_num || '—' }}</template>
-                    </Column>
-                    <Column header="Akcie">
-                        <template #body="{ data }">
-                            <Link :href="route('recipients.edit', data.id)">
-                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
-                            </Link>
-                            <Button
-                                icon="pi pi-trash"
-                                class="p-button-text p-button-sm p-button-danger"
-                                title="Zmazať"
-                                @click="confirmDeleteRecipient(data)"
-                            />
-                        </template>
-                    </Column>
-                </DataTable>
+        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <PageHeader title="Klienti">
+                <template #actions>
+                    <Link :href="route('recipients.create')">
+                        <Button label="Nový klient" icon="pi pi-plus" class="p-button-raised p-button-sm" />
+                    </Link>
+                </template>
+            </PageHeader>
+            <DataTable :value="recipients" tableStyle="min-width: 50rem">
+                <Column field="company_name" header="Názov / obchodné meno">
+                    <template #body="{ data }">{{ displayName(data) }}</template>
+                </Column>
+                <Column field="city" header="Mesto">
+                    <template #body="{ data }">{{ data.city || '—' }}</template>
+                </Column>
+                <Column field="street" header="Ulica">
+                    <template #body="{ data }">{{ data.street || '—' }}</template>
+                </Column>
+                <Column field="street_num" header="Číslo ulice">
+                    <template #body="{ data }">{{ data.street_num || '—' }}</template>
+                </Column>
+                <Column header="Akcie">
+                    <template #body="{ data }">
+                        <Link :href="route('recipients.edit', data.id)">
+                            <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
+                        </Link>
+                        <Button
+                            icon="pi pi-trash"
+                            class="p-button-text p-button-sm p-button-danger"
+                            title="Zmazať"
+                            @click="confirmDeleteRecipient(data)"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
         </div>
     </AuthenticatedLayout>
 </template>

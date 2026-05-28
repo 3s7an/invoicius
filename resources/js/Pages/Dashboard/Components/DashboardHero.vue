@@ -30,17 +30,17 @@ defineProps({
         <div class="space-y-6 lg:col-span-6">
             <div class="flex h-full min-h-[380px] flex-col gap-4 sm:flex-row lg:flex-col">
                 <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Faktúry</p>
+                    <p class="text-base font-semibold text-gray-600">Faktúry</p>
                     <p class="mt-1 text-3xl font-semibold text-gray-900">{{ counts.invoices }}</p>
                     <p class="mt-1 text-xs text-gray-500">celkom v systéme</p>
                 </div>
                 <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Klienti</p>
+                    <p class="text-base font-semibold text-gray-600">Klienti</p>
                     <p class="mt-1 text-3xl font-semibold text-gray-900">{{ counts.clients }}</p>
                     <p class="mt-1 text-xs text-gray-500">aktívna databáza</p>
                 </div>
                 <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                    <p class="text-sm font-medium text-gray-500">Automatizácie</p>
+                    <p class="text-base font-semibold text-gray-600">Automatizácie</p>
                     <p class="mt-1 text-3xl font-semibold text-gray-900">{{ counts.automatizations_active }}</p>
                     <p class="mt-1 text-xs text-gray-500">aktívne</p>
                 </div>
