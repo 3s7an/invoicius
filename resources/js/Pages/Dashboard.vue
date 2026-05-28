@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import InvoiceOverviewCards from '@/Components/InvoiceOverviewCards.vue';
-import InvoiceStatsPie from '@/Components/InvoiceStatsPie.vue';
+import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
+import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecentInvoices.vue';
+import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps({
@@ -13,6 +14,18 @@ defineProps({
         type: String,
         default: '€',
     },
+    counts: {
+        type: Object,
+        default: () => ({ invoices: 0, clients: 0, automatizations_active: 0 }),
+    },
+    recent_invoices: {
+        type: Array,
+        default: () => [],
+    },
+    active_automatizations: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -20,10 +33,19 @@ defineProps({
     <Head title="Prehľad" />
 
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-            <h1 class="app-page-title mb-6">Prehľad</h1>
-            <InvoiceOverviewCards :stats="invoice_stats" :currency-symbol="currency_symbol" />
-            <InvoiceStatsPie :stats="invoice_stats" :currency-symbol="currency_symbol" />
+        <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap items-end justify-between gap-4">
+                <div>
+                    <h1 class="app-page-title">Prehľad</h1>
+                </div>
+            </div>
+
+            <DashboardHero :invoice_stats="invoice_stats" :currency_symbol="currency_symbol" :counts="counts" />
+
+            <div class="grid gap-6 lg:grid-cols-2">
+                <DashboardRecentInvoices :recent_invoices="recent_invoices" :currency_symbol="currency_symbol" />
+                <DashboardActiveAutomatizations :active_automatizations="active_automatizations" />
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

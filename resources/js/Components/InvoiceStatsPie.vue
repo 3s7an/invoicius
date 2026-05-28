@@ -130,17 +130,11 @@ watch(
 </script>
 
 <template>
-    <div class="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/60 p-6 shadow-sm">
+    <div class="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <div class="flex items-start justify-between gap-4">
             <div>
                 <h2 class="text-base font-semibold text-gray-900">Rozdelenie faktúr</h2>
-                <p class="mt-1 text-sm text-gray-500">Prehľad podľa stavu faktúr.</p>
-            </div>
-            <div class="hidden text-right sm:block">
-                <p class="text-xs font-medium uppercase tracking-wide text-gray-400">Spolu</p>
-                <p class="mt-0.5 text-base font-semibold text-gray-900">
-                    {{ formatAmount(total) }} {{ currencySymbol }}
-                </p>
+                <p class="mt-1 text-sm text-gray-500">Prehľad podľa stavu faktúr:</p>
             </div>
         </div>
 
@@ -160,7 +154,7 @@ watch(
                         <div
                             v-for="s in segments"
                             :key="s.key"
-                            class="flex items-center justify-between gap-4 rounded-xl bg-white/70 p-4 ring-1 ring-black/5"
+                            class="flex items-center justify-between gap-4 rounded-xl bg-gray-50/60 p-4 ring-1 ring-gray-200/60"
                         >
                             <div class="flex items-center gap-3">
                                 <span class="h-2.5 w-2.5 rounded-full" :class="s.bg" aria-hidden="true" />
