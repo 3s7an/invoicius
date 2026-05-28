@@ -6,10 +6,7 @@
         "rule": {
           "interval": [
             {
-              "field": "days",
-              "daysInterval": 1,
-              "triggerAtHour": 8,
-              "triggerAtMinute": 0
+              "triggerAtHour": 8
             }
           ]
         }
@@ -18,7 +15,10 @@
       "name": "Daily 8:00",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 300]
+      "position": [
+        0,
+        304
+      ]
     },
     {
       "parameters": {
@@ -28,8 +28,8 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "={{ $env.INVOICIUS_N8N_HEADER || '3stan' }}",
-              "value": "={{ $env.INVOICIUS_N8N_TOKEN }}"
+              "name": "=3stan",
+              "value": "=r54lV9L0capUKkNHUqd0vukR9BNavl3d"
             }
           ]
         },
@@ -39,18 +39,24 @@
       "name": "Process Automatizations",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [280, 300]
+      "position": [
+        288,
+        304
+      ]
     },
     {
       "parameters": {
         "fieldToSplitOut": "results",
-        "include": "noOtherFields"
+        "options": {}
       },
       "id": "split-results",
       "name": "Split Results",
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
-      "position": [560, 300]
+      "position": [
+        560,
+        304
+      ]
     },
     {
       "parameters": {
@@ -66,13 +72,19 @@
               "id": "success-true",
               "leftValue": "={{ $json.success }}",
               "rightValue": true,
-              "operator": { "type": "boolean", "operation": "equals" }
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
             },
             {
               "id": "type-reminder",
               "leftValue": "={{ $json.type }}",
               "rightValue": "invoice_due_reminder",
-              "operator": { "type": "string", "operation": "equals" }
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
             }
           ],
           "combinator": "and"
@@ -83,57 +95,163 @@
       "name": "Reminder Only",
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
-      "position": [840, 300]
+      "position": [
+        848,
+        304
+      ]
     },
     {
       "parameters": {
-        "fieldToSplitOut": "data.invoices",
-        "include": "allFields"
+        "jsCode": "const d = items[0]?.json?.data || {};\nconst invoices = Array.isArray(d.invoices) ? d.invoices : [];\nconst offset = Number(d.due_offset_days ?? 0);\nconst targetDate = d.target_date || '';\n\nlet headline;\nif (offset < 0) headline = `Pripomienka: o ${Math.abs(offset)} dní je splatnosť týchto faktúr.`;\nelse if (offset > 0) headline = `Upozornenie: tieto faktúry sú ${offset} dní po splatnosti.`;\nelse headline = 'Dnes je splatnosť týchto faktúr.';\n\nconst lines = invoices.map((i) => {\n  const number = i.number ?? '—';\n  const recipient = i.recipient_name ?? '—';\n  const due = i.due_date ?? '—';\n  const status = i.status_name ?? i.status_code ?? '—';\n  return `- ${number} | ${recipient} | splatnosť: ${due} | stav: ${status}`;\n});\n\nconst subject = `Upozornenie: ${invoices.length} faktúr (${targetDate || 'termín'})`;\nconst message = [\n  'Dobrý deň,',\n  '',\n   '',\n  headline,\n  targetDate ? `Cieľový dátum: ${targetDate}` : null,\n  '',\n  '',\n  ...lines,\n  '',\n  '',\n  'Prehľad: https://invoicius.online',\n  '',\n   '',\n  'S pozdravom,',\n  'Invoicius',\n].filter(Boolean).join('\\n');\n\nreturn [{ json: { ...items[0].json, email: { to: d.user_email, subject, message, invoicesCount: invoices.length } } }];"
       },
-      "id": "split-invoices",
-      "name": "Split Invoices",
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [1120, 300]
+      "id": "format-email",
+      "name": "Format Summary Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        304
+      ]
     },
     {
       "parameters": {
-        "resource": "message",
-        "operation": "send",
-        "sendTo": "={{ $json.data.user_email }}",
-        "subject": "=Upozornenie na splatnosť faktúry {{ $json.data.invoices.number }}",
+        "sendTo": "={{ $json.email.to }}",
+        "subject": "={{ $json.email.subject }}",
         "emailType": "text",
-        "message": "=Dobrý deň,\\n\\n{{ $json.data.due_offset_days < 0 ? ('O ' + Math.abs($json.data.due_offset_days) + ' dní bude splatná') : ($json.data.due_offset_days > 0 ? ('Faktúra je ' + $json.data.due_offset_days + ' dní po splatnosti') : 'Dnes je splatná') }} faktúra č. {{ $json.data.invoices.number }} pre odberateľa {{ $json.data.invoices.recipient_name || '—' }}.\\n\\nSplatnosť: {{ $json.data.invoices.due_date }}\\n\\nPrehľad nájdete po prihlásení: https://invoicius.online\\n\\nS pozdravom,\\nInvoicius",
+        "message": "={{ $json.email.message }}",
         "options": {}
       },
       "id": "gmail-reminder",
-      "name": "Send Due Reminder",
+      "name": "Send Summary Reminder",
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
-      "position": [1400, 300]
+      "position": [
+        1600,
+        304
+      ],
+      "webhookId": "008a1a3b-a356-49cf-aa62-4c88c86c986e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ts4TbfgKdps7zIo3",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "066c4c29-25ea-45e3-9971-7fbc966a71ca",
+              "leftValue": "={{ $json.data.invoices }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "array",
+                "operation": "lengthGt",
+                "rightType": "number"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1056,
+        304
+      ],
+      "id": "5167c724-29f1-4fd1-a634-838608171627",
+      "name": "Filter"
     }
   ],
+  "pinData": {},
   "connections": {
     "Daily 8:00": {
-      "main": [[{ "node": "Process Automatizations", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Process Automatizations",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Process Automatizations": {
-      "main": [[{ "node": "Split Results", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Split Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Split Results": {
-      "main": [[{ "node": "Reminder Only", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Reminder Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Reminder Only": {
-      "main": [[{ "node": "Split Invoices", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
-    "Split Invoices": {
-      "main": [[{ "node": "Send Due Reminder", "type": "main", "index": 0 }]]
+    "Format Summary Email": {
+      "main": [
+        [
+          {
+            "node": "Send Summary Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Format Summary Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
+  "active": true,
   "settings": {
     "executionOrder": "v1",
+    "binaryMode": "separate",
     "timezone": "Europe/Bratislava"
   },
+  "versionId": "a7c87f70-d2fe-44e8-b93f-cf53e0d2dee7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "38e3634f194e0dd8cce139a4d681df85e98afc4e27c5604925d2cc1e4ff676e8"
+  },
+  "id": "0hLwx9PAEAe4uULR",
   "tags": []
 }
-

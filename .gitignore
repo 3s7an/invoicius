@@ -24,3 +24,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Local-only notes (never commit)
+/.local-notes
