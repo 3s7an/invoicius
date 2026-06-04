@@ -1,10 +1,11 @@
 <script setup>
 import { ref, watch } from 'vue';
+import DatePicker from 'primevue/datepicker';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { defaultInvoiceHeader } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
-import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import { prefixedId, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
     modelValue: {
@@ -84,21 +85,27 @@ const id = (name) => prefixedId(props.idPrefix, name);
             </div>
             <div>
                 <InputLabel :for="id('issue-date')" value="Dátum vystavenia" />
-                <TextInput
-                    :id="id('issue-date')"
-                    v-model="header.issue_date"
-                    type="date"
-                    class="mt-1 block w-full"
+                <DatePicker
+                    :inputId="id('issue-date')"
+                    :modelValue="ymdToDate(header.issue_date)"
+                    showIcon
+                    iconDisplay="input"
+                    fluid
+                    class="mt-1"
+                    @update:modelValue="(d) => { header.issue_date = d ? toYMD(d) : '' }"
                 />
                 <InputError class="mt-2" :message="errors.issue_date" />
             </div>
             <div>
                 <InputLabel :for="id('due-date')" value="Dátum splatnosti" />
-                <TextInput
-                    :id="id('due-date')"
-                    v-model="header.due_date"
-                    type="date"
-                    class="mt-1 block w-full"
+                <DatePicker
+                    :inputId="id('due-date')"
+                    :modelValue="ymdToDate(header.due_date)"
+                    showIcon
+                    iconDisplay="input"
+                    fluid
+                    class="mt-1"
+                    @update:modelValue="(d) => { header.due_date = d ? toYMD(d) : '' }"
                 />
                 <InputError class="mt-2" :message="errors.due_date" />
             </div>

@@ -7,6 +7,11 @@ export function prefixedId(prefix, name) {
 
 export const toYMD = (d = new Date()) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+export const ymdToDate = (ymd) => {
+    if (!ymd || !/^\d{4}-\d{2}-\d{2}/.test(String(ymd))) return null;
+    const [y, m, d] = String(ymd).slice(0, 10).split('-').map(Number);
+    return new Date(y, m - 1, d);
+};
 export const todayYMD = () => toYMD();
 export const defaultDueYMD = (days = 14) => toYMD(new Date(Date.now() + days * 864e5));
 export const formatDate = (v) => (v ? String(v).slice(0, 10) : '');

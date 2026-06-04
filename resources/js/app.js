@@ -8,6 +8,7 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import { sk } from 'primelocale/js/sk.js';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -23,6 +24,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue)
             .use(PrimeVue, {
+                locale: sk,
                 theme: {
                     preset: Aura,
                     options: {
