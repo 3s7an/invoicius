@@ -90,7 +90,7 @@
                                 v-model="item.quantity"
                                 type="number"
                                 min="0"
-                                step="1"
+                                step="any"
                                 class="block w-full text-right"
                             />
                         </td>
