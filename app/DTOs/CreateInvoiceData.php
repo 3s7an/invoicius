@@ -19,25 +19,4 @@ final readonly class CreateInvoiceData
         public array $items,
     ) {
     }
-
-    /**
-     * @param array<string, mixed> $validated
-     */
-    public static function fromValidated(array $validated, int $userId): self
-    {
-        return new self(
-            userId: $userId,
-            number: $validated['number'],
-            variableSymbol: $validated['variable_symbol'],
-            issueDate: Carbon::parse($validated['issue_date']),
-            dueDate: Carbon::parse($validated['due_date']),
-            currencyId: (int) $validated['currency_id'],
-            recipientId: $validated['recipient_id'] === null ? null : (int) $validated['recipient_id'],
-            recipient: CreateInvoiceRecipientData::fromArray($validated['recipient']),
-            items: array_map(
-                fn (array $row) => CreateInvoiceItemData::fromArray($row),
-                $validated['items'],
-            ),
-        );
-    }
 }

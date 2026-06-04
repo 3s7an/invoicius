@@ -12,18 +12,4 @@ final readonly class CreateInvoiceItemData
         public ?int $vatTypeId,
     ) {
     }
-
-    /**
-     * @param array<string, mixed> $data
-     */
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            name: $data['name'],
-            quantity: (float) $data['quantity'],
-            unitPrice: (float) $data['unit_price'],
-            unit: $data['unit'],
-            vatTypeId: $data['vat_type_id'] === null ? null : (int) $data['vat_type_id'],
-        );
-    }
 }

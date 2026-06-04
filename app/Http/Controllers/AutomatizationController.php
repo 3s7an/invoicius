@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AutomatizationService;
 use App\Services\RecipientService;
-use App\DTOs\CreateAutomatizationData;
+use App\Mappers\CreateAutomatizationDataMapper;
 use App\Http\Requests\StoreAutomatizationRequest;
 use App\Http\Requests\UpdateAutomatizationRequest;
 use App\Models\Automatization;
@@ -18,6 +18,7 @@ class AutomatizationController extends Controller
     public function __construct(
         private readonly AutomatizationService $automatizationService,
         private readonly RecipientService $recipientService,
+        private readonly CreateAutomatizationDataMapper $createAutomatizationDataMapper,
     ) {
     }
 
@@ -56,7 +57,7 @@ class AutomatizationController extends Controller
     public function store(StoreAutomatizationRequest $request): RedirectResponse
     {
         $this->automatizationService->store(
-            CreateAutomatizationData::fromValidated($request->validated(), $request->user()->id),
+            $this->createAutomatizationDataMapper->fromValidated($request->validated(), $request->user()->id),
         );
 
         return redirect()
