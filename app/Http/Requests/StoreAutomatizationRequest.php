@@ -16,6 +16,7 @@ class StoreAutomatizationRequest extends FormRequest
                 'integer',
                 Rule::exists('recipients', 'id')->where('user_id', $this->user()?->id),
             ],
+            'name' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:100'],
             'date_trigger' => ['required', 'date', 'after_or_equal:today'],
             'due_offset_days' => [

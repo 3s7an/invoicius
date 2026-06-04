@@ -15,6 +15,7 @@ class Automatization extends Model
     protected $fillable = [
         'user_id',
         'recipient_id',
+        'name',
         'type',
         'date_trigger',
         'due_offset_days',

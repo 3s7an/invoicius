@@ -24,16 +24,8 @@ function toggleActive(automatization) {
     );
 }
 
-function typeLabel(type) {
-    if (type === 'invoice_auto_gen') return 'Automatické generovanie faktúr';
-    if (type === 'invoice_report') return 'Mesačný report faktúr';
-    if (type === 'invoice_due_reminder') return 'Upozornenie na splatnosť';
-    return type;
-}
-
 function confirmDelete(automatization) {
-    const label = recipientName(automatization) ?? typeLabel(automatization.type);
-    if (!confirm(`Zmazať automatizáciu „${label}“?`)) return;
+    if (!confirm(`Zmazať automatizáciu „${automatization.name}“?`)) return;
     router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
 }
 </script>
@@ -47,7 +39,7 @@ function confirmDelete(automatization) {
         >
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0">
-                    <p class="text-base font-semibold text-gray-900">{{ typeLabel(automatization.type) }}</p>
+                    <p class="text-base font-semibold text-gray-900">{{ automatization.name }}</p>
                     <p v-if="recipientName(automatization)" class="mt-0.5 truncate text-sm text-gray-600">
                         Klient: {{ recipientName(automatization) }}
                     </p>

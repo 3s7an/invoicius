@@ -9,6 +9,7 @@ final readonly class CreateAutomatizationData
     public function __construct(
         public int $userId,
         public ?int $recipientId,
+        public string $name,
         public string $type,
         public Carbon $dateTrigger,
         public ?int $dueOffsetDays,
@@ -29,6 +30,7 @@ final readonly class CreateAutomatizationData
             recipientId: ($recipientId === null || $recipientId === '' || (int) $recipientId === 0)
                 ? null
                 : (int) $recipientId,
+            name: (string) $validated['name'],
             type: $type,
             dateTrigger: $type === 'invoice_due_reminder'
                 ? now()->startOfDay()

@@ -28,7 +28,7 @@ defineProps({
 
         <ul v-else class="mt-4 space-y-4">
             <li v-for="a in active_automatizations" :key="a.id">
-                <p class="text-sm font-semibold text-gray-900">{{ a.type }}</p>
+                <p class="text-sm font-semibold text-gray-900">{{ a.name }}</p>
                 <p class="text-xs text-gray-500">
                     ďalšie spustenie: {{ a.date_trigger ? formatDate(a.date_trigger) : '—' }}
                 </p>

@@ -3,7 +3,7 @@ import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+import { defaultAutomatizationForm, automatizationTypeLabel } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
 import { todayYMD } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
@@ -28,7 +28,15 @@ const form = useForm(defaultAutomatizationForm(props.automatization));
 
 watch(
     () => form.type,
-    (type) => {
+    (type, oldType) => {
+        if (!isEdit.value) {
+            const currentName = form.name?.trim();
+            const oldDefault = oldType ? automatizationTypeLabel(oldType) : '';
+            if (!currentName || currentName === oldDefault) {
+                form.name = automatizationTypeLabel(type);
+            }
+        }
+
         if (type === 'invoice_report') {
             form.recipient_id = '';
         }
@@ -67,6 +75,19 @@ function submit() {
                 </header>
 
                 <div class="mt-6 space-y-6">
+                    <div>
+                        <InputLabel for="auto-name" value="Názov" />
+                        <input
+                            id="auto-name"
+                            type="text"
+                            v-model="form.name"
+                            :class="inputClass"
+                            maxlength="255"
+                            required
+                        />
+                        <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
+
                     <div>
                         <InputLabel for="auto-type" value="Typ" />
                         <select

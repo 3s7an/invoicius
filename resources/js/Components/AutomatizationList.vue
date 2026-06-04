@@ -24,23 +24,16 @@ function toggleActive(automatization) {
     }, { preserveScroll: true });
 }
 
-function typeLabel(type) {
-    if (type === 'invoice_auto_gen') return 'Automatické generovanie faktúr';
-    if (type === 'invoice_report') return 'Mesačný report faktúr';
-    if (type === 'invoice_due_reminder') return 'Upozornenie na splatnosť';
-    return type;
-}
-
 function confirmDelete(automatization) {
-    if (!confirm(`Zmazať automatizáciu pre „${recipientName(automatization)}“?`)) return;
+    if (!confirm(`Zmazať automatizáciu „${automatization.name}“?`)) return;
     router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
 }
 </script>
 
 <template>
     <DataTable :value="automatizations" tableStyle="min-width: 40rem">
-        <Column field="type" header="Názov">
-            <template #body="{ data }">{{ typeLabel(data.type) }}</template>
+        <Column field="name" header="Názov">
+            <template #body="{ data }">{{ data.name }}</template>
         </Column>
         <Column header="Nasledujúce spustenie">
             <template #body="{ data }">{{ formatDate(data.date_trigger) }}</template>

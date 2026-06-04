@@ -62,7 +62,7 @@ class DashboardService
     /**
      * @return \Illuminate\Support\Collection<int, array{
      *   id:int,
-     *   type:string,
+     *   name:string,
      *   recipient_label:string|null,
      *   date_trigger:string|null,
      *   due_offset_days:int|null,
@@ -78,7 +78,7 @@ class DashboardService
             ->limit($limit)
             ->get([
                 'id',
-                'type',
+                'name',
                 'recipient_id',
                 'date_trigger',
                 'due_offset_days',
@@ -87,7 +87,7 @@ class DashboardService
             ])
             ->map(fn ($a) => [
                 'id' => $a->id,
-                'type' => $a->type,
+                'name' => $a->name,
                 'recipient_label' => $a->recipient
                     ? ($a->recipient->company_name ?? $a->recipient->name)
                     : null,

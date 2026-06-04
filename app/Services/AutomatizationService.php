@@ -21,6 +21,7 @@ class AutomatizationService
         return Automatization::create([
             'user_id' => $data->userId,
             'recipient_id' => $data->recipientId,
+            'name' => $data->name,
             'type' => $data->type,
             'date_trigger' => $data->dateTrigger,
             'due_offset_days' => $data->dueOffsetDays,
