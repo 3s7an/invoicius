@@ -59,7 +59,7 @@ defineProps({
                         <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                             <p class="text-sm font-medium text-gray-500">Klienti</p>
                             <p class="mt-1 text-3xl font-semibold text-gray-900">{{ counts.clients }}</p>
-                            <p class="mt-1 text-xs text-gray-500">aktívna databáza</p>
+                            <p class="mt-1 text-xs text-gray-500">celkom v systéme</p>
                         </div>
                         <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                             <p class="text-sm font-medium text-gray-500">Automatizácie</p>
@@ -148,12 +148,8 @@ defineProps({
                         >
                             <div class="flex items-start justify-between gap-4">
                                 <p class="text-sm font-semibold text-gray-900">{{ a.type }}</p>
-                                <p class="text-xs text-gray-500">next: {{ a.date_trigger || '—' }}</p>
+                                <p class="text-xs text-gray-500">ďalšie spustenie: {{ a.date_trigger ? formatDate(a.date_trigger) : '—'  }}</p>
                             </div>
-                            <p class="mt-1 text-sm text-gray-600">
-                                {{ a.recipient_label ? `Klient: ${a.recipient_label}` : 'Pre všetkých klientov' }}
-                                <span v-if="a.due_offset_days != null"> · offset: {{ a.due_offset_days }}</span>
-                            </p>
                         </div>
                     </div>
                 </div>
