@@ -18,6 +18,7 @@ class InvoiceController extends Controller
 {
     public function __construct(
         private readonly InvoiceService $invoiceService,
+        private readonly InvoicePdfService $invoicePdfService,
     ) {
     }
 
@@ -107,6 +108,6 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        return $this->invoiceService->getPdfDownloadResponse($invoice);
+        return $this->invoicePdfService->getPdfDownloadResponse($invoice);
     }
 }
