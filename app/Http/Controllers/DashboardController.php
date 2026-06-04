@@ -30,7 +30,7 @@ class DashboardController extends Controller
 
         $currencySymbol = $user->currency?->symbol ?? '€';
 
-        return Inertia::render('Dashboard', [
+        return Inertia::render('Dashboard/Dashboard', [
             'invoice_stats' => $invoiceStats,
             'currency_symbol' => $currencySymbol,
             'counts' => $counts,

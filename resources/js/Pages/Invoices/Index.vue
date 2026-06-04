@@ -83,7 +83,7 @@ const props = defineProps({
     },
     invoice_stats: {
         type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0 }),
+        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
     },
     invoice_statuses: {
         type: Array,

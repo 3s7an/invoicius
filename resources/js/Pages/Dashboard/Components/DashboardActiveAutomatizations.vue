@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import { formatDate } from '@/utils/formatters';
 
 defineProps({
     active_automatizations: {
@@ -25,22 +26,17 @@ defineProps({
             Zatiaľ nemáš žiadne aktívne automatizácie.
         </div>
 
-        <div v-else class="mt-4 space-y-3">
-            <div
-                v-for="a in active_automatizations"
-                :key="a.id"
-                class="rounded-xl bg-gray-50/60 p-4 ring-1 ring-gray-200/60"
-            >
-                <div class="flex items-start justify-between gap-4">
-                    <p class="text-sm font-semibold text-gray-900">{{ a.type }}</p>
-                    <p class="text-xs text-gray-500">next: {{ a.date_trigger || '—' }}</p>
-                </div>
-                <p class="mt-1 text-sm text-gray-600">
-                    {{ a.recipient_label ? `Klient: ${a.recipient_label}` : 'Pre všetkých klientov' }}
-                    <span v-if="a.due_offset_days != null"> · offset: {{ a.due_offset_days }}</span>
+        <ul v-else class="mt-4 space-y-4">
+            <li v-for="a in active_automatizations" :key="a.id">
+                <p class="text-sm font-semibold text-gray-900">{{ a.type }}</p>
+                <p class="text-xs text-gray-500">
+                    ďalšie spustenie: {{ a.date_trigger ? formatDate(a.date_trigger) : '—' }}
                 </p>
-            </div>
-        </div>
+                <p class="mt-0.5 text-sm text-gray-600">
+                    {{ a.recipient_label ? `Klient: ${a.recipient_label}` : 'Pre všetkých klientov' }}
+                </p>
+            </li>
+        </ul>
     </div>
 </template>
 

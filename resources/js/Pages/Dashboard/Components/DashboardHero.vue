@@ -4,7 +4,7 @@ import InvoiceStatsPie from '@/Components/InvoiceStatsPie.vue';
 defineProps({
     invoice_stats: {
         type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0 }),
+        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
     },
     currency_symbol: {
         type: String,
@@ -37,7 +37,7 @@ defineProps({
                 <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                     <p class="text-base font-semibold text-gray-600">Klienti</p>
                     <p class="mt-1 text-3xl font-semibold text-gray-900">{{ counts.clients }}</p>
-                    <p class="mt-1 text-xs text-gray-500">aktívna databáza</p>
+                    <p class="mt-1 text-xs text-gray-500">celkom v systéme</p>
                 </div>
                 <div class="flex-1 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                     <p class="text-base font-semibold text-gray-600">Automatizácie</p>

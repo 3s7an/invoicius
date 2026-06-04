@@ -38,7 +38,7 @@ class InvoiceService
     }
 
     /**
-     * @return array{total_invoiced: float, paid: float, awaiting: float, overdue: float}
+     * @return array{total_invoiced: float, paid: float, awaiting: float, overdue: float, draft: float}
      */
     public function getInvoiceStats(int $userId): array
     {
@@ -49,11 +49,16 @@ class InvoiceService
         $today = now()->startOfDay();
 
         $totalInvoiced = (clone $base)->sum('total_price');
-        $paid = 0.0; 
+        $paid = 0.0;
+        $draft = 0.0;
         
-        if($paidStatusId) {
+        if ($paidStatusId) {
             $paid = (clone $base)->where('invoice_status_id', $paidStatusId)->sum('total_price');
-        } 
+        }
+
+        if ($draftStatusId) {
+            $draft = (clone $base)->where('invoice_status_id', $draftStatusId)->sum('total_price');
+        }
 
         $overdueQuery = (clone $base)->whereDate('due_date', '<', $today);
 
@@ -86,6 +91,7 @@ class InvoiceService
             'paid' => (float) $paid,
             'awaiting' => (float) max(0, $awaiting),
             'overdue' => $overdue,
+            'draft' => (float) $draft,
         ];
     }
 

@@ -173,6 +173,7 @@ class InvoiceServiceTest extends TestCase
         $this->assertEquals(300.00, $stats['total_invoiced']);
         $this->assertEquals(200.00, $stats['awaiting']);
         $this->assertEquals(0.00, $stats['paid']);
+        $this->assertEquals(100.00, $stats['draft']);
     }
 
     public function test_create_invoice_rejects_other_users_recipient(): void

@@ -8,7 +8,7 @@ Chart.register(...registerables);
 const props = defineProps({
     stats: {
         type: Object,
-        default: () => ({ paid: 0, awaiting: 0, overdue: 0 }),
+        default: () => ({ paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
     },
     currencySymbol: {
         type: String,
@@ -23,20 +23,28 @@ const dataValues = computed(() => {
     const paid = Number(props.stats?.paid ?? 0);
     const awaiting = Number(props.stats?.awaiting ?? 0);
     const overdue = Number(props.stats?.overdue ?? 0);
-    return { paid, awaiting, overdue };
+    const draft = Number(props.stats?.draft ?? 0);
+    return { paid, awaiting, overdue, draft };
 });
 
-const total = computed(() => dataValues.value.paid + dataValues.value.awaiting + dataValues.value.overdue);
+const total = computed(
+    () =>
+        dataValues.value.paid +
+        dataValues.value.awaiting +
+        dataValues.value.overdue +
+        dataValues.value.draft
+);
 const hasAny = computed(() => total.value > 0);
 
 const segments = computed(() => {
-    const { paid, awaiting, overdue } = dataValues.value;
+    const { paid, awaiting, overdue, draft } = dataValues.value;
     const t = total.value || 0;
 
     const items = [
-        { key: 'paid', label: 'Uhradené', value: paid, color: '#06b6d4', ring: 'ring-cyan-200', bg: 'bg-cyan-500' },
-        { key: 'awaiting', label: 'Čaká na úhradu', value: awaiting, color: '#f59e0b', ring: 'ring-amber-200', bg: 'bg-amber-500' },
-        { key: 'overdue', label: 'Po splatnosti', value: overdue, color: '#ef4444', ring: 'ring-red-200', bg: 'bg-red-500' },
+        { key: 'paid', label: 'Uhradené', value: paid, color: '#06b6d4', bg: 'bg-cyan-500' },
+        { key: 'awaiting', label: 'Čaká na úhradu', value: awaiting, color: '#f59e0b', bg: 'bg-amber-500' },
+        { key: 'overdue', label: 'Po splatnosti', value: overdue, color: '#ef4444', bg: 'bg-red-500' },
+        { key: 'draft', label: 'Koncept', value: draft, color: '#94a3b8', bg: 'bg-slate-400' },
     ];
 
     return items.map((i) => ({
@@ -56,7 +64,7 @@ function renderChart() {
     if (!canvasRef.value) return;
     destroyChart();
 
-    const { paid, awaiting, overdue } = dataValues.value;
+    const { paid, awaiting, overdue, draft } = dataValues.value;
 
     const centerTextPlugin = {
         id: 'centerText',
@@ -86,12 +94,12 @@ function renderChart() {
     chart = new Chart(canvasRef.value.getContext('2d'), {
         type: 'doughnut',
         data: {
-            labels: ['Uhradené', 'Čaká na úhradu', 'Po splatnosti'],
+            labels: ['Uhradené', 'Čaká na úhradu', 'Po splatnosti', 'Koncept'],
             datasets: [
                 {
-                    data: [paid, awaiting, overdue],
+                    data: [paid, awaiting, overdue, draft],
                     backgroundColor: segments.value.map((s) => s.color),
-                    borderColor: ['#ffffff', '#ffffff', '#ffffff'],
+                    borderColor: ['#ffffff', '#ffffff', '#ffffff', '#ffffff'],
                     borderWidth: 3,
                     borderRadius: 10,
                     spacing: 2,
@@ -124,7 +132,13 @@ onMounted(renderChart);
 onBeforeUnmount(destroyChart);
 
 watch(
-    () => [dataValues.value.paid, dataValues.value.awaiting, dataValues.value.overdue, props.currencySymbol],
+    () => [
+        dataValues.value.paid,
+        dataValues.value.awaiting,
+        dataValues.value.overdue,
+        dataValues.value.draft,
+        props.currencySymbol,
+    ],
     renderChart
 );
 </script>
@@ -150,23 +164,21 @@ watch(
                 </div>
 
                 <div class="lg:col-span-5">
-                    <div class="space-y-3">
+                    <div class="space-y-4">
                         <div
                             v-for="s in segments"
                             :key="s.key"
-                            class="flex items-center justify-between gap-4 rounded-xl bg-gray-50/60 p-4 ring-1 ring-gray-200/60"
+                            class="flex items-start gap-3"
                         >
-                            <div class="flex items-center gap-3">
-                                <span class="h-2.5 w-2.5 rounded-full" :class="s.bg" aria-hidden="true" />
-                                <div class="min-w-0">
-                                    <p class="truncate text-sm font-semibold text-gray-900">{{ s.label }}</p>
-                                    <p class="text-xs text-gray-500">{{ s.pct }}%</p>
-                                </div>
+                            <span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" :class="s.bg" aria-hidden="true" />
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold text-gray-900">{{ s.label }}</p>
+                                <p class="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+                                    {{ formatAmount(s.value) }} {{ currencySymbol }}
+                                </p>
+                                <p class="text-xs text-gray-500">{{ s.pct }}%</p>
+                               
                             </div>
-
-                            <p class="shrink-0 text-sm font-semibold text-gray-900">
-                                {{ formatAmount(s.value) }} {{ currencySymbol }}
-                            </p>
                         </div>
                     </div>
                 </div>
