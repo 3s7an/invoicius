@@ -23,13 +23,13 @@ export function withRecipientLabel(recipient) {
     };
 }
 
-export function defaultInvoiceItem(vatTypes = []) {
+export function defaultInvoiceItem(defaultVatTypeId, vatTypes = []) {
     return {
         name: '',
         quantity: 1,
         unit: 'hrs',
         unit_price: '',
-        vat_type_id: vatTypes?.[0]?.id ?? null,
+        vat_type_id: defaultVatTypeId ?? vatTypes?.[0]?.id ?? null,
     };
 }
 
@@ -61,13 +61,13 @@ function recipientDetailsFromInvoice(invoice = {}) {
     };
 }
 
-function invoiceItemsFromInvoice(invoice, vatTypes) {
+function invoiceItemsFromInvoice(invoice, vatTypes, defaultVatTypeId) {
     if (!invoice?.items?.length) {
-        return [defaultInvoiceItem(vatTypes)];
+        return [defaultInvoiceItem(defaultVatTypeId, vatTypes)];
     }
 
     return invoice.items.map((item) => ({
-        ...defaultInvoiceItem(vatTypes),
+        ...defaultInvoiceItem(defaultVatTypeId, vatTypes),
         name: item.name ?? '',
         quantity: item.quantity ?? 1,
         unit: item.unit ?? 'pcs',
@@ -112,7 +112,11 @@ export function createInvoiceFormDefaults({
         recipient: preselectedRecipient
             ? recipientDetailsFromRecipient(preselectedRecipient)
             : recipientDetailsFromInvoice(sourceInvoice),
-        items: invoiceItemsFromInvoice(isEdit ? sourceInvoice : null, vatTypes),
+        items: invoiceItemsFromInvoice(
+            isEdit ? sourceInvoice : null,
+            vatTypes,
+            user?.default_vat_type_id ?? null
+        ),
     };
 }
 

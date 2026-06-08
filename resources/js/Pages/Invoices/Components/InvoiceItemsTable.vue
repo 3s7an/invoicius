@@ -199,6 +199,9 @@ import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
 import { defaultInvoiceItem } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
 import { UNITS } from '@/utils/units';
+import { usePage } from '@inertiajs/vue3';
+
+const defaultUserVatTypeId = usePage().props.auth?.user?.default_vat_type_id ?? null;
 
 const props = defineProps({
     modelValue: {
@@ -227,10 +230,25 @@ const emit = defineEmits(['update:modelValue']);
 
 const vatTypesList = computed(() => props.vatTypes ?? []);
 
+function mergeItem(item) {
+    const defaults = defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value);
+    const vatTypeId = item.vat_type_id;
+    const resolvedVatTypeId =
+        vatTypeId != null && vatTypeId !== '' && typeof vatTypeId !== 'object'
+            ? vatTypeId
+            : defaults.vat_type_id;
+
+    return {
+        ...defaults,
+        ...item,
+        vat_type_id: resolvedVatTypeId,
+    };
+}
+
 const items = ref(
     props.modelValue?.length
-        ? props.modelValue.map((item) => ({ ...defaultInvoiceItem(vatTypesList.value), ...item }))
-        : [defaultInvoiceItem(vatTypesList.value)]
+        ? props.modelValue.map(mergeItem)
+        : [defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value)]
 );
 
 watch(
@@ -245,7 +263,7 @@ watch(
 );
 
 function addItem() {
-    items.value.push(defaultInvoiceItem(vatTypesList.value));
+    items.value.push(defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value));
 }
 
 function removeItem(index) {
