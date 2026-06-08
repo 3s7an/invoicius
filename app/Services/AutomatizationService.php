@@ -25,6 +25,7 @@ class AutomatizationService
             'type' => $data->type,
             'date_trigger' => $data->dateTrigger,
             'due_offset_days' => $data->dueOffsetDays,
+            'item_names' => $data->itemNames,
             'is_active' => true,
         ]);
     }
@@ -36,6 +37,12 @@ class AutomatizationService
         if ($type === 'invoice_due_reminder') {
             $validated['date_trigger'] = now()->startOfDay();
         }
+
+        if ($type !== 'invoice_auto_gen') {
+            $validated['item_names'] = null;
+        }
+
+        unset($validated['item_count']);
 
         $automatization->update($validated);
 

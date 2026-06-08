@@ -297,13 +297,37 @@ class InvoiceService
         ];
     }
 
-    public function generateFromAutomatization(int $userId, int $recipientId): Invoice
+    public function generateFromAutomatization(int $userId, int $recipientId, array $itemNames): Invoice
     {
         $user = User::with('defaultVatType')->findOrFail($userId);
         $recipient = Recipient::forUser($userId)->findOrFail($recipientId);
 
         $defaultCurrencyId = $user->currency_id ?? Currency::orderBy('id')->value('id');
         $defaultVatTypeId = $user->default_vat_type_id;
+
+        $items = [];
+
+        if(!empty($itemNames)) {
+            foreach ($itemNames as $name) {
+                $items[] = new CreateInvoiceItemData(
+                    name: $name,
+                    quantity: 1,
+                    unitPrice: 0,
+                    unit: 'hrs',
+                    vatTypeId: $defaultVatTypeId,
+                );
+            }
+        } else {
+            $items = [
+                new CreateInvoiceItemData(
+                    name: '',
+                    quantity: 1,
+                    unitPrice: 0,
+                    unit: 'hrs',
+                    vatTypeId: $defaultVatTypeId,
+                ),
+            ];
+        }
 
         $data = new CreateInvoiceData(
             userId: $userId,
@@ -324,15 +348,7 @@ class InvoiceService
                 recipientIcDph: $recipient->ic_dph,
                 recipientIban: $recipient->iban,
             ),
-            items: [
-                new CreateInvoiceItemData(
-                    name: '',
-                    quantity: 1,
-                    unitPrice: 0,
-                    unit: '',
-                    vatTypeId: $defaultVatTypeId,
-                ),
-            ],
+            items: $items
         );
 
         return $this->createInvoice($data);

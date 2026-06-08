@@ -13,6 +13,7 @@ final readonly class CreateAutomatizationData
         public string $type,
         public Carbon $dateTrigger,
         public ?int $dueOffsetDays,
+        public ?array $itemNames,
     ) {
     }
 }

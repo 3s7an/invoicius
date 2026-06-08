@@ -61,6 +61,16 @@ function submit() {
 
     form.post(route('automatizations.store'));
 }
+
+watch(
+    () => Number(form.item_count) || 0,
+    (count) => {
+        while (form.item_names.length < count) form.item_names.push('');
+        while (form.item_names.length > count) form.item_names.pop();
+    },
+    { immediate: true }
+);
+
 </script>
 
 <template>
@@ -69,9 +79,9 @@ function submit() {
             <section>
                 <header>
                     <h2 class="text-lg font-medium text-gray-900">Nastavenia automatizácie</h2>
-                    <p class="mt-1 text-sm text-gray-600">
+                    <!-- <p class="mt-1 text-sm text-gray-600">
                         Nastavte automatické generovanie faktúr alebo mesačný report.
-                    </p>
+                    </p> -->
                 </header>
 
                 <div class="mt-6 space-y-6">
@@ -86,6 +96,35 @@ function submit() {
                             required
                         />
                         <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
+
+                    <div v-if="form.type === 'invoice_auto_gen'">
+                        <InputLabel for="auto-item_count" value="Počet položiek vo faktúre" />
+                        <input
+                            id="auto-item_count"
+                            type="number"
+                            v-model="form.item_count"
+                            :class="inputClass"
+                            maxlength="255"
+                            required
+                        />
+                        <InputError class="mt-2" :message="form.errors.name" />
+                    </div>
+
+                    <div v-if="form.type === 'invoice_auto_gen' && form.item_count > 0">
+                        <InputLabel for="auto-item_count" value="Názov položiek" />
+
+                            <div v-for="(name, index) in form.item_names" :key="index">
+                                <input
+                                    :id="`auto-item_name-${index}`"
+                                    type="text"
+                                    v-model="form.item_names[index]"
+                                    :class="inputClass"
+                                    maxlength="255"
+                                    required
+                                />
+                                <InputError class="mt-2" :message="form.errors.item_name" />
+                            </div>
                     </div>
 
                     <div>

@@ -18,5 +18,11 @@ export function defaultAutomatizationForm(automatization = null) {
             : today,
         due_offset_days: automatization?.due_offset_days ?? '',
         is_active: automatization?.is_active ?? true,
+        item_names: Array.isArray(automatization?.item_names) && automatization.item_names.length
+            ? [...automatization.item_names]
+            : [''],
+        item_count: Array.isArray(automatization?.item_names) && automatization.item_names.length
+            ? automatization.item_names.length
+            : 1,
     };
 }

@@ -24,6 +24,7 @@ class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
         $invoice = $this->invoiceService->generateFromAutomatization(
             $automatization->user_id,
             $automatization->recipient_id,
+            $automatization->item_names ?? [],
         );
 
         return new AutomatizationResult(

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+
 class Automatization extends Model
 {
     use HasFactory, SoftDeletes;
@@ -22,6 +23,7 @@ class Automatization extends Model
         'is_active',
         'last_run_at',
         'result_data',
+        'item_names',
     ];
 
     protected function casts(): array
@@ -32,6 +34,7 @@ class Automatization extends Model
             'is_active' => 'boolean',
             'last_run_at' => 'datetime',
             'result_data' => 'array',
+            'item_names' => 'array',
         ];
     }
 

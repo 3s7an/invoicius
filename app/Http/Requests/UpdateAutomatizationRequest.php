@@ -20,6 +20,14 @@ class UpdateAutomatizationRequest extends FormRequest
             'date_trigger' => ['nullable', 'date'],
             'due_offset_days' => ['nullable', 'integer', 'min:-365', 'max:365'],
             'is_active' => ['nullable', 'boolean'],
+            'item_names' => [
+                Rule::requiredIf(fn () => $this->input('type') === 'invoice_auto_gen'),
+                'nullable',
+                'array',
+                'min:1',
+                'max:20',
+            ],
+            'item_names.*' => ['required', 'string', 'max:255'],
         ];
     }
 }

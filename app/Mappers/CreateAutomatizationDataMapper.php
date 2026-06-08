@@ -27,6 +27,9 @@ final class CreateAutomatizationDataMapper
                 ? now()->startOfDay()
                 : Carbon::parse($validated['date_trigger']),
             dueOffsetDays: ($dueOffsetDays === null || $dueOffsetDays === '' ? null : (int) $dueOffsetDays),
+            itemNames: $type === 'invoice_auto_gen'
+                ? array_values($validated['item_names'] ?? [])
+                : null,
         );
     }
 }

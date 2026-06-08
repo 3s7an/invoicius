@@ -3,6 +3,9 @@ set -e
 
 cd /var/www/html
 
+mkdir -p storage/logs storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
+chmod -R 777 storage bootstrap/cache 2>/dev/null || true
+
 if [ ! -f .env ]; then
     cp .env.example .env
 fi
