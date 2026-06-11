@@ -42,7 +42,7 @@ class AutomatizationProcessor
                 $result = $handler->handle($automatization);
 
                 if ($result->success) {
-                    $this->markAsRun($automatization, $result);
+                    $this->scheduleNextRun($automatization, $result);
                 }
 
                 Log::info('Automatization processed', [
@@ -75,6 +75,8 @@ class AutomatizationProcessor
                     'error' => $e->getMessage(),
                     'next_trigger' => null,
                 ];
+
+                return $results;
             }
         }
 
@@ -90,6 +92,19 @@ class AutomatizationProcessor
     {
         return $this->handlers[$type]
             ?? throw new \InvalidArgumentException("No handler registered for type: {$type}");
+    }
+
+    private function scheduleNextRun(Automatization $automatization, AutomatizationResult $result): void
+    {
+        $nextTrigger = $automatization->type === 'invoice_due_reminder'
+            ? now()->addDay()
+            : now()->addMonth();
+
+        $automatization->update([
+            'last_run_at' => now(),
+            'date_trigger' => $nextTrigger,
+            'result_data' => $result->data,
+        ]);
     }
 
     /**
@@ -118,7 +133,9 @@ class AutomatizationProcessor
      */
     private function ensureRecipientOrAppendError(Automatization $automatization, array &$results): bool
     {
-        if (! $automatization->recipient_id) {
+        if ($automatization->recipient_id && $automatization->recipient) {
+            return true;
+        }
             $results[] = [
                 'automatization_id' => $automatization->id,
                 'type' => $automatization->type,
@@ -129,35 +146,6 @@ class AutomatizationProcessor
             ];
 
             return false;
-        }
-
-        if (! $automatization->recipient) {
-            $results[] = [
-                'automatization_id' => $automatization->id,
-                'type' => $automatization->type,
-                'success' => false,
-                'data' => [],
-                'error' => "Recipient #{$automatization->recipient_id} not found.",
-                'next_trigger' => null,
-            ];
-
-            return false;
-        }
-
-        return true;
-    }
-
-    private function markAsRun(Automatization $automatization, AutomatizationResult $result): void
-    {
-        $nextTrigger = $automatization->type === 'invoice_due_reminder'
-            ? now()->addDay()
-            : now()->addMonth();
-
-        $automatization->update([
-            'last_run_at' => now(),
-            'date_trigger' => $nextTrigger,
-            'result_data' => $result->data,
-        ]);
     }
 }
 
