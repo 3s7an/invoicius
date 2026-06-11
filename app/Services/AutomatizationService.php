@@ -26,25 +26,21 @@ class AutomatizationService
             'date_trigger' => $data->dateTrigger,
             'due_offset_days' => $data->dueOffsetDays,
             'item_names' => $data->itemNames,
-            'is_active' => true,
+            'is_active' => $data->isActive,
         ]);
     }
 
-    public function update(Automatization $automatization, array $validated): Automatization
+    public function update(Automatization $automatization, AutomatizationDTO $data): Automatization
     {
-        $type = $validated['type'] ?? $automatization->type;
-
-        if ($type === 'invoice_due_reminder') {
-            $validated['date_trigger'] = now()->startOfDay();
-        }
-
-        if ($type !== 'invoice_auto_gen') {
-            $validated['item_names'] = null;
-        }
-
-        unset($validated['item_count']);
-
-        $automatization->update($validated);
+        $automatization->update([
+            'recipient_id' => $data->recipientId,
+            'name' => $data->name,
+            'type' => $data->type,
+            'date_trigger' => $data->dateTrigger,
+            'due_offset_days' => $data->dueOffsetDays,
+            'item_names' => $data->itemNames,
+            'is_active' => $data->isActive,
+        ]);
 
         return $automatization;
     }

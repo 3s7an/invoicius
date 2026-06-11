@@ -68,7 +68,10 @@ class AutomatizationController extends Controller
     {
         $this->authorize('update', $automatization);
 
-        $this->automatizationService->update($automatization, $request->validated());
+        $this->automatizationService->update(
+            $automatization,
+            AutomatizationDTO::fromValidated($request->validated(), $automatization->user_id),
+        );
 
         return redirect()
             ->route('automatizations.index')

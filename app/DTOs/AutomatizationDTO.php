@@ -14,6 +14,7 @@ final readonly class AutomatizationDTO
         public Carbon $dateTrigger,
         public ?int $dueOffsetDays,
         public ?array $itemNames,
+        public bool $isActive,
     ) {
     }
 
@@ -40,6 +41,7 @@ final readonly class AutomatizationDTO
             itemNames: $type === 'invoice_auto_gen'
                 ? array_values($validated['item_names'] ?? [])
                 : null,
+            isActive: (bool) ($validated['is_active'] ?? true),
         );
     }
 }
