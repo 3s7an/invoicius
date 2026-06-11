@@ -1,16 +1,21 @@
-export function automatizationTypeLabel(type) {
-    if (type === 'invoice_auto_gen') return 'Automatické generovanie faktúr';
-    if (type === 'invoice_report') return 'Mesačný report faktúr';
-    if (type === 'invoice_due_reminder') return 'Upozornenie na splatnosť';
+import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
+
+export function automatizationTypeLabel(type, automatizationTypes = []) {
+    const found = automatizationTypes.find((entry) => entry.value === type);
+
+    if (found) {
+        return found.label;
+    }
+
     return type;
 }
 
-export function defaultAutomatizationForm(automatization = null) {
+export function defaultAutomatizationForm(automatization = null, automatizationTypes = []) {
     const today = new Date().toISOString().slice(0, 10);
-    const type = automatization?.type ?? 'invoice_auto_gen';
+    const type = automatization?.type ?? AutomatizationType.InvoiceAutoGen;
 
     return {
-        name: automatization?.name ?? automatizationTypeLabel(type),
+        name: automatization?.name ?? automatizationTypeLabel(type, automatizationTypes),
         recipient_id: automatization?.recipient_id ?? '',
         type,
         date_trigger: automatization?.date_trigger

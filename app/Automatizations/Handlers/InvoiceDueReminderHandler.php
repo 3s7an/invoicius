@@ -4,6 +4,7 @@ namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\DTOs\AutomatizationResultDTO;
+use App\Enums\AutomatizationType;
 use App\Models\Automatization;
 use App\Services\InvoiceDueReminderService;
 
@@ -14,9 +15,9 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
     ) {
     }
 
-    public function type(): string
+    public function type(): AutomatizationType
     {
-        return 'invoice_due_reminder';
+        return AutomatizationType::InvoiceDueReminder;
     }
 
     public function handle(Automatization $automatization): AutomatizationResultDTO

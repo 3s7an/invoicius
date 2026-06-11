@@ -14,6 +14,10 @@ defineProps({
         type: Array,
         default: () => [],
     },
+    automatization_types: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -37,6 +41,7 @@ defineProps({
                 mode="edit"
                 :automatization="automatization"
                 :recipients="recipients"
+                :automatization_types="automatization_types"
             />
         </div>
     </AuthenticatedLayout>

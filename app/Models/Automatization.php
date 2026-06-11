@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\AutomatizationType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,7 @@ class Automatization extends Model
     protected function casts(): array
     {
         return [
+            'type' => AutomatizationType::class,
             'date_trigger' => 'date:Y-m-d',
             'due_offset_days' => 'integer',
             'is_active' => 'boolean',

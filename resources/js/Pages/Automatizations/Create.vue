@@ -10,6 +10,10 @@ defineProps({
         type: Array,
         default: () => [],
     },
+    automatization_types: {
+        type: Array,
+        default: () => [],
+    },
 });
 </script>
 
@@ -29,7 +33,11 @@ defineProps({
                 </template>
             </PageHeader>
 
-            <AutomatizationForm mode="create" :recipients="recipients" />
+            <AutomatizationForm
+                mode="create"
+                :recipients="recipients"
+                :automatization_types="automatization_types"
+            />
         </div>
     </AuthenticatedLayout>
 </template>

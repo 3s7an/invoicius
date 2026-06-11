@@ -4,6 +4,7 @@ import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { defaultAutomatizationForm, automatizationTypeLabel } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { todayYMD } from '@/Pages/Invoices/Utils/helpers';
 
 const props = defineProps({
@@ -20,27 +21,31 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+    automatization_types: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const isEdit = computed(() => props.mode === 'edit');
 
-const form = useForm(defaultAutomatizationForm(props.automatization));
+const form = useForm(defaultAutomatizationForm(props.automatization, props.automatization_types));
 
 watch(
     () => form.type,
     (type, oldType) => {
         if (!isEdit.value) {
             const currentName = form.name?.trim();
-            const oldDefault = oldType ? automatizationTypeLabel(oldType) : '';
+            const oldDefault = oldType ? automatizationTypeLabel(oldType, props.automatization_types) : '';
             if (!currentName || currentName === oldDefault) {
-                form.name = automatizationTypeLabel(type);
+                form.name = automatizationTypeLabel(type, props.automatization_types);
             }
         }
 
-        if (type === 'invoice_report') {
+        if (type === AutomatizationType.InvoiceReport) {
             form.recipient_id = '';
         }
-        if (type !== 'invoice_due_reminder') {
+        if (type !== AutomatizationType.InvoiceDueReminder) {
             form.due_offset_days = '';
         } else {
             form.date_trigger = todayYMD();
@@ -79,9 +84,6 @@ watch(
             <section>
                 <header>
                     <h2 class="text-lg font-medium text-gray-900">Nastavenia automatizácie</h2>
-                    <!-- <p class="mt-1 text-sm text-gray-600">
-                        Nastavte automatické generovanie faktúr alebo mesačný report.
-                    </p> -->
                 </header>
 
                 <div class="mt-6 space-y-6">
@@ -98,7 +100,7 @@ watch(
                         <InputError class="mt-2" :message="form.errors.name" />
                     </div>
 
-                    <div v-if="form.type === 'invoice_auto_gen'">
+                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
                         <InputLabel for="auto-item_count" value="Počet položiek vo faktúre" />
                         <input
                             id="auto-item_count"
@@ -111,7 +113,7 @@ watch(
                         <InputError class="mt-2" :message="form.errors.name" />
                     </div>
 
-                    <div v-if="form.type === 'invoice_auto_gen' && form.item_count > 0">
+                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen && form.item_count > 0">
                         <InputLabel for="auto-item_count" value="Názov položiek" />
 
                             <div v-for="(name, index) in form.item_names" :key="index">
@@ -134,14 +136,18 @@ watch(
                             v-model="form.type"
                             :class="inputClass"
                         >
-                            <option value="invoice_auto_gen">Automatické generovanie faktúr</option>
-                            <option value="invoice_report">Mesačný report faktúr</option>
-                            <option value="invoice_due_reminder">Upozornenie na splatnosť</option>
+                            <option
+                                v-for="entry in automatization_types"
+                                :key="entry.value"
+                                :value="entry.value"
+                            >
+                                {{ entry.label }}
+                            </option>
                         </select>
                         <InputError class="mt-2" :message="form.errors.type" />
                     </div>
 
-                    <div v-if="form.type === 'invoice_auto_gen'">
+                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
                         <InputLabel for="auto-recipient" value="Klient" />
                         <select
                             id="auto-recipient"
@@ -160,7 +166,7 @@ watch(
                         <InputError class="mt-2" :message="form.errors.recipient_id" />
                     </div>
 
-                    <div v-if="form.type !== 'invoice_due_reminder'">
+                    <div v-if="form.type !== AutomatizationType.InvoiceDueReminder">
                         <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
                         <input
                             id="auto-trigger"
@@ -168,7 +174,7 @@ watch(
                             v-model="form.date_trigger"
                             :class="inputClass"
                         />
-                        <p v-if="form.type === 'invoice_report'" class="mt-1 text-sm text-gray-500">
+                        <p v-if="form.type === AutomatizationType.InvoiceReport" class="mt-1 text-sm text-gray-500">
                             Report je za predošlý mesiac od tohto dátumu.
                         </p>
                         <InputError class="mt-2" :message="form.errors.date_trigger" />
@@ -181,7 +187,7 @@ watch(
                         </p>
                     </div>
 
-                    <div v-if="form.type === 'invoice_due_reminder'">
+                    <div v-if="form.type === AutomatizationType.InvoiceDueReminder">
                         <InputLabel for="auto-offset" value="Koľko dní pred/po splatnosti" />
                         <input
                             id="auto-offset"

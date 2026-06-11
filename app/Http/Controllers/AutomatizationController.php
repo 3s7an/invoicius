@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\AutomatizationDTO;
+use App\Enums\AutomatizationType;
 use App\Services\AutomatizationService;
 use App\Services\RecipientService;
-use App\DTOs\AutomatizationDTO;
 use App\Http\Requests\StoreAutomatizationRequest;
 use App\Http\Requests\UpdateAutomatizationRequest;
 use App\Models\Automatization;
@@ -36,6 +37,7 @@ class AutomatizationController extends Controller
 
         return Inertia::render('Automatizations/Create', [
             'recipients' => $recipients,
+            'automatization_types' => AutomatizationType::optionsForFrontend(),
         ]);
     }
 
@@ -50,6 +52,7 @@ class AutomatizationController extends Controller
         return Inertia::render('Automatizations/Edit', [
             'automatization' => $automatization,
             'recipients' => $recipients,
+            'automatization_types' => AutomatizationType::optionsForFrontend(),
         ]);
     }
 

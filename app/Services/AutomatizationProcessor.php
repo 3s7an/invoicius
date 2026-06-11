@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\DTOs\AutomatizationResultDTO;
+use App\Enums\AutomatizationType;
 use App\Exceptions\Automatization\AutomatizationException;
 use App\Models\Automatization;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,7 @@ class AutomatizationProcessor
 
     public function registerHandler(AutomatizationHandlerInterface $handler): void
     {
-        $this->handlers[$handler->type()] = $handler;
+        $this->handlers[$handler->type()->value] = $handler;
     }
 
     public function processDueAutomatizations(): array
@@ -28,21 +29,17 @@ class AutomatizationProcessor
         $results = [];
 
         foreach ($due as $automatization) {
-            
-            // user check 
             if (! $this->ensureUserOrAppendError($automatization, $results)) {
                 continue;
             }
 
-            // recipient check 
             if (
-                $automatization->type === 'invoice_auto_gen'
+                $automatization->type === AutomatizationType::InvoiceAutoGen
                 && ! $this->ensureRecipientOrAppendError($automatization, $results)
             ) {
                 continue;
             }
 
-            // start processing
             try {
                 $handler = $this->resolveHandler($automatization->type);
 
@@ -70,13 +67,13 @@ class AutomatizationProcessor
 
                 Log::info('Automatization processed', [
                     'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
+                    'type' => $automatization->type->value,
                     'success' => $result->success,
                 ]);
 
                 $results[] = [
                     'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
+                    'type' => $automatization->type->value,
                     'success' => $result->success,
                     'data' => $result->data,
                     'error' => $result->error,
@@ -87,7 +84,7 @@ class AutomatizationProcessor
             } catch (\Throwable $e) {
                 Log::error('Automatization failed', [
                     'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
+                    'type' => $automatization->type->value,
                     'exception' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -104,10 +101,10 @@ class AutomatizationProcessor
         return $results;
     }
 
-    private function resolveHandler(string $type): AutomatizationHandlerInterface
+    private function resolveHandler(AutomatizationType $type): AutomatizationHandlerInterface
     {
-        return $this->handlers[$type]
-            ?? throw new \InvalidArgumentException("No handler registered for type: {$type}");
+        return $this->handlers[$type->value]
+            ?? throw new \InvalidArgumentException("No handler registered for type: {$type->value}");
     }
 
     private function runHandler(
@@ -119,7 +116,7 @@ class AutomatizationProcessor
         } catch (AutomatizationException $e) {
             Log::warning('Automatization business failure', [
                 'automatization_id' => $automatization->id,
-                'type' => $automatization->type,
+                'type' => $automatization->type->value,
                 'error' => $e->getMessage(),
             ]);
 
@@ -129,7 +126,7 @@ class AutomatizationProcessor
 
     private function scheduleNextRun(Automatization $automatization, AutomatizationResultDTO $result): void
     {
-        $nextTrigger = $automatization->type === 'invoice_due_reminder'
+        $nextTrigger = $automatization->type->usesDailySchedule()
             ? now()->addDay()
             : now()->addMonth();
 
@@ -186,7 +183,7 @@ class AutomatizationProcessor
     ): void {
         $results[] = [
             'automatization_id' => $automatization->id,
-            'type' => $automatization->type,
+            'type' => $automatization->type->value,
             'success' => false,
             'data' => [],
             'error' => $error,

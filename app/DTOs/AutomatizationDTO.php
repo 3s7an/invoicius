@@ -2,6 +2,7 @@
 
 namespace App\DTOs;
 
+use App\Enums\AutomatizationType;
 use Carbon\Carbon;
 
 final readonly class AutomatizationDTO
@@ -10,7 +11,7 @@ final readonly class AutomatizationDTO
         public int $userId,
         public ?int $recipientId,
         public string $name,
-        public string $type,
+        public AutomatizationType $type,
         public Carbon $dateTrigger,
         public ?int $dueOffsetDays,
         public ?array $itemNames,
@@ -25,7 +26,7 @@ final readonly class AutomatizationDTO
     {
         $recipientId = $validated['recipient_id'] ?? null;
         $dueOffsetDays = $validated['due_offset_days'] ?? null;
-        $type = (string) $validated['type'];
+        $type = AutomatizationType::from((string) $validated['type']);
 
         return new self(
             userId: $userId,
@@ -34,11 +35,11 @@ final readonly class AutomatizationDTO
                 : (int) $recipientId,
             name: (string) $validated['name'],
             type: $type,
-            dateTrigger: $type === 'invoice_due_reminder'
+            dateTrigger: $type->usesDailySchedule()
                 ? now()->startOfDay()
                 : Carbon::parse($validated['date_trigger']),
             dueOffsetDays: ($dueOffsetDays === null || $dueOffsetDays === '' ? null : (int) $dueOffsetDays),
-            itemNames: $type === 'invoice_auto_gen'
+            itemNames: $type->requiresItemNames()
                 ? array_values($validated['item_names'] ?? [])
                 : null,
             isActive: (bool) ($validated['is_active'] ?? true),
