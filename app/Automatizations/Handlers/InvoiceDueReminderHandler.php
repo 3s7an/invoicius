@@ -23,9 +23,6 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
     {   
         $reminderData = $this->invoiceDueReminderService->buildReminderData($automatization);
         
-        return new AutomatizationResultDTO(
-            success: true,
-            data: $reminderData,
-        );
+        return AutomatizationResultDTO::success($reminderData);
     }
 }

@@ -15,7 +15,7 @@ class InvoiceAutoGenerationService
     ) {
     }
 
-    public function createFromAutomatization(Automatization $automatization): Invoice
+    public function buildGenerationData(Automatization $automatization): array
     {
         $userId = $automatization->user_id;
 
@@ -30,6 +30,20 @@ class InvoiceAutoGenerationService
             $suggestedNumber,
         );
 
-        return $this->invoiceService->createInvoice($data);
+        $invoice = $this->invoiceService->createInvoice(
+            InvoiceDTO::fromAutomatization(
+                $automatization,
+                $user,
+                $recipient,
+                $suggestedNumber,
+            )
+        );
+
+        return [
+            'invoice_id' => $invoice->id, 
+            'invoice_number' => $invoice->number,
+            'user_email' => $automatization->user->email, 
+            'recipient_name' => $invoice->recipient_name
+        ];
     }
 }

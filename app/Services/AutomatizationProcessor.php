@@ -6,6 +6,7 @@ use App\Contracts\AutomatizationHandlerInterface;
 use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\Automatization\AutomatizationException;
 
 class AutomatizationProcessor
 {
@@ -39,7 +40,7 @@ class AutomatizationProcessor
                 }
 
                 $handler = $this->resolveHandler($automatization->type);
-                $result = $handler->handle($automatization);
+                $result = $this->runHandler($handler, $automatization);
 
                 if ($result->success) {
                     $this->scheduleNextRun($automatization, $result);
@@ -91,6 +92,25 @@ class AutomatizationProcessor
         return $this->handlers[$type]
             ?? throw new \InvalidArgumentException("No handler registered for type: {$type}");
     }
+
+    private function runHandler(
+        AutomatizationHandlerInterface $handler,
+        Automatization $automatization,
+    ): AutomatizationResultDTO {
+        try {
+            return $handler->handle($automatization);
+
+        } catch (AutomatizationException $e) {
+            Log::warning('Automatization business failure', [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'error' => $e->getMessage(),
+            ]);
+
+            return AutomatizationResultDTO::failure($e->getMessage());
+        } 
+    }
+
 
     private function scheduleNextRun(Automatization $automatization, AutomatizationResultDTO $result): void
     {

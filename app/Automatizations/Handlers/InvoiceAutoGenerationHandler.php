@@ -21,17 +21,8 @@ class InvoiceAutoGenerationHandler implements AutomatizationHandlerInterface
 
     public function handle(Automatization $automatization): AutomatizationResultDTO
     {
-        $invoice = $this->invoiceAutoGenerationService->createFromAutomatization($automatization);
+        $invoice_data = $this->invoiceAutoGenerationService->buildGenerationData($automatization);
 
-        return new AutomatizationResultDTO(
-            success: true,
-            data: [
-                'invoice_id' => $invoice->id,
-                'invoice_number' => $invoice->number,
-                'user_email' => $automatization->user->email,
-                'recipient_name' => $automatization->recipient->company_name
-                    ?? $automatization->recipient->name,
-            ],
-        );
+        return AutomatizationResultDTO::success($invoice_data);
     }
 }
