@@ -1,22 +1,32 @@
 <?php
 
-namespace App\Mappers;
+namespace App\DTOs;
 
-use App\DTOs\CreateAutomatizationData;
 use Carbon\Carbon;
 
-final class CreateAutomatizationDataMapper
+final readonly class AutomatizationDTO
 {
+    public function __construct(
+        public int $userId,
+        public ?int $recipientId,
+        public string $name,
+        public string $type,
+        public Carbon $dateTrigger,
+        public ?int $dueOffsetDays,
+        public ?array $itemNames,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $validated
      */
-    public function fromValidated(array $validated, int $userId): CreateAutomatizationData
+    public static function fromValidated(array $validated, int $userId): self
     {
         $recipientId = $validated['recipient_id'] ?? null;
         $dueOffsetDays = $validated['due_offset_days'] ?? null;
         $type = (string) $validated['type'];
 
-        return new CreateAutomatizationData(
+        return new self(
             userId: $userId,
             recipientId: ($recipientId === null || $recipientId === '' || (int) $recipientId === 0)
                 ? null

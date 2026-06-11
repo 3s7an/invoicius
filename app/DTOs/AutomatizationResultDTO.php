@@ -2,7 +2,7 @@
 
 namespace App\DTOs;
 
-final readonly class AutomatizationResult
+final readonly class AutomatizationResultDTO
 {
     public function __construct(
         public bool $success,

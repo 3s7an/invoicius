@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Services;
 
-use App\DTOs\CreateInvoiceData;
-use App\DTOs\CreateInvoiceItemData;
-use App\DTOs\CreateInvoiceRecipientData;
+use App\DTOs\InvoiceDTO;
+use App\DTOs\InvoiceItemDTO;
+use App\DTOs\InvoiceRecipientDTO;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -62,7 +62,7 @@ class InvoiceServiceTest extends TestCase
         $currency = Currency::first();
         $vat23 = VatType::where('code', '23')->first();
 
-        $data = new CreateInvoiceData(
+        $data = new InvoiceDTO(
             userId: $this->user->id,
             number: 'TEST-001',
             variableSymbol: 'VS-001',
@@ -70,7 +70,7 @@ class InvoiceServiceTest extends TestCase
             dueDate: now()->addDays(14),
             currencyId: $currency->id,
             recipientId: null,
-            recipient: new CreateInvoiceRecipientData(
+            recipient: new InvoiceRecipientDTO(
                 recipientName: 'Test Recipient',
                 recipientStreet: 'Test Street',
                 recipientStreetNum: '1',
@@ -82,7 +82,7 @@ class InvoiceServiceTest extends TestCase
                 recipientIban: null,
             ),
             items: [
-                new CreateInvoiceItemData(
+                new InvoiceItemDTO(
                     name: 'Service A',
                     quantity: 2.0,
                     unit: 'hrs',
@@ -105,7 +105,7 @@ class InvoiceServiceTest extends TestCase
         $currency = Currency::first();
         $mimo = VatType::where('code', 'MIMO')->first();
 
-        $data = new CreateInvoiceData(
+        $data = new InvoiceDTO(
             userId: $this->user->id,
             number: 'TEST-002',
             variableSymbol: 'VS-002',
@@ -113,7 +113,7 @@ class InvoiceServiceTest extends TestCase
             dueDate: now()->addDays(14),
             currencyId: $currency->id,
             recipientId: null,
-            recipient: new CreateInvoiceRecipientData(
+            recipient: new InvoiceRecipientDTO(
                 recipientName: 'Test',
                 recipientStreet: null,
                 recipientStreetNum: null,
@@ -125,7 +125,7 @@ class InvoiceServiceTest extends TestCase
                 recipientIban: null,
             ),
             items: [
-                new CreateInvoiceItemData(
+                new InvoiceItemDTO(
                     name: 'Item',
                     quantity: 1.0,
                     unit: 'pcs',
@@ -180,7 +180,7 @@ class InvoiceServiceTest extends TestCase
         $otherUser = User::factory()->create();
         $recipient = Recipient::factory()->create(['user_id' => $otherUser->id]);
 
-        $data = new CreateInvoiceData(
+        $data = new InvoiceDTO(
             userId: $this->user->id,
             number: 'TEST-003',
             variableSymbol: 'VS-003',
@@ -188,7 +188,7 @@ class InvoiceServiceTest extends TestCase
             dueDate: now()->addDays(14),
             currencyId: $currency->id,
             recipientId: $recipient->id,
-            recipient: new CreateInvoiceRecipientData(
+            recipient: new InvoiceRecipientDTO(
                 recipientName: 'Test',
                 recipientStreet: null,
                 recipientStreetNum: null,
@@ -200,7 +200,7 @@ class InvoiceServiceTest extends TestCase
                 recipientIban: null,
             ),
             items: [
-                new CreateInvoiceItemData(
+                new InvoiceItemDTO(
                     name: 'Item',
                     quantity: 1.0,
                     unit: 'pcs',

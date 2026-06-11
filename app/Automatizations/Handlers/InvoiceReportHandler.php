@@ -4,7 +4,7 @@ namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\Services\InvoiceService;
-use App\DTOs\AutomatizationResult;
+use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
 use Carbon\Carbon;
 
@@ -20,7 +20,7 @@ class InvoiceReportHandler implements AutomatizationHandlerInterface
         return 'invoice_report';
     }
 
-    public function handle(Automatization $automatization): AutomatizationResult
+    public function handle(Automatization $automatization): AutomatizationResultDTO
     {
         $userId = $automatization->user_id;
 
@@ -56,7 +56,7 @@ class InvoiceReportHandler implements AutomatizationHandlerInterface
             ];
         })->values()->all();
 
-        return new AutomatizationResult(
+        return new AutomatizationResultDTO(
             success: true,
             data: [
                 'user_id' => $userId,

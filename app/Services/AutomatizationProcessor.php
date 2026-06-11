@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Contracts\AutomatizationHandlerInterface;
-use App\DTOs\AutomatizationResult;
+use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
 use Illuminate\Support\Facades\Log;
 
@@ -94,7 +94,7 @@ class AutomatizationProcessor
             ?? throw new \InvalidArgumentException("No handler registered for type: {$type}");
     }
 
-    private function scheduleNextRun(Automatization $automatization, AutomatizationResult $result): void
+    private function scheduleNextRun(Automatization $automatization, AutomatizationResultDTO $result): void
     {
         $nextTrigger = $automatization->type === 'invoice_due_reminder'
             ? now()->addDay()

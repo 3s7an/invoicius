@@ -1,24 +1,31 @@
 <?php
 
-namespace App\Mappers;
+namespace App\DTOs;
 
-use App\DTOs\CreateInvoiceData;
 use Carbon\Carbon;
 
-final class CreateInvoiceDataMapper
+final readonly class InvoiceDTO
 {
     public function __construct(
-        private readonly CreateInvoiceRecipientDataMapper $recipientDataMapper,
-        private readonly CreateInvoiceItemDataMapper $itemDataMapper,
+        public int $userId,
+        public string $number,
+        public string $variableSymbol,
+        public Carbon $issueDate,
+        public Carbon $dueDate,
+        public int $currencyId,
+        public ?int $recipientId,
+        public InvoiceRecipientDTO $recipient,
+        /** @var array<int, InvoiceItemDTO> */
+        public array $items,
     ) {
     }
 
     /**
      * @param array<string, mixed> $validated
      */
-    public function fromValidated(array $validated, int $userId): CreateInvoiceData
+    public static function fromValidated(array $validated, int $userId): self
     {
-        return new CreateInvoiceData(
+        return new self(
             userId: $userId,
             number: $validated['number'],
             variableSymbol: $validated['variable_symbol'],
@@ -26,9 +33,9 @@ final class CreateInvoiceDataMapper
             dueDate: Carbon::parse($validated['due_date']),
             currencyId: (int) $validated['currency_id'],
             recipientId: $validated['recipient_id'] === null ? null : (int) $validated['recipient_id'],
-            recipient: $this->recipientDataMapper->fromArray($validated['recipient']),
+            recipient: InvoiceRecipientDTO::fromArray($validated['recipient']),
             items: array_map(
-                fn (array $row) => $this->itemDataMapper->fromArray($row),
+                fn (array $row) => InvoiceItemDTO::fromArray($row),
                 $validated['items'],
             ),
         );

@@ -4,7 +4,7 @@ namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\Services\InvoiceService;
-use App\DTOs\AutomatizationResult;
+use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
 use App\Models\InvoiceStatus;
 
@@ -20,7 +20,7 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
         return 'invoice_due_reminder';
     }
 
-    public function handle(Automatization $automatization): AutomatizationResult
+    public function handle(Automatization $automatization): AutomatizationResultDTO
     {
         $offsetDays = (int) ($automatization->due_offset_days ?? 0);
         $targetDate = now()->startOfDay()->addDays($offsetDays);
@@ -62,7 +62,7 @@ class InvoiceDueReminderHandler implements AutomatizationHandlerInterface
             ];
         })->all();
 
-        return new AutomatizationResult(
+        return new AutomatizationResultDTO(
             success: true,
             data: [
                 'user_email' => $automatization->user->email,

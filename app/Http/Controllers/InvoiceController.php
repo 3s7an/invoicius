@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\InvoiceFormDataService;
 use App\Services\InvoiceService;
-use App\Mappers\CreateInvoiceDataMapper;
+use App\DTOs\InvoiceDTO;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceStatusRequest;
@@ -22,7 +22,6 @@ class InvoiceController extends Controller
         private readonly InvoiceService $invoiceService,
         private readonly InvoiceFormDataService $invoiceFormDataService,
         private readonly InvoicePdfService $invoicePdfService,
-        private readonly CreateInvoiceDataMapper $createInvoiceDataMapper,
     ) {
     }
 
@@ -55,7 +54,7 @@ class InvoiceController extends Controller
 
     public function store(StoreInvoiceRequest $request): RedirectResponse
     {
-        $data = $this->createInvoiceDataMapper->fromValidated($request->validated(), $request->user()->id);
+        $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
         $this->invoiceService->createInvoice($data);
 
         return redirect()
@@ -76,7 +75,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        $data = $this->createInvoiceDataMapper->fromValidated($request->validated(), $request->user()->id);
+        $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
         $this->invoiceService->updateInvoice($invoice, $data);
 
         return redirect()

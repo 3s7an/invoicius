@@ -4,7 +4,7 @@ namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\Services\InvoiceService;
-use App\DTOs\AutomatizationResult;
+use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
 
 class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
@@ -19,7 +19,7 @@ class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
         return 'invoice_auto_gen';
     }
 
-    public function handle(Automatization $automatization): AutomatizationResult
+    public function handle(Automatization $automatization): AutomatizationResultDTO
     {
         $invoice = $this->invoiceService->generateFromAutomatization(
             $automatization->user_id,
@@ -27,7 +27,7 @@ class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
             $automatization->item_names ?? [],
         );
 
-        return new AutomatizationResult(
+        return new AutomatizationResultDTO(
             success: true,
             data: [
                 'invoice_id' => $invoice->id,

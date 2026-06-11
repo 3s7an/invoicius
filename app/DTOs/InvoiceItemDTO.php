@@ -1,17 +1,24 @@
 <?php
 
-namespace App\Mappers;
+namespace App\DTOs;
 
-use App\DTOs\CreateInvoiceItemData;
-
-final class CreateInvoiceItemDataMapper
+final readonly class InvoiceItemDTO
 {
+    public function __construct(
+        public string $name,
+        public float $quantity,
+        public float $unitPrice,
+        public string $unit,
+        public ?int $vatTypeId,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $data
      */
-    public function fromArray(array $data): CreateInvoiceItemData
+    public static function fromArray(array $data): self
     {
-        return new CreateInvoiceItemData(
+        return new self(
             name: $data['name'],
             quantity: (float) $data['quantity'],
             unitPrice: (float) $data['unit_price'],

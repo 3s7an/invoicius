@@ -1,17 +1,28 @@
 <?php
 
-namespace App\Mappers;
+namespace App\DTOs;
 
-use App\DTOs\CreateInvoiceRecipientData;
-
-final class CreateInvoiceRecipientDataMapper
+final readonly class InvoiceRecipientDTO
 {
+    public function __construct(
+        public ?string $recipientName,
+        public ?string $recipientStreet,
+        public ?string $recipientStreetNum,
+        public ?string $recipientCity,
+        public ?string $recipientState,
+        public ?string $recipientIco,
+        public ?string $recipientDic,
+        public ?string $recipientIcDph,
+        public ?string $recipientIban,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $data
      */
-    public function fromArray(array $data): CreateInvoiceRecipientData
+    public static function fromArray(array $data): self
     {
-        return new CreateInvoiceRecipientData(
+        return new self(
             recipientName: $data['recipient_name'],
             recipientStreet: $data['recipient_street'],
             recipientStreetNum: $data['recipient_street_num'],

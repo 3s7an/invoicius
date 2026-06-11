@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\DTOs\CreateAutomatizationData;
+use App\DTOs\AutomatizationDTO;
 use App\Models\Automatization;
 use Illuminate\Support\Collection;
 
@@ -16,7 +16,7 @@ class AutomatizationService
             ->get();
     }
 
-    public function store(CreateAutomatizationData $data): Automatization
+    public function store(AutomatizationDTO $data): Automatization
     {
         return Automatization::create([
             'user_id' => $data->userId,

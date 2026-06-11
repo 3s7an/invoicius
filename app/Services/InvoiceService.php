@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\DTOs\CreateInvoiceData;
-use App\DTOs\CreateInvoiceItemData;
-use App\DTOs\CreateInvoiceRecipientData;
+use App\DTOs\InvoiceDTO;
+use App\DTOs\InvoiceItemDTO;
+use App\DTOs\InvoiceRecipientDTO;
 use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Currency;
 use App\Models\Invoice;
@@ -93,7 +93,7 @@ class InvoiceService
         ];
     }
 
-    public function createInvoice(CreateInvoiceData $data): Invoice
+    public function createInvoice(InvoiceDTO $data): Invoice
     {
         return DB::transaction(function () use ($data) {
             $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
@@ -155,7 +155,7 @@ class InvoiceService
         });
     }
 
-    public function updateInvoice(Invoice $invoice, CreateInvoiceData $data): Invoice
+    public function updateInvoice(Invoice $invoice, InvoiceDTO $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
             $woVatTotal = 0.0;
@@ -236,7 +236,7 @@ class InvoiceService
 
         if(!empty($itemNames)) {
             foreach ($itemNames as $name) {
-                $items[] = new CreateInvoiceItemData(
+                $items[] = new InvoiceItemDTO(
                     name: $name,
                     quantity: 1,
                     unitPrice: 0,
@@ -246,7 +246,7 @@ class InvoiceService
             }
         } else {
             $items = [
-                new CreateInvoiceItemData(
+                new InvoiceItemDTO(
                     name: '',
                     quantity: 1,
                     unitPrice: 0,
@@ -256,7 +256,7 @@ class InvoiceService
             ];
         }
 
-        $data = new CreateInvoiceData(
+        $data = new InvoiceDTO(
             userId: $userId,
             number: $this->getSuggestedNumber($userId),
             variableSymbol: $this->getSuggestedNumber($userId),
@@ -264,7 +264,7 @@ class InvoiceService
             dueDate: Carbon::today()->addDays(14),
             currencyId: $defaultCurrencyId,
             recipientId: $recipientId,
-            recipient: new CreateInvoiceRecipientData(
+            recipient: new InvoiceRecipientDTO(
                 recipientName: $recipient->company_name ?? $recipient->name,
                 recipientStreet: $recipient->street,
                 recipientStreetNum: $recipient->street_num,
