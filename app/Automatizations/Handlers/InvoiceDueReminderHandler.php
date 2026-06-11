@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
