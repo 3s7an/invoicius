@@ -20,10 +20,11 @@ class InvoiceReportHandler implements AutomatizationHandlerInterface
     }
 
     public function handle(Automatization $automatization): AutomatizationResultDTO
-    {
+    {   
+        $reportData = $this->invoiceReportService->buildReportData($automatization);
         return new AutomatizationResultDTO(
             success: true,
-            data: $this->invoiceReportService->buildReportData($automatization),
+            data: $reportData,
         );
     }
 }

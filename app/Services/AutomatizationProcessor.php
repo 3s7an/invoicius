@@ -75,8 +75,6 @@ class AutomatizationProcessor
                     'error' => $e->getMessage(),
                     'next_trigger' => null,
                 ];
-
-                return $results;
             }
         }
 
