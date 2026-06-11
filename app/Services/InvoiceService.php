@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Services\RecipientService;
 use App\DTOs\CreateInvoiceData;
 use App\DTOs\CreateInvoiceItemData;
 use App\DTOs\CreateInvoiceRecipientData;
@@ -24,7 +23,6 @@ use Illuminate\Validation\ValidationException;
 class InvoiceService
 {
     public function __construct(
-        private readonly RecipientService $recipientService,
         private readonly PaymentQrService $paymentQrService,
     ) {
     }
@@ -95,37 +93,8 @@ class InvoiceService
         ];
     }
 
-
-    private function calculateLineVat(float $lineWoVat, ?int $vatTypeId): float
-    {
-        $vatType = VatType::find($vatTypeId);
-    
-        if ($vatType === null || in_array(strtoupper((string) $vatType->code), ['MIMO', 'OSVO'], true)) {
-            return 0.0;
-        }
-    
-        return $lineWoVat * ($vatType->rate / 100);
-    }
-
-    public function getSuggestedNumber(int $userId): string
-    {
-        $today = now()->format('Ymd');
-        $existingCount = Invoice::forUser($userId)
-            ->where(function ($q) use ($today) {
-                $q->where('number', $today)
-                    ->orWhere('number', 'like', $today . '-%');
-            })
-            ->count();
-
-        return ($existingCount === 0)
-            ? $today
-            : $today . '-' . ($existingCount + 1);
-    }
-
     public function createInvoice(CreateInvoiceData $data): Invoice
     {
-        $this->ensureRecipientBelongsToUser($data->recipientId, $data->userId);
-
         return DB::transaction(function () use ($data) {
             $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
 
@@ -188,8 +157,6 @@ class InvoiceService
 
     public function updateInvoice(Invoice $invoice, CreateInvoiceData $data): Invoice
     {
-        $this->ensureRecipientBelongsToUser($data->recipientId, $data->userId);
-
         return DB::transaction(function () use ($invoice, $data) {
             $woVatTotal = 0.0;
             $vatTotal = 0.0;
@@ -257,46 +224,6 @@ class InvoiceService
         $invoice->delete();
     }
 
-    public function getIndexData(int $userId): array
-    {
-        return [
-            'invoices' => $this->getInvoices($userId),
-            'invoice_stats' => $this->getInvoiceStats($userId),
-            'invoice_statuses' => InvoiceStatus::orderBy('id')->get(['id', 'code', 'name']),
-        ];
-    }
-
-    public function getCreateFormData(int $userId, ?int $createdRecipientId): array
-    {
-        $user = User::find($userId);
-        $preselectedRecipient = null;
-        if ($createdRecipientId) {
-            $preselectedRecipient = Recipient::forUser($userId)->find($createdRecipientId);
-        }
-
-        return [
-            'recipients' => $this->recipientService->listForUser($userId),
-            'suggested_number' => $this->getSuggestedNumber($userId),
-            'preselected_recipient' => $preselectedRecipient,
-            'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
-            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
-            'default_currency_id' => $user?->currency_id,
-        ];
-    }
-
-    public function getEditFormData(Invoice $invoice, int $userId): array
-    {
-        $invoice->load(['items', 'recipient']);
-
-        return [
-            'invoice' => $invoice,
-            'recipients' => $this->recipientService->listForUser($userId),
-            'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
-            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
-            'default_currency_id' => $invoice->currency_id,
-        ];
-    }
-
     public function generateFromAutomatization(int $userId, int $recipientId, array $itemNames): Invoice
     {
         $user = User::with('defaultVatType')->findOrFail($userId);
@@ -354,20 +281,29 @@ class InvoiceService
         return $this->createInvoice($data);
     }
 
-    private function ensureRecipientBelongsToUser(?int $recipientId, int $userId): void
-{
-    if ($recipientId === null) {
-        return;
+    private function calculateLineVat(float $lineWoVat, ?int $vatTypeId): float
+    {
+        $vatType = VatType::find($vatTypeId);
+    
+        if ($vatType === null || in_array(strtoupper((string) $vatType->code), ['MIMO', 'OSVO'], true)) {
+            return 0.0;
+        }
+    
+        return $lineWoVat * ($vatType->rate / 100);
     }
 
-    $recipientBelongsToUser = Recipient::forUser($userId)
-        ->where('id', $recipientId)
-        ->exists();
+    public function getSuggestedNumber(int $userId): string
+    {
+        $today = now()->format('Ymd');
+        $existingCount = Invoice::forUser($userId)
+            ->where(function ($q) use ($today) {
+                $q->where('number', $today)
+                    ->orWhere('number', 'like', $today . '-%');
+            })
+            ->count();
 
-    if (! $recipientBelongsToUser) {
-        throw ValidationException::withMessages([
-            'recipient_id' => 'Vybraný odberateľ nepatrí tvojmu účtu.',
-        ]);
+        return ($existingCount === 0)
+            ? $today
+            : $today . '-' . ($existingCount + 1);
     }
-}
 }

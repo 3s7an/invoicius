@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\InvoiceFormDataService;
 use App\Services\InvoiceService;
 use App\Mappers\CreateInvoiceDataMapper;
 use App\Http\Requests\StoreInvoiceRequest;
@@ -19,6 +20,7 @@ class InvoiceController extends Controller
 {
     public function __construct(
         private readonly InvoiceService $invoiceService,
+        private readonly InvoiceFormDataService $invoiceFormDataService,
         private readonly InvoicePdfService $invoicePdfService,
         private readonly CreateInvoiceDataMapper $createInvoiceDataMapper,
     ) {
@@ -26,7 +28,7 @@ class InvoiceController extends Controller
 
     public function index(Request $request): Response
     {
-        $data = $this->invoiceService->getIndexData($request->user()->id);
+        $data = $this->invoiceFormDataService->forIndex($request->user()->id);
 
         return Inertia::render('Invoices/Index', [
             'invoices' => $data['invoices'],
@@ -43,7 +45,7 @@ class InvoiceController extends Controller
             session()->forget('created_recipient_id');
         }
 
-        $data = $this->invoiceService->getCreateFormData(
+        $data = $this->invoiceFormDataService->forCreate(
             $userId,
             $createdRecipientId ? (int) $createdRecipientId : null
         );
@@ -65,7 +67,7 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        $data = $this->invoiceService->getEditFormData($invoice, $request->user()->id);
+        $data = $this->invoiceFormDataService->forEdit($invoice, $request->user()->id);
 
         return Inertia::render('Invoices/Edit', $data);
     }

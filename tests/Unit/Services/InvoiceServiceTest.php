@@ -12,7 +12,6 @@ use App\Models\Recipient;
 use App\Models\User;
 use App\Models\VatType;
 use App\Services\InvoiceService;
-use App\Services\RecipientService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,8 +31,7 @@ class InvoiceServiceTest extends TestCase
         $this->seed(\Database\Seeders\VatTypeSeeder::class);
 
         $this->user = User::factory()->create();
-        $recipientService = $this->app->make(RecipientService::class);
-        $this->service = new InvoiceService($recipientService, new \App\Services\PaymentQrService);
+        $this->service = $this->app->make(InvoiceService::class);
     }
 
     public function test_suggested_number_returns_date_format(): void
