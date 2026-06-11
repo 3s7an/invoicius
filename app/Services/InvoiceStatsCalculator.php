@@ -9,10 +9,10 @@ use Illuminate\Support\Collection;
 class InvoiceStatsCalculator
 {
     /**
-     * Stats for a pre-filtered invoice collection (e.g. monthly report scope).
+     * Stats for a pre-filtered invoice collection (dashboard, monthly report, etc.).
      *
      * @param Collection<int, \App\Models\Invoice> $invoices
-     * @return array{total_invoiced: float, paid: float, awaiting: float, overdue: float}
+     * @return array{total_invoiced: float, paid: float, awaiting: float, overdue: float, draft: float}
      */
     public function calculateForCollection(Collection $invoices, Carbon $referenceDate): array
     {
@@ -20,6 +20,10 @@ class InvoiceStatsCalculator
 
         $paid = (float) $invoices
             ->filter(fn ($invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
+            ->sum('total_price');
+
+        $draft = (float) $invoices
+            ->filter(fn ($invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
             ->sum('total_price');
 
         $overdue = (float) $invoices
@@ -38,13 +42,14 @@ class InvoiceStatsCalculator
             })
             ->sum('total_price');
 
-        $awaiting = max(0.0, $totalInvoiced - $paid - $overdue);
+        $awaiting = max(0.0, $totalInvoiced - $paid - $draft - $overdue);
 
         return [
             'total_invoiced' => $totalInvoiced,
             'paid' => $paid,
             'awaiting' => $awaiting,
             'overdue' => $overdue,
+            'draft' => $draft,
         ];
     }
 }

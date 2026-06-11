@@ -18,6 +18,7 @@ class InvoiceService
 {
     public function __construct(
         private readonly PaymentQrService $paymentQrService,
+        private readonly InvoiceStatsCalculator $invoiceStatsCalculator,
     ) {
     }
 
@@ -34,57 +35,10 @@ class InvoiceService
      */
     public function getInvoiceStats(int $userId): array
     {
-        $base = Invoice::forUser($userId);
-        $paidStatusId = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID)?->id;
-        $draftStatusId = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT)?->id;
-        
-        $today = now()->startOfDay();
-
-        $totalInvoiced = (clone $base)->sum('total_price');
-        $paid = 0.0;
-        $draft = 0.0;
-        
-        if ($paidStatusId) {
-            $paid = (clone $base)->where('invoice_status_id', $paidStatusId)->sum('total_price');
-        }
-
-        if ($draftStatusId) {
-            $draft = (clone $base)->where('invoice_status_id', $draftStatusId)->sum('total_price');
-        }
-
-        $overdueQuery = (clone $base)->whereDate('due_date', '<', $today);
-
-        if ($paidStatusId !== null) {
-            $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $paidStatusId);
-        }
-
-        if ($draftStatusId !== null) {
-            $overdueQuery = $overdueQuery->where('invoice_status_id', '!=', $draftStatusId);
-        }
-
-        $overdue = (float) $overdueQuery->sum('total_price');
-
-        $excludeIds = array_filter([$paidStatusId, $draftStatusId]);
-
-        $awaitingQuery = clone $base;
-
-        if ($excludeIds) {
-            $awaitingQuery = $awaitingQuery->whereNotIn('invoice_status_id', $excludeIds);
-        }
-
-        $awaitingQuery = $awaitingQuery->where(function ($q) use ($today) {
-            $q->whereNull('due_date')->orWhereDate('due_date', '>=', $today);
-        });
-
-        $awaiting = (float) $awaitingQuery->sum('total_price');
-
-        return [
-            'total_invoiced' => (float) $totalInvoiced,
-            'paid' => (float) $paid,
-            'awaiting' => (float) max(0, $awaiting),
-            'overdue' => $overdue,
-            'draft' => (float) $draft,
-        ];
+        return $this->invoiceStatsCalculator->calculateForCollection(
+            $this->getInvoices($userId),
+            now()->startOfDay(),
+        );
     }
 
     public function createInvoice(InvoiceDTO $data): Invoice

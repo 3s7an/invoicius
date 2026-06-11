@@ -17,7 +17,7 @@ class InvoiceReportService
      *   user_id: int,
      *   user_email: string,
      *   period: array{from: string, to: string},
-     *   stats: array{total_invoiced: float, paid: float, awaiting: float, overdue: float},
+     *   stats: array{total_invoiced: float, paid: float, awaiting: float, overdue: float, draft: float},
      *   invoices: array<int, array<string, mixed>>
      * }
      */
