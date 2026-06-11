@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Contracts\AutomatizationHandlerInterface;
 use App\DTOs\AutomatizationResultDTO;
+use App\Exceptions\Automatization\AutomatizationException;
 use App\Models\Automatization;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\Automatization\AutomatizationException;
 
 class AutomatizationProcessor
 {
@@ -27,56 +27,56 @@ class AutomatizationProcessor
         $results = [];
 
         foreach ($due as $automatization) {
-            try {
-                if (! $this->ensureUserOrAppendError($automatization, $results)) {
-                    continue;
-                }
-
-                if (
-                    $automatization->type === 'invoice_auto_gen'
-                    && ! $this->ensureRecipientOrAppendError($automatization, $results)
-                ) {
-                    continue;
-                }
-
-                $handler = $this->resolveHandler($automatization->type);
-                $result = $this->runHandler($handler, $automatization);
-
-                if ($result->success) {
-                    $this->scheduleNextRun($automatization, $result);
-                }
-
-                Log::info('Automatization processed', [
-                    'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
-                    'success' => $result->success,
-                ]);
-
-                $results[] = [
-                    'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
-                    'success' => $result->success,
-                    'data' => $result->data,
-                    'error' => $result->error,
-                    'next_trigger' => $automatization->fresh()?->date_trigger?->toDateString(),
-                ];
-            } catch (\Throwable $e) {
-                Log::error('Automatization failed', [
-                    'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
-                    'exception' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                $results[] = [
-                    'automatization_id' => $automatization->id,
-                    'type' => $automatization->type,
-                    'success' => false,
-                    'data' => [],
-                    'error' => $e->getMessage(),
-                    'next_trigger' => null,
-                ];
+            if (! $this->ensureUserOrAppendError($automatization, $results)) {
+                continue;
             }
+
+            if (
+                $automatization->type === 'invoice_auto_gen'
+                && ! $this->ensureRecipientOrAppendError($automatization, $results)
+            ) {
+                continue;
+            }
+
+            try {
+                $handler = $this->resolveHandler($automatization->type);
+            } catch (\InvalidArgumentException $e) {
+                $this->appendFailureResult($results, $automatization, $e->getMessage());
+                continue;
+            }
+
+            $result = $this->runHandler($handler, $automatization);
+
+            if ($result->success) {
+                try {
+                    $this->scheduleNextRun($automatization, $result);
+                } catch (\Throwable $e) {
+                    Log::error('Automatization schedule failed', [
+                        'automatization_id' => $automatization->id,
+                        'type' => $automatization->type,
+                        'exception' => $e->getMessage(),
+                    ]);
+
+                    $result = AutomatizationResultDTO::failure(
+                        'Nepodarilo sa uložiť výsledok automatizácie.',
+                    );
+                }
+            }
+
+            Log::info('Automatization processed', [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'success' => $result->success,
+            ]);
+
+            $results[] = [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'success' => $result->success,
+                'data' => $result->data,
+                'error' => $result->error,
+                'next_trigger' => $automatization->fresh()?->date_trigger?->toDateString(),
+            ];
         }
 
         Log::info('Automatization processing finished', [
@@ -99,7 +99,6 @@ class AutomatizationProcessor
     ): AutomatizationResultDTO {
         try {
             return $handler->handle($automatization);
-
         } catch (AutomatizationException $e) {
             Log::warning('Automatization business failure', [
                 'automatization_id' => $automatization->id,
@@ -108,9 +107,19 @@ class AutomatizationProcessor
             ]);
 
             return AutomatizationResultDTO::failure($e->getMessage());
-        } 
-    }
+        } catch (\Throwable $e) {
+            Log::error('Automatization unexpected failure', [
+                'automatization_id' => $automatization->id,
+                'type' => $automatization->type,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
+            return AutomatizationResultDTO::failure(
+                'Interná chyba pri spracovaní automatizácie.',
+            );
+        }
+    }
 
     private function scheduleNextRun(Automatization $automatization, AutomatizationResultDTO $result): void
     {
@@ -134,14 +143,11 @@ class AutomatizationProcessor
             return true;
         }
 
-        $results[] = [
-            'automatization_id' => $automatization->id,
-            'type' => $automatization->type,
-            'success' => false,
-            'data' => [],
-            'error' => 'No user assigned to automatization.',
-            'next_trigger' => null,
-        ];
+        $this->appendFailureResult(
+            $results,
+            $automatization,
+            'Automatizácia nemá priradeného používateľa.',
+        );
 
         return false;
     }
@@ -154,16 +160,31 @@ class AutomatizationProcessor
         if ($automatization->recipient_id && $automatization->recipient) {
             return true;
         }
-            $results[] = [
-                'automatization_id' => $automatization->id,
-                'type' => $automatization->type,
-                'success' => false,
-                'data' => [],
-                'error' => 'No recipient assigned to automatization.',
-                'next_trigger' => null,
-            ];
 
-            return false;
+        $this->appendFailureResult(
+            $results,
+            $automatization,
+            'Automatizácia nemá priradeného odberateľa.',
+        );
+
+        return false;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $results
+     */
+    private function appendFailureResult(
+        array &$results,
+        Automatization $automatization,
+        string $error,
+    ): void {
+        $results[] = [
+            'automatization_id' => $automatization->id,
+            'type' => $automatization->type,
+            'success' => false,
+            'data' => [],
+            'error' => $error,
+            'next_trigger' => null,
+        ];
     }
 }
-

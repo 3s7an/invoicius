@@ -11,14 +11,13 @@ use App\Models\VatType;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class InvoiceService
 {
     public function __construct(
         private readonly PaymentQrService $paymentQrService,
         private readonly InvoiceStatsCalculator $invoiceStatsCalculator,
+        private readonly RecipientService $recipientService,
     ) {
     }
 
@@ -43,123 +42,135 @@ class InvoiceService
 
     public function createInvoice(InvoiceDTO $data): Invoice
     {
-        return DB::transaction(function () use ($data) {
-            $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+        $this->ensureRecipientBelongsToUser($data);
 
-            $woVatTotal = 0.0;
-            $vatTotal = 0.0;
-            $itemRows = [];
+        try {
+            return DB::transaction(function () use ($data) {
+                $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
 
-            foreach ($data->items as $position => $item) {
-                $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
-                $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
+                $woVatTotal = 0.0;
+                $vatTotal = 0.0;
+                $itemRows = [];
 
-                $woVatTotal += $lineWoVat;
-                $vatTotal += $lineVat;
+                foreach ($data->items as $position => $item) {
+                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
+                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
 
-                $itemRows[] = [
-                    'vat_type_id' => $item->vatTypeId,
-                    'name' => $item->name,
-                    'unit' => $item->unit,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->unitPrice,
-                    'unit_wo_vat' => $item->unitPrice,
-                    'position' => $position,
-                    'line_wo_vat' => $lineWoVat,
-                    'vat' => $lineVat,
-                    'line_total' => $lineTotalWithVat,
-                ];
-            }
+                    $woVatTotal += $lineWoVat;
+                    $vatTotal += $lineVat;
 
-            $invoice = Invoice::create([
-                'user_id' => $data->userId,
-                'recipient_id' => $data->recipientId,
-                'number' => $data->number,
-                'varsym' => $data->variableSymbol,
-                'issue_date' => $data->issueDate,
-                'due_date' => $data->dueDate,
-                'currency_id' => $data->currencyId,
-                'recipient_name' => $data->recipient->recipientName,
-                'recipient_street' => $data->recipient->recipientStreet,
-                'recipient_street_num' => $data->recipient->recipientStreetNum,
-                'recipient_city' => $data->recipient->recipientCity,
-                'recipient_state' => $data->recipient->recipientState,
-                'recipient_ico' => $data->recipient->recipientIco,
-                'recipient_dic' => $data->recipient->recipientDic,
-                'recipient_ic_dph' => $data->recipient->recipientIcDph,
-                'iban' => $data->recipient->recipientIban,
-                'wo_vat_price' => round($woVatTotal, 2),
-                'vat_price' => round($vatTotal, 2),
-                'total_price' => round($woVatTotal + $vatTotal, 2),
-                'invoice_status_id' => $draftStatus?->id,
-            ]);
+                    $itemRows[] = [
+                        'vat_type_id' => $item->vatTypeId,
+                        'name' => $item->name,
+                        'unit' => $item->unit,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unitPrice,
+                        'unit_wo_vat' => $item->unitPrice,
+                        'position' => $position,
+                        'line_wo_vat' => $lineWoVat,
+                        'vat' => $lineVat,
+                        'line_total' => $lineTotalWithVat,
+                    ];
+                }
 
-            foreach ($itemRows as $row) {
-                $invoice->items()->create($row);
-            }
+                $invoice = Invoice::create([
+                    'user_id' => $data->userId,
+                    'recipient_id' => $data->recipientId,
+                    'number' => $data->number,
+                    'varsym' => $data->variableSymbol,
+                    'issue_date' => $data->issueDate,
+                    'due_date' => $data->dueDate,
+                    'currency_id' => $data->currencyId,
+                    'recipient_name' => $data->recipient->recipientName,
+                    'recipient_street' => $data->recipient->recipientStreet,
+                    'recipient_street_num' => $data->recipient->recipientStreetNum,
+                    'recipient_city' => $data->recipient->recipientCity,
+                    'recipient_state' => $data->recipient->recipientState,
+                    'recipient_ico' => $data->recipient->recipientIco,
+                    'recipient_dic' => $data->recipient->recipientDic,
+                    'recipient_ic_dph' => $data->recipient->recipientIcDph,
+                    'iban' => $data->recipient->recipientIban,
+                    'wo_vat_price' => round($woVatTotal, 2),
+                    'vat_price' => round($vatTotal, 2),
+                    'total_price' => round($woVatTotal + $vatTotal, 2),
+                    'invoice_status_id' => $draftStatus?->id,
+                ]);
 
-            return $invoice;
-        });
+                foreach ($itemRows as $row) {
+                    $invoice->items()->create($row);
+                }
+
+                return $invoice;
+            });
+        } catch (UniqueConstraintViolationException) {
+            throw new DuplicateInvoiceNumberException($data->number);
+        }
     }
 
     public function updateInvoice(Invoice $invoice, InvoiceDTO $data): Invoice
     {
-        return DB::transaction(function () use ($invoice, $data) {
-            $woVatTotal = 0.0;
-            $vatTotal = 0.0;
-            $itemRows = [];
+        $this->ensureRecipientBelongsToUser($data);
 
-            foreach ($data->items as $position => $item) {
-                $lineWoVat = round($item->quantity * $item->unitPrice, 2);
-                $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
-                $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
+        try {
+            return DB::transaction(function () use ($invoice, $data) {
+                $woVatTotal = 0.0;
+                $vatTotal = 0.0;
+                $itemRows = [];
 
-                $woVatTotal += $lineWoVat;
-                $vatTotal += $lineVat;
+                foreach ($data->items as $position => $item) {
+                    $lineWoVat = round($item->quantity * $item->unitPrice, 2);
+                    $lineVat = round($this->calculateLineVat($lineWoVat, $item->vatTypeId), 2);
+                    $lineTotalWithVat = round($lineWoVat + $lineVat, 2);
 
-                $itemRows[] = [
-                    'vat_type_id' => $item->vatTypeId,
-                    'name' => $item->name,
-                    'unit' => $item->unit,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->unitPrice,
-                    'unit_wo_vat' => $item->unitPrice,
-                    'position' => $position,
-                    'line_wo_vat' => $lineWoVat,
-                    'vat' => $lineVat,
-                    'line_total' => $lineTotalWithVat,
-                ];
-            }
+                    $woVatTotal += $lineWoVat;
+                    $vatTotal += $lineVat;
 
-            $invoice->update([
-                'recipient_id' => $data->recipientId,
-                'number' => $data->number,
-                'varsym' => $data->variableSymbol,
-                'issue_date' => $data->issueDate,
-                'due_date' => $data->dueDate,
-                'currency_id' => $data->currencyId,
-                'recipient_name' => $data->recipient->recipientName,
-                'recipient_street' => $data->recipient->recipientStreet,
-                'recipient_street_num' => $data->recipient->recipientStreetNum,
-                'recipient_city' => $data->recipient->recipientCity,
-                'recipient_state' => $data->recipient->recipientState,
-                'recipient_ico' => $data->recipient->recipientIco,
-                'recipient_dic' => $data->recipient->recipientDic,
-                'recipient_ic_dph' => $data->recipient->recipientIcDph,
-                'iban' => $data->recipient->recipientIban,
-                'wo_vat_price' => round($woVatTotal, 2),
-                'vat_price' => round($vatTotal, 2),
-                'total_price' => round($woVatTotal + $vatTotal, 2),
-            ]);
+                    $itemRows[] = [
+                        'vat_type_id' => $item->vatTypeId,
+                        'name' => $item->name,
+                        'unit' => $item->unit,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unitPrice,
+                        'unit_wo_vat' => $item->unitPrice,
+                        'position' => $position,
+                        'line_wo_vat' => $lineWoVat,
+                        'vat' => $lineVat,
+                        'line_total' => $lineTotalWithVat,
+                    ];
+                }
 
-            $invoice->items()->delete();
-            foreach ($itemRows as $row) {
-                $invoice->items()->create($row);
-            }
+                $invoice->update([
+                    'recipient_id' => $data->recipientId,
+                    'number' => $data->number,
+                    'varsym' => $data->variableSymbol,
+                    'issue_date' => $data->issueDate,
+                    'due_date' => $data->dueDate,
+                    'currency_id' => $data->currencyId,
+                    'recipient_name' => $data->recipient->recipientName,
+                    'recipient_street' => $data->recipient->recipientStreet,
+                    'recipient_street_num' => $data->recipient->recipientStreetNum,
+                    'recipient_city' => $data->recipient->recipientCity,
+                    'recipient_state' => $data->recipient->recipientState,
+                    'recipient_ico' => $data->recipient->recipientIco,
+                    'recipient_dic' => $data->recipient->recipientDic,
+                    'recipient_ic_dph' => $data->recipient->recipientIcDph,
+                    'iban' => $data->recipient->recipientIban,
+                    'wo_vat_price' => round($woVatTotal, 2),
+                    'vat_price' => round($vatTotal, 2),
+                    'total_price' => round($woVatTotal + $vatTotal, 2),
+                ]);
 
-            return $invoice->fresh('items');
-        });
+                $invoice->items()->delete();
+                foreach ($itemRows as $row) {
+                    $invoice->items()->create($row);
+                }
+
+                return $invoice->fresh('items');
+            });
+        } catch (UniqueConstraintViolationException) {
+            throw new DuplicateInvoiceNumberException($data->number);
+        }
     }
 
     public function updateStatus(Invoice $invoice, int $invoiceStatusId): void
@@ -181,6 +192,15 @@ class InvoiceService
         }
     
         return $lineWoVat * ($vatType->rate / 100);
+    }
+
+    private function ensureRecipientBelongsToUser(InvoiceDTO $data): void
+    {
+        if ($data->recipientId === null) {
+            return;
+        }
+
+        $this->recipientService->findForUserOrFail($data->userId, $data->recipientId);
     }
 
     public function getSuggestedNumber(int $userId): string

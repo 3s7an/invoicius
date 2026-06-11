@@ -210,7 +210,7 @@ class InvoiceServiceTest extends TestCase
             ],
         );
 
-        $this->expectException(\Symfony\Component\HttpKernel\Exception\HttpException::class);
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
         $this->service->createInvoice($data);
     }
 }
