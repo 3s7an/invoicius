@@ -36,7 +36,7 @@ COPY public ./public
 RUN npm run build
 
 
-FROM php:8.2-apache-bookworm AS app
+FROM php:8.4-apache-bookworm AS app
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
