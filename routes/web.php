@@ -16,7 +16,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', /*'verified'*/])
     ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -30,11 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function () {
     Route::resource('recipients', RecipientController::class)->except(['show']);
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function () {
     Route::resource('automatizations', AutomatizationController::class)
         ->except(['show']);
 });
