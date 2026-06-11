@@ -2,6 +2,8 @@
 
 namespace App\DTOs;
 
+use App\Models\Recipient;
+
 final readonly class InvoiceRecipientDTO
 {
     public function __construct(
@@ -15,6 +17,21 @@ final readonly class InvoiceRecipientDTO
         public ?string $recipientIcDph,
         public ?string $recipientIban,
     ) {
+    }
+
+    public static function fromModel(Recipient $recipient): self
+    {
+        return new self(
+            recipientName: $recipient->company_name ?? $recipient->name,
+            recipientStreet: $recipient->street,
+            recipientStreetNum: $recipient->street_num,
+            recipientCity: $recipient->city,
+            recipientState: $recipient->state,
+            recipientIco: $recipient->ico,
+            recipientDic: $recipient->dic,
+            recipientIcDph: $recipient->ic_dph,
+            recipientIban: $recipient->iban,
+        );
     }
 
     /**

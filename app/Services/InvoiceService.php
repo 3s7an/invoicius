@@ -3,19 +3,13 @@
 namespace App\Services;
 
 use App\DTOs\InvoiceDTO;
-use App\DTOs\InvoiceItemDTO;
-use App\DTOs\InvoiceRecipientDTO;
 use App\Exceptions\DuplicateInvoiceNumberException;
-use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\InvoiceStatus;
-use App\Models\Recipient;
-use App\Models\User;
 use App\Models\VatType;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -222,63 +216,6 @@ class InvoiceService
     public function delete(Invoice $invoice): void
     {
         $invoice->delete();
-    }
-
-    public function generateFromAutomatization(int $userId, int $recipientId, array $itemNames): Invoice
-    {
-        $user = User::with('defaultVatType')->findOrFail($userId);
-        $recipient = Recipient::forUser($userId)->findOrFail($recipientId);
-
-        $defaultCurrencyId = $user->currency_id ?? Currency::orderBy('id')->value('id');
-        $defaultVatTypeId = $user->default_vat_type_id;
-
-        $items = [];
-
-        if(!empty($itemNames)) {
-            foreach ($itemNames as $name) {
-                $items[] = new InvoiceItemDTO(
-                    name: $name,
-                    quantity: 1,
-                    unitPrice: 0,
-                    unit: 'hrs',
-                    vatTypeId: $defaultVatTypeId,
-                );
-            }
-        } else {
-            $items = [
-                new InvoiceItemDTO(
-                    name: '',
-                    quantity: 1,
-                    unitPrice: 0,
-                    unit: 'hrs',
-                    vatTypeId: $defaultVatTypeId,
-                ),
-            ];
-        }
-
-        $data = new InvoiceDTO(
-            userId: $userId,
-            number: $this->getSuggestedNumber($userId),
-            variableSymbol: $this->getSuggestedNumber($userId),
-            issueDate: Carbon::today(),
-            dueDate: Carbon::today()->addDays(14),
-            currencyId: $defaultCurrencyId,
-            recipientId: $recipientId,
-            recipient: new InvoiceRecipientDTO(
-                recipientName: $recipient->company_name ?? $recipient->name,
-                recipientStreet: $recipient->street,
-                recipientStreetNum: $recipient->street_num,
-                recipientCity: $recipient->city,
-                recipientState: $recipient->state,
-                recipientIco: $recipient->ico,
-                recipientDic: $recipient->dic,
-                recipientIcDph: $recipient->ic_dph,
-                recipientIban: $recipient->iban,
-            ),
-            items: $items
-        );
-
-        return $this->createInvoice($data);
     }
 
     private function calculateLineVat(float $lineWoVat, ?int $vatTypeId): float

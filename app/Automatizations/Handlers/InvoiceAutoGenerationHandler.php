@@ -3,14 +3,14 @@
 namespace App\Automatizations\Handlers;
 
 use App\Contracts\AutomatizationHandlerInterface;
-use App\Services\InvoiceService;
 use App\DTOs\AutomatizationResultDTO;
 use App\Models\Automatization;
+use App\Services\InvoiceAutoGenerationService;
 
-class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
+class InvoiceAutoGenerationHandler implements AutomatizationHandlerInterface
 {
     public function __construct(
-        private readonly InvoiceService $invoiceService,
+        private readonly InvoiceAutoGenerationService $invoiceAutoGenerationService,
     ) {
     }
 
@@ -21,11 +21,7 @@ class InvoiceAutoGenHandler implements AutomatizationHandlerInterface
 
     public function handle(Automatization $automatization): AutomatizationResultDTO
     {
-        $invoice = $this->invoiceService->generateFromAutomatization(
-            $automatization->user_id,
-            $automatization->recipient_id,
-            $automatization->item_names ?? [],
-        );
+        $invoice = $this->invoiceAutoGenerationService->createFromAutomatization($automatization);
 
         return new AutomatizationResultDTO(
             success: true,

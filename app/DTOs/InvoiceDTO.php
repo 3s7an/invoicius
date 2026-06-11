@@ -2,6 +2,10 @@
 
 namespace App\DTOs;
 
+use App\Models\Automatization;
+use App\Models\Currency;
+use App\Models\Recipient;
+use App\Models\User;
 use Carbon\Carbon;
 
 final readonly class InvoiceDTO
@@ -18,6 +22,52 @@ final readonly class InvoiceDTO
         /** @var array<int, InvoiceItemDTO> */
         public array $items,
     ) {
+    }
+
+    public static function fromAutomatization(
+        Automatization $automatization,
+        User $user,
+        Recipient $recipient,
+        string $suggestedNumber,
+    ): self {
+        $defaultCurrencyId = $user->currency_id ?? Currency::orderBy('id')->value('id');
+        $defaultVatTypeId = $user->default_vat_type_id;
+        $itemNames = $automatization->item_names ?? [];
+
+        if ($itemNames !== []) {
+            $items = array_map(
+                fn (string $name) => new InvoiceItemDTO(
+                    name: $name,
+                    quantity: 1,
+                    unitPrice: 0,
+                    unit: 'hrs',
+                    vatTypeId: $defaultVatTypeId,
+                ),
+                $itemNames,
+            );
+        } else {
+            $items = [
+                new InvoiceItemDTO(
+                    name: '',
+                    quantity: 1,
+                    unitPrice: 0,
+                    unit: 'hrs',
+                    vatTypeId: $defaultVatTypeId,
+                ),
+            ];
+        }
+
+        return new self(
+            userId: $automatization->user_id,
+            number: $suggestedNumber,
+            variableSymbol: $suggestedNumber,
+            issueDate: Carbon::today(),
+            dueDate: Carbon::today()->addDays(14),
+            currencyId: $defaultCurrencyId,
+            recipientId: $automatization->recipient_id,
+            recipient: InvoiceRecipientDTO::fromModel($recipient),
+            items: $items,
+        );
     }
 
     /**
