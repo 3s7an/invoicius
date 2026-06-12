@@ -37,12 +37,17 @@ final readonly class AutomatizationDTO
             type: $type,
             dateTrigger: $type->usesDailySchedule()
                 ? now()->startOfDay()
-                : Carbon::parse($validated['date_trigger']),
+                : self::parseDateTrigger((string) $validated['date_trigger']),
             dueOffsetDays: ($dueOffsetDays === null || $dueOffsetDays === '' ? null : (int) $dueOffsetDays),
             itemNames: $type->requiresItemNames()
                 ? array_values($validated['item_names'] ?? [])
                 : null,
             isActive: (bool) ($validated['is_active'] ?? true),
         );
+    }
+
+    private static function parseDateTrigger(string $date): Carbon
+    {
+        return Carbon::createFromFormat('Y-m-d', $date, config('app.timezone'))->startOfDay();
     }
 }

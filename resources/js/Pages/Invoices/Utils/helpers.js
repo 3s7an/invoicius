@@ -1,4 +1,5 @@
 import { FALLBACK_COUNTRY_LIST } from '@/utils/countries';
+import { toDateString } from '@/utils/formatters';
 
 export function prefixedId(prefix, name) {
     if (!prefix) return name;
@@ -14,7 +15,7 @@ export const ymdToDate = (ymd) => {
 };
 export const todayYMD = () => toYMD();
 export const defaultDueYMD = (days = 14) => toYMD(new Date(Date.now() + days * 864e5));
-export const formatDate = (v) => (v ? String(v).slice(0, 10) : '');
+export const formatDate = (v) => toDateString(v);
 export const nullIfBlank = (value) => (value === '' || value == null ? null : value);
 
 

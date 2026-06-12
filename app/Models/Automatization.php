@@ -71,6 +71,20 @@ class Automatization extends Model
         return $this->type->label();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $attributes = parent::toArray();
+
+        if ($this->date_trigger !== null) {
+            $attributes['date_trigger'] = $this->date_trigger->toDateString();
+        }
+
+        return $attributes;
+    }
+
     public function scopeDueToday(Builder $query): Builder
     {
         return $query->whereDate('date_trigger', now()->toDateString())

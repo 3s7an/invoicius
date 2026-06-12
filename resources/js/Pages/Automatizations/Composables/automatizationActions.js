@@ -1,11 +1,12 @@
 import { router } from '@inertiajs/vue3';
+import { toDateString } from '@/utils/formatters';
 
 export function useAutomatizationActions() {
     function buildUpdatePayload(automatization, overrides = {}) {
         return {
             recipient_id: automatization.recipient_id,
             type: automatization.type,
-            date_trigger: automatization.date_trigger,
+            date_trigger: toDateString(automatization.date_trigger),
             due_offset_days: automatization.due_offset_days,
             item_names: automatization.item_names,
             is_active: automatization.is_active,

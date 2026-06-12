@@ -7,20 +7,53 @@ export function formatAmount(value) {
 }
 
 /**
+ * Normalize a date value to Y-m-d in local calendar (avoids UTC ISO off-by-one).
+ */
+export function toDateString(value) {
+    if (value == null || value === '') {
+        return '';
+    }
+
+    if (value instanceof Date) {
+        if (Number.isNaN(value.getTime())) {
+            return '';
+        }
+
+        const year = value.getFullYear();
+        const month = String(value.getMonth() + 1).padStart(2, '0');
+        const day = String(value.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+
+    const str = String(value).trim();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+        return str;
+    }
+
+    const date = new Date(str);
+
+    if (Number.isNaN(date.getTime())) {
+        return '';
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * Format a date value for display (sk-SK: dd.mm.yyyy).
  */
 export function formatDate(value) {
-    if (value == null) return '—';
+    const ymd = toDateString(value);
 
-    if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}/.test(value)) {
-        return value.slice(0, 10).split('-').reverse().join('.');
+    if (!ymd) {
+        return '—';
     }
 
-    const date = value instanceof Date ? value : new Date(value);
-    if (Number.isNaN(date.getTime())) return '—';
-    return new Intl.DateTimeFormat('sk-SK', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-    }).format(date);
+    return ymd.split('-').reverse().join('.');
 }
