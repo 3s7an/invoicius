@@ -1,17 +1,26 @@
 import { router } from '@inertiajs/vue3';
+import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { toDateString } from '@/utils/formatters';
 
 export function useAutomatizationActions() {
     function buildUpdatePayload(automatization, overrides = {}) {
-        return {
-            recipient_id: automatization.recipient_id,
+        const payload = {
             type: automatization.type,
             date_trigger: toDateString(automatization.date_trigger),
-            due_offset_days: automatization.due_offset_days,
-            item_names: automatization.item_names,
             is_active: automatization.is_active,
             ...overrides,
         };
+
+        if (automatization.type === AutomatizationType.InvoiceAutoGen) {
+            payload.recipient_id = automatization.recipient_id;
+            payload.item_names = automatization.item_names;
+        }
+
+        if (automatization.type === AutomatizationType.InvoiceDueReminder) {
+            payload.due_offset_days = automatization.due_offset_days;
+        }
+
+        return payload;
     }
 
     function toggleActive(automatization) {

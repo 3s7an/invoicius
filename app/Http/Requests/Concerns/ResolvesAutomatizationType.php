@@ -10,10 +10,16 @@ use LogicException;
 
 trait ResolvesAutomatizationType
 {
-    protected function automatizationType(): AutomatizationType
+    protected function automatizationType(): ?AutomatizationType
     {
         if ($this->has('type')) {
-            return $this->enum('type', AutomatizationType::class);
+            $type = $this->input('type');
+
+            if (! is_string($type)) {
+                return null;
+            }
+
+            return AutomatizationType::tryFrom($type);
         }
 
         $automatization = $this->route('automatization');

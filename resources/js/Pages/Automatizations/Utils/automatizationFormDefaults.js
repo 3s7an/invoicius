@@ -12,8 +12,21 @@ export function automatizationTypeLabel(type, automatizationTypes = []) {
     return type;
 }
 
+function defaultItemNames(automatization, type) {
+    if (type !== AutomatizationType.InvoiceAutoGen) {
+        return [];
+    }
+
+    if (Array.isArray(automatization?.item_names) && automatization.item_names.length) {
+        return [...automatization.item_names];
+    }
+
+    return [''];
+}
+
 export function defaultAutomatizationForm(automatization = null) {
     const type = automatization?.type ?? AutomatizationType.InvoiceAutoGen;
+    const itemNames = defaultItemNames(automatization, type);
 
     return {
         recipient_id: automatization?.recipient_id ?? '',
@@ -23,11 +36,7 @@ export function defaultAutomatizationForm(automatization = null) {
             : todayYMD(),
         due_offset_days: automatization?.due_offset_days ?? '',
         is_active: automatization?.is_active ?? true,
-        item_names: Array.isArray(automatization?.item_names) && automatization.item_names.length
-            ? [...automatization.item_names]
-            : [''],
-        item_count: Array.isArray(automatization?.item_names) && automatization.item_names.length
-            ? automatization.item_names.length
-            : 1,
+        item_names: itemNames,
+        item_count: itemNames.length || 1,
     };
 }

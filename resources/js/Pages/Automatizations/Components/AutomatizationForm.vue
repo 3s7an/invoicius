@@ -44,6 +44,13 @@ watch(
         } else {
             form.date_trigger = todayYMD();
         }
+        if (type !== AutomatizationType.InvoiceAutoGen) {
+            form.item_names = [];
+            form.item_count = 1;
+        } else if (form.item_names.length === 0) {
+            form.item_names = [''];
+            form.item_count = 1;
+        }
     }
 );
 
@@ -57,7 +64,26 @@ const recipientOptions = computed(() =>
 const inputClass =
     'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 
+function submitPayload(data) {
+    const payload = { ...data };
+
+    delete payload.item_count;
+
+    if (payload.type !== AutomatizationType.InvoiceAutoGen) {
+        delete payload.item_names;
+        delete payload.recipient_id;
+    }
+
+    if (payload.type !== AutomatizationType.InvoiceDueReminder) {
+        delete payload.due_offset_days;
+    }
+
+    return payload;
+}
+
 function submit() {
+    form.transform(submitPayload);
+
     if (isEdit.value) {
         form.patch(route('automatizations.update', props.automatization.id));
         return;
@@ -67,8 +93,12 @@ function submit() {
 }
 
 watch(
-    () => Math.max(0, Number(form.item_count) || 0),
-    (count) => {
+    () => [form.type, Math.max(0, Number(form.item_count) || 0)],
+    ([type, count]) => {
+        if (type !== AutomatizationType.InvoiceAutoGen) {
+            return;
+        }
+
         while (form.item_names.length < count) form.item_names.push('');
         while (form.item_names.length > count) form.item_names.pop();
     },
