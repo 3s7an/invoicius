@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import Button from 'primevue/button';
+import { Head, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
@@ -46,19 +45,6 @@ const userName = computed(() => {
             <PageHeader title="Prehľad">
                 <template v-if="userName" #subtitle>
                     Vitaj späť, {{ userName }}.
-                </template>
-
-                <template #actions>
-                    <Link :href="route('invoices.create')">
-                        <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-sm" />
-                    </Link>
-                    <Link :href="route('automatizations.create')">
-                        <Button
-                            label="Nová automatizácia"
-                            icon="pi pi-bolt"
-                            class="p-button-sm !border !border-gray-200 !bg-white !text-gray-700 shadow-sm hover:!bg-gray-50"
-                        />
-                    </Link>
                 </template>
             </PageHeader>
 

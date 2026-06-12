@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="mb-4 mt-4">
+    <div class="mb-4">
         <div class="flex items-start justify-between gap-3">
             <h1 class="min-w-0 flex-1 text-2xl font-semibold leading-tight tracking-tight text-gray-900 sm:text-3xl">
                 {{ title }}
