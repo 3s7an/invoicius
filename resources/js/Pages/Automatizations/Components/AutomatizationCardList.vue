@@ -2,6 +2,9 @@
 import { router, Link } from '@inertiajs/vue3';
 import { formatDate } from '@/utils/formatters';
 import Button from 'primevue/button';
+import { useAutomatizationActions } from '@/Pages/Automatizations/Composables/automatizationActions';
+
+const { toggleActive, confirmDelete } = useAutomatizationActions();
 
 defineProps({
     automatizations: {
@@ -10,24 +13,6 @@ defineProps({
     },
 });
 
-function recipientName(automatization) {
-    const r = automatization.recipient;
-    if (!r) return null;
-    return r.company_name || r.name || '—';
-}
-
-function toggleActive(automatization) {
-    router.patch(
-        route('automatizations.update', automatization.id),
-        { is_active: !automatization.is_active },
-        { preserveScroll: true },
-    );
-}
-
-function confirmDelete(automatization) {
-    if (!confirm(`Zmazať automatizáciu „${automatization.type_label}“?`)) return;
-    router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
-}
 </script>
 
 <template>
@@ -38,20 +23,12 @@ function confirmDelete(automatization) {
             class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
         >
             <div class="flex items-start justify-between gap-3">
-                <div class="min-w-0">
-                    <p class="text-base font-semibold text-gray-900">{{ automatization.type_label }}</p>
-                    <p v-if="recipientName(automatization)" class="mt-0.5 truncate text-sm text-gray-600">
-                        Klient: {{ recipientName(automatization) }}
-                    </p>
-                    <p v-else class="mt-0.5 text-sm text-gray-600">Pre všetkých klientov</p>
-                </div>
+                <p class="text-base font-semibold text-gray-900">{{ automatization.type_label }}</p>
                 <span
-                    class="inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    :class="
-                        automatization.is_active
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-gray-100 text-gray-500'
-                    "
+                    class="inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                    :class="automatization.is_active
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-gray-100 text-gray-500'"
                 >
                     {{ automatization.is_active ? 'Aktívne' : 'Neaktívne' }}
                 </span>

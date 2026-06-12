@@ -4,6 +4,9 @@ import { formatDate } from '@/utils/formatters';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
+import { useAutomatizationActions } from '@/Pages/Automatizations/Composables/automatizationActions';
+
+const { toggleActive, confirmDelete } = useAutomatizationActions();
 
 defineProps({
     automatizations: {
@@ -12,22 +15,6 @@ defineProps({
     },
 });
 
-function recipientName(automatization) {
-    const r = automatization.recipient;
-    if (!r) return '—';
-    return r.company_name || r.name || '—';
-}
-
-function toggleActive(automatization) {
-    router.patch(route('automatizations.update', automatization.id), {
-        is_active: !automatization.is_active,
-    }, { preserveScroll: true });
-}
-
-function confirmDelete(automatization) {
-    if (!confirm(`Zmazať automatizáciu „${automatization.type_label}“?`)) return;
-    router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
-}
 </script>
 
 <template>

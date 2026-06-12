@@ -5,7 +5,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
 import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
-import { todayYMD } from '@/Pages/Invoices/Utils/helpers';
+import { todayYMD, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
+import DatePicker from 'primevue/datepicker';
 
 const props = defineProps({
     mode: {
@@ -148,11 +149,14 @@ watch(
 
                     <div v-if="form.type !== AutomatizationType.InvoiceDueReminder">
                         <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
-                        <input
-                            id="auto-trigger"
-                            type="date"
-                            v-model="form.date_trigger"
-                            :class="inputClass"
+                        <DatePicker
+                            inputId="auto-trigger"
+                            :modelValue="ymdToDate(form.date_trigger)"
+                            showIcon
+                            iconDisplay="input"
+                            fluid
+                            class="mt-1"
+                            @update:modelValue="(d) => { form.date_trigger = d ? toYMD(d) : '' }"
                         />
                         <p v-if="form.type === AutomatizationType.InvoiceReport" class="mt-1 text-sm text-gray-500">
                             Report je za predošlý mesiac od tohto dátumu.
