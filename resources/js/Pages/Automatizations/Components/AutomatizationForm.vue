@@ -3,7 +3,7 @@ import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { defaultAutomatizationForm, automatizationTypeLabel } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
 import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { todayYMD } from '@/Pages/Invoices/Utils/helpers';
 
@@ -29,19 +29,11 @@ const props = defineProps({
 
 const isEdit = computed(() => props.mode === 'edit');
 
-const form = useForm(defaultAutomatizationForm(props.automatization, props.automatization_types));
+const form = useForm(defaultAutomatizationForm(props.automatization));
 
 watch(
     () => form.type,
-    (type, oldType) => {
-        if (!isEdit.value) {
-            const currentName = form.name?.trim();
-            const oldDefault = oldType ? automatizationTypeLabel(oldType, props.automatization_types) : '';
-            if (!currentName || currentName === oldDefault) {
-                form.name = automatizationTypeLabel(type, props.automatization_types);
-            }
-        }
-
+    (type) => {
         if (type === AutomatizationType.InvoiceReport) {
             form.recipient_id = '';
         }
@@ -68,7 +60,7 @@ function submit() {
 }
 
 watch(
-    () => Number(form.item_count) || 0,
+    () => Math.max(0, Number(form.item_count) || 0),
     (count) => {
         while (form.item_names.length < count) form.item_names.push('');
         while (form.item_names.length > count) form.item_names.pop();
@@ -88,49 +80,6 @@ watch(
 
                 <div class="mt-6 space-y-6">
                     <div>
-                        <InputLabel for="auto-name" value="Názov" />
-                        <input
-                            id="auto-name"
-                            type="text"
-                            v-model="form.name"
-                            :class="inputClass"
-                            maxlength="255"
-                            required
-                        />
-                        <InputError class="mt-2" :message="form.errors.name" />
-                    </div>
-
-                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
-                        <InputLabel for="auto-item_count" value="Počet položiek vo faktúre" />
-                        <input
-                            id="auto-item_count"
-                            type="number"
-                            v-model="form.item_count"
-                            :class="inputClass"
-                            maxlength="255"
-                            min="0"
-                            required
-                        />
-                        <InputError class="mt-2" :message="form.errors.name" />
-                    </div>
-
-                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen && form.item_count > 0">
-                        <InputLabel for="auto-item_count" value="Názov položiek" />
-
-                            <div v-for="(name, index) in form.item_names" :key="index">
-                                <input
-                                    :id="`auto-item_name-${index}`"
-                                    type="text"
-                                    v-model="form.item_names[index]"
-                                    :class="inputClass"
-                                    maxlength="255"
-                                    required
-                                />
-                                <InputError class="mt-2" :message="form.errors.item_name" />
-                            </div>
-                    </div>
-
-                    <div>
                         <InputLabel for="auto-type" value="Typ" />
                         <select
                             id="auto-type"
@@ -146,6 +95,36 @@ watch(
                             </option>
                         </select>
                         <InputError class="mt-2" :message="form.errors.type" />
+                    </div>
+
+                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
+                        <InputLabel for="auto-item_count" value="Počet položiek vo faktúre" />
+                        <input
+                            id="auto-item_count"
+                            type="number"
+                            v-model="form.item_count"
+                            :class="inputClass"
+                            min="1"
+                            max="20"
+                            required
+                        />
+                        <InputError class="mt-2" :message="form.errors.item_names" />
+                    </div>
+
+                    <div v-if="form.type === AutomatizationType.InvoiceAutoGen && form.item_count > 0">
+                        <InputLabel for="auto-item_count" value="Názov položiek" />
+
+                            <div v-for="(name, index) in form.item_names" :key="index">
+                                <input
+                                    :id="`auto-item_name-${index}`"
+                                    type="text"
+                                    v-model="form.item_names[index]"
+                                    :class="inputClass"
+                                    maxlength="255"
+                                    required
+                                />
+                                <InputError class="mt-2" :message="form.errors[`item_names.${index}`]" />
+                            </div>
                     </div>
 
                     <div v-if="form.type === AutomatizationType.InvoiceAutoGen">

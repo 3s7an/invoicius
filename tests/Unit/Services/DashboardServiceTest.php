@@ -104,12 +104,10 @@ class DashboardServiceTest extends TestCase
     {
         Automatization::factory()->create([
             'user_id' => $this->user->id,
-            'name' => 'Active',
             'is_active' => true,
         ]);
         Automatization::factory()->inactive()->create([
             'user_id' => $this->user->id,
-            'name' => 'Inactive',
         ]);
         Automatization::factory()->create([
             'user_id' => User::factory()->create()->id,
@@ -119,7 +117,10 @@ class DashboardServiceTest extends TestCase
         $active = $this->service->getActiveAutomatizations($this->user->id, 6);
 
         $this->assertCount(1, $active);
-        $this->assertSame('Active', $active[0]['name']);
+        $this->assertSame(
+            \App\Enums\AutomatizationType::InvoiceReport->label(),
+            $active[0]['type_label'],
+        );
     }
 
     public function test_get_active_automatizations_limits_to_six(): void
@@ -127,7 +128,6 @@ class DashboardServiceTest extends TestCase
         for ($i = 1; $i <= 8; $i++) {
             Automatization::factory()->create([
                 'user_id' => $this->user->id,
-                'name' => "Auto {$i}",
                 'is_active' => true,
                 'updated_at' => now()->subDays(8 - $i),
             ]);

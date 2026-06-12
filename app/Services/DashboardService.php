@@ -66,7 +66,7 @@ class DashboardService
     /**
      * @return list<array{
      *   id:int,
-     *   name:string,
+     *   type_label:string,
      *   recipient_label:string|null,
      *   date_trigger:string|null,
      *   due_offset_days:int|null,
@@ -83,7 +83,7 @@ class DashboardService
             ->limit($limit)
             ->get([
                 'id',
-                'name',
+                'type',
                 'recipient_id',
                 'date_trigger',
                 'due_offset_days',
@@ -93,7 +93,7 @@ class DashboardService
 
         return $automatizations->map(fn (Automatization $a) => [
             'id' => $a->id,
-            'name' => $a->name,
+            'type_label' => $a->type->label(),
             'recipient_label' => $a->recipient
                 ? ($a->recipient->company_name ?? $a->recipient->name)
                 : null,

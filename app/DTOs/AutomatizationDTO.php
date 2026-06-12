@@ -12,7 +12,6 @@ final readonly class AutomatizationDTO
     public function __construct(
         public int $userId,
         public ?int $recipientId,
-        public string $name,
         public AutomatizationType $type,
         public Carbon $dateTrigger,
         public ?int $dueOffsetDays,
@@ -35,7 +34,6 @@ final readonly class AutomatizationDTO
             recipientId: ($recipientId === null || $recipientId === '' || (int) $recipientId === 0)
                 ? null
                 : (int) $recipientId,
-            name: (string) $validated['name'],
             type: $type,
             dateTrigger: $type->usesDailySchedule()
                 ? now()->startOfDay()

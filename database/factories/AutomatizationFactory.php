@@ -19,7 +19,6 @@ class AutomatizationFactory extends Factory
         return [
             'user_id' => User::factory(),
             'recipient_id' => null,
-            'name' => $this->faker->sentence(3),
             'type' => AutomatizationType::InvoiceReport,
             'date_trigger' => now()->addDay()->toDateString(),
             'due_offset_days' => null,

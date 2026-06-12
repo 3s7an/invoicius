@@ -10,12 +10,11 @@ export function automatizationTypeLabel(type, automatizationTypes = []) {
     return type;
 }
 
-export function defaultAutomatizationForm(automatization = null, automatizationTypes = []) {
+export function defaultAutomatizationForm(automatization = null) {
     const today = new Date().toISOString().slice(0, 10);
     const type = automatization?.type ?? AutomatizationType.InvoiceAutoGen;
 
     return {
-        name: automatization?.name ?? automatizationTypeLabel(type, automatizationTypes),
         recipient_id: automatization?.recipient_id ?? '',
         type,
         date_trigger: automatization?.date_trigger

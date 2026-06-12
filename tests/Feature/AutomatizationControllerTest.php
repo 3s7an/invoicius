@@ -55,7 +55,6 @@ class AutomatizationControllerTest extends TestCase
     public function test_user_can_store_invoice_report_automatization(): void
     {
         $response = $this->actingAs($this->user)->post(route('automatizations.store'), [
-            'name' => 'Mesačný report',
             'type' => AutomatizationType::InvoiceReport->value,
             'date_trigger' => now()->addDay()->toDateString(),
         ]);
@@ -63,7 +62,6 @@ class AutomatizationControllerTest extends TestCase
         $response->assertRedirect(route('automatizations.index'));
         $this->assertDatabaseHas('automatizations', [
             'user_id' => $this->user->id,
-            'name' => 'Mesačný report',
             'type' => AutomatizationType::InvoiceReport->value,
         ]);
     }
@@ -71,7 +69,6 @@ class AutomatizationControllerTest extends TestCase
     public function test_user_can_store_invoice_due_reminder_automatization(): void
     {
         $response = $this->actingAs($this->user)->post(route('automatizations.store'), [
-            'name' => 'Pripomienka splatnosti',
             'type' => AutomatizationType::InvoiceDueReminder->value,
             'date_trigger' => now()->addDay()->toDateString(),
             'due_offset_days' => 3,
@@ -90,7 +87,6 @@ class AutomatizationControllerTest extends TestCase
         $recipient = Recipient::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->post(route('automatizations.store'), [
-            'name' => 'Auto faktúra',
             'type' => AutomatizationType::InvoiceAutoGen->value,
             'date_trigger' => now()->addDay()->toDateString(),
             'recipient_id' => $recipient->id,
@@ -111,7 +107,6 @@ class AutomatizationControllerTest extends TestCase
         $recipient = Recipient::factory()->create(['user_id' => $otherUser->id]);
 
         $response = $this->actingAs($this->user)->post(route('automatizations.store'), [
-            'name' => 'Auto faktúra',
             'type' => AutomatizationType::InvoiceAutoGen->value,
             'date_trigger' => now()->addDay()->toDateString(),
             'recipient_id' => $recipient->id,
@@ -149,20 +144,20 @@ class AutomatizationControllerTest extends TestCase
     {
         $automatization = Automatization::factory()->create([
             'user_id' => $this->user->id,
-            'name' => 'Pôvodný názov',
+            'type' => AutomatizationType::InvoiceReport,
         ]);
 
         $response = $this->actingAs($this->user)->put(route('automatizations.update', $automatization), [
-            'name' => 'Nový názov',
-            'type' => AutomatizationType::InvoiceReport->value,
+            'type' => AutomatizationType::InvoiceDueReminder->value,
             'date_trigger' => now()->addDays(2)->toDateString(),
+            'due_offset_days' => 1,
             'is_active' => false,
         ]);
 
         $response->assertRedirect(route('automatizations.index'));
         $this->assertDatabaseHas('automatizations', [
             'id' => $automatization->id,
-            'name' => 'Nový názov',
+            'type' => AutomatizationType::InvoiceDueReminder->value,
             'is_active' => false,
         ]);
     }
@@ -173,7 +168,6 @@ class AutomatizationControllerTest extends TestCase
         $automatization = Automatization::factory()->create(['user_id' => $otherUser->id]);
 
         $response = $this->actingAs($this->user)->put(route('automatizations.update', $automatization), [
-            'name' => 'Hacker',
             'type' => AutomatizationType::InvoiceReport->value,
             'date_trigger' => now()->addDay()->toDateString(),
         ]);

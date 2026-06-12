@@ -16,8 +16,8 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int|null $recipient_id
- * @property string $name
  * @property AutomatizationType $type
+ * @property-read string $type_label
  * @property Carbon|null $date_trigger
  * @property int|null $due_offset_days
  * @property bool $is_active
@@ -32,10 +32,13 @@ class Automatization extends Model
     /** @use HasFactory<\Database\Factories\AutomatizationFactory> */
     use HasFactory, SoftDeletes;
 
+    protected $appends = [
+        'type_label',
+    ];
+
     protected $fillable = [
         'user_id',
         'recipient_id',
-        'name',
         'type',
         'date_trigger',
         'due_offset_days',
@@ -61,6 +64,11 @@ class Automatization extends Model
     public function scopeForUser(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return $this->type->label();
     }
 
     public function scopeDueToday(Builder $query): Builder

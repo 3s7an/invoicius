@@ -18,7 +18,6 @@ class StoreAutomatizationRequestTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('automatizations.store'), [
-            'name' => 'Test',
             'type' => 'foobar',
             'date_trigger' => now()->addDay()->toDateString(),
         ]);
@@ -31,7 +30,6 @@ class StoreAutomatizationRequestTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('automatizations.store'), [
-            'name' => 'Mesačný report',
             'type' => AutomatizationType::InvoiceReport->value,
             'date_trigger' => now()->addDay()->toDateString(),
         ]);
@@ -48,7 +46,6 @@ class StoreAutomatizationRequestTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('automatizations.store'), [
-            'name' => 'Test',
             'type' => AutomatizationType::InvoiceReport->value,
             'date_trigger' => now()->subDay()->toDateString(),
         ]);
@@ -61,7 +58,6 @@ class StoreAutomatizationRequestTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('automatizations.store'), [
-            'name' => 'Reminder',
             'type' => AutomatizationType::InvoiceDueReminder->value,
             'date_trigger' => now()->addDay()->toDateString(),
         ]);
@@ -74,7 +70,6 @@ class StoreAutomatizationRequestTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post(route('automatizations.store'), [
-            'name' => 'Auto',
             'type' => AutomatizationType::InvoiceAutoGen->value,
             'date_trigger' => now()->addDay()->toDateString(),
         ]);

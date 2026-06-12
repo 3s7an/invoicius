@@ -47,7 +47,6 @@ class AutomatizationServiceTest extends TestCase
         $dto = new AutomatizationDTO(
             userId: $this->user->id,
             recipientId: $recipient->id,
-            name: 'Auto invoice',
             type: AutomatizationType::InvoiceAutoGen,
             dateTrigger: now()->addDay(),
             dueOffsetDays: null,
@@ -61,7 +60,6 @@ class AutomatizationServiceTest extends TestCase
             'id' => $automatization->id,
             'user_id' => $this->user->id,
             'recipient_id' => $recipient->id,
-            'name' => 'Auto invoice',
             'type' => AutomatizationType::InvoiceAutoGen->value,
         ]);
     }
@@ -70,24 +68,23 @@ class AutomatizationServiceTest extends TestCase
     {
         $automatization = Automatization::factory()->create([
             'user_id' => $this->user->id,
-            'name' => 'Old name',
+            'type' => AutomatizationType::InvoiceReport,
             'is_active' => true,
         ]);
 
         $dto = new AutomatizationDTO(
             userId: $this->user->id,
             recipientId: null,
-            name: 'New name',
-            type: AutomatizationType::InvoiceReport,
+            type: AutomatizationType::InvoiceDueReminder,
             dateTrigger: now()->addDays(3),
-            dueOffsetDays: null,
+            dueOffsetDays: 2,
             itemNames: null,
             isActive: false,
         );
 
         $updated = $this->service->update($automatization, $dto);
 
-        $this->assertSame('New name', $updated->name);
+        $this->assertSame(AutomatizationType::InvoiceDueReminder, $updated->type);
         $this->assertFalse($updated->is_active);
     }
 

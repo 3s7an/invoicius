@@ -25,15 +25,15 @@ function toggleActive(automatization) {
 }
 
 function confirmDelete(automatization) {
-    if (!confirm(`Zmazať automatizáciu „${automatization.name}“?`)) return;
+    if (!confirm(`Zmazať automatizáciu „${automatization.type_label}“?`)) return;
     router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
 }
 </script>
 
 <template>
     <DataTable :value="automatizations" tableStyle="min-width: 40rem">
-        <Column field="name" header="Názov">
-            <template #body="{ data }">{{ data.name }}</template>
+        <Column field="type_label" header="Typ">
+            <template #body="{ data }">{{ data.type_label }}</template>
         </Column>
         <Column header="Nasledujúce spustenie">
             <template #body="{ data }">{{ formatDate(data.date_trigger) }}</template>

@@ -25,7 +25,7 @@ function toggleActive(automatization) {
 }
 
 function confirmDelete(automatization) {
-    if (!confirm(`Zmazať automatizáciu „${automatization.name}“?`)) return;
+    if (!confirm(`Zmazať automatizáciu „${automatization.type_label}“?`)) return;
     router.delete(route('automatizations.destroy', automatization.id), { preserveScroll: true });
 }
 </script>
@@ -39,7 +39,7 @@ function confirmDelete(automatization) {
         >
             <div class="flex items-start justify-between gap-3">
                 <div class="min-w-0">
-                    <p class="text-base font-semibold text-gray-900">{{ automatization.name }}</p>
+                    <p class="text-base font-semibold text-gray-900">{{ automatization.type_label }}</p>
                     <p v-if="recipientName(automatization)" class="mt-0.5 truncate text-sm text-gray-600">
                         Klient: {{ recipientName(automatization) }}
                     </p>
