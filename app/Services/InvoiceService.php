@@ -9,20 +9,22 @@ use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use App\Models\VatType;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\UniqueConstraintViolationException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
 {
     public function __construct(
-        private readonly PaymentQrService $paymentQrService,
         private readonly InvoiceStatsCalculator $invoiceStatsCalculator,
         private readonly RecipientService $recipientService,
     ) {
     }
 
-    public function getInvoices(int $userId): Collection
+    /**
+     * @return EloquentCollection<int, Invoice>
+     */
+    public function getInvoices(int $userId): EloquentCollection
     {
         return Invoice::forUser($userId)
             ->with('invoiceStatus')

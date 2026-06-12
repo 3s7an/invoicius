@@ -60,7 +60,7 @@ class ProfileServiceTest extends TestCase
         ]);
 
         $this->assertNotNull($user->fresh()->email_verified_at);
-        $this->assertTrue($verifiedAt->eq($user->fresh()->email_verified_at));
+        $this->assertTrue($verifiedAt->equalTo($user->fresh()->email_verified_at));
     }
 
     public function test_update_details_persists_fields_and_uploads_logo(): void

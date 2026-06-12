@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Models\Automatization;
 use App\Models\Invoice;
 use App\Models\Recipient;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 class DashboardService
 {
@@ -28,7 +28,7 @@ class DashboardService
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array{
+     * @return list<array{
      *   id:int,
      *   number:string|null,
      *   recipient_name:string|null,
@@ -37,9 +37,10 @@ class DashboardService
      *   created_at:string|null
      * }>
      */
-    public function getRecentInvoices(int $userId, int $limit = 6): Collection
+    public function getRecentInvoices(int $userId, int $limit = 6): array
     {
-        return Invoice::forUser($userId)
+        /** @var EloquentCollection<int, Invoice> $invoices */
+        $invoices = Invoice::forUser($userId)
             ->with('invoiceStatus')
             ->orderByDesc('created_at')
             ->limit($limit)
@@ -50,19 +51,20 @@ class DashboardService
                 'total_price',
                 'invoice_status_id',
                 'created_at',
-            ])
-            ->map(fn ($i) => [
-                'id' => $i->id,
-                'number' => $i->number,
-                'recipient_name' => $i->recipient_name,
-                'total_price' => (float) $i->total_price,
-                'status_name' => $i->invoiceStatus?->name,
-                'created_at' => optional($i->created_at)->toDateString(),
             ]);
+
+        return $invoices->map(fn (Invoice $i) => [
+            'id' => $i->id,
+            'number' => $i->number,
+            'recipient_name' => $i->recipient_name,
+            'total_price' => (float) $i->total_price,
+            'status_name' => $i->invoiceStatus?->name,
+            'created_at' => $i->created_at?->toDateString(),
+        ])->values()->all();
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, array{
+     * @return list<array{
      *   id:int,
      *   name:string,
      *   recipient_label:string|null,
@@ -71,9 +73,10 @@ class DashboardService
      *   last_run_at:string|null
      * }>
      */
-    public function getActiveAutomatizations(int $userId, int $limit = 6): Collection
+    public function getActiveAutomatizations(int $userId, int $limit = 6): array
     {
-        return Automatization::forUser($userId)
+        /** @var EloquentCollection<int, Automatization> $automatizations */
+        $automatizations = Automatization::forUser($userId)
             ->with('recipient')
             ->where('is_active', true)
             ->orderByDesc('updated_at')
@@ -86,17 +89,18 @@ class DashboardService
                 'due_offset_days',
                 'last_run_at',
                 'updated_at',
-            ])
-            ->map(fn ($a) => [
-                'id' => $a->id,
-                'name' => $a->name,
-                'recipient_label' => $a->recipient
-                    ? ($a->recipient->company_name ?? $a->recipient->name)
-                    : null,
-                'date_trigger' => optional($a->date_trigger)->toDateString(),
-                'due_offset_days' => $a->due_offset_days,
-                'last_run_at' => optional($a->last_run_at)?->toDateTimeString(),
             ]);
+
+        return $automatizations->map(fn (Automatization $a) => [
+            'id' => $a->id,
+            'name' => $a->name,
+            'recipient_label' => $a->recipient
+                ? ($a->recipient->company_name ?? $a->recipient->name)
+                : null,
+            'date_trigger' => $a->date_trigger?->toDateString(),
+            'due_offset_days' => $a->due_offset_days,
+            'last_run_at' => $a->last_run_at?->toDateTimeString(),
+        ])->values()->all();
     }
 }
 

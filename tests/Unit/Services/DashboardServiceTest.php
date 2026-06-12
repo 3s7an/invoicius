@@ -97,7 +97,7 @@ class DashboardServiceTest extends TestCase
         $recent = $this->service->getRecentInvoices($this->user->id, 6);
 
         $this->assertCount(6, $recent);
-        $this->assertSame('INV-8', $recent->first()['number']);
+        $this->assertSame('INV-8', $recent[0]['number']);
     }
 
     public function test_get_active_automatizations_returns_only_active_for_user(): void
@@ -119,7 +119,7 @@ class DashboardServiceTest extends TestCase
         $active = $this->service->getActiveAutomatizations($this->user->id, 6);
 
         $this->assertCount(1, $active);
-        $this->assertSame('Active', $active->first()['name']);
+        $this->assertSame('Active', $active[0]['name']);
     }
 
     public function test_get_active_automatizations_limits_to_six(): void
@@ -154,6 +154,6 @@ class DashboardServiceTest extends TestCase
 
         $active = $this->service->getActiveAutomatizations($this->user->id, 6);
 
-        $this->assertSame('ACME s.r.o.', $active->first()['recipient_label']);
+        $this->assertSame('ACME s.r.o.', $active[0]['recipient_label']);
     }
 }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +12,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+/**
+ * @property int $id
+ * @property string|null $company_name
+ * @property string $email
+ * @property string|null $iban
+ * @property int|null $currency_id
+ * @property int|null $company_logo_id
+ * @property int|null $default_vat_type_id
+ * @property string|null $street
+ * @property string|null $city
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property-read Currency|null $currency
+ * @property-read UserCompanyLogo|null $companyLogo
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -65,11 +79,13 @@ class User extends Authenticatable
         ];
     }
 
+    /** @return BelongsTo<Currency, $this> */
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
+    /** @return BelongsTo<UserCompanyLogo, $this> */
     public function companyLogo(): BelongsTo
     {
         return $this->belongsTo(UserCompanyLogo::class, 'company_logo_id');

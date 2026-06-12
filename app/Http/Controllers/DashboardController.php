@@ -30,7 +30,8 @@ class DashboardController extends Controller
         $recentInvoices = $this->dashboardService->getRecentInvoices($userId, 6);
         $activeAutomatizations = $this->dashboardService->getActiveAutomatizations($userId, 6);
 
-        $currencySymbol = $user->currency?->symbol ?? '€';
+        $user->loadMissing('currency');
+        $currencySymbol = $user->currency !== null ? $user->currency->symbol : '€';
 
         return Inertia::render('Dashboard/Dashboard', [
             'invoice_stats' => $invoiceStats,

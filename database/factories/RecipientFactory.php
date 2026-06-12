@@ -6,6 +6,9 @@ use App\Models\Recipient;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Recipient>
+ */
 class RecipientFactory extends Factory
 {
     protected $model = Recipient::class;

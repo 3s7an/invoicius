@@ -26,12 +26,9 @@ class PaymentQrService
             return null;
         }
 
-        $payload = $this->buildPayload($invoice, $issuer, $iban, $amount);
-        if ($payload === null) {
-            return null;
-        }
-
-        return $this->renderDataUri($payload);
+        return $this->renderDataUri(
+            $this->buildPayload($invoice, $issuer, $iban, $amount),
+        );
     }
 
     public function normalizeIban(?string $iban): ?string
@@ -47,7 +44,7 @@ class PaymentQrService
             : null;
     }
 
-    private function buildPayload(Invoice $invoice, User $issuer, string $iban, float $amount): ?string
+    private function buildPayload(Invoice $invoice, User $issuer, string $iban, float $amount): string
     {
         if ($this->isSkIban($iban)) {
             try {
@@ -139,8 +136,9 @@ class PaymentQrService
 
     private function resolveCurrencyCode(Invoice $invoice): string
     {
-        $symbol = $invoice->currency?->symbol;
-        $name = strtolower((string) ($invoice->currency?->name ?? ''));
+        $currency = $invoice->currency;
+        $symbol = $currency !== null ? $currency->symbol : null;
+        $name = strtolower($currency !== null ? $currency->name : '');
 
         return match ($symbol) {
             '€' => 'EUR',

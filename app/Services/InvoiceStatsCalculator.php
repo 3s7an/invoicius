@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -21,15 +22,15 @@ class InvoiceStatsCalculator
         $totalInvoiced = (float) $invoices->sum('total_price');
 
         $paid = (float) $invoices
-            ->filter(fn ($invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
+            ->filter(fn (Invoice $invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
             ->sum('total_price');
 
         $draft = (float) $invoices
-            ->filter(fn ($invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
+            ->filter(fn (Invoice $invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
             ->sum('total_price');
 
         $overdue = (float) $invoices
-            ->filter(function ($invoice) use ($referenceDate) {
+            ->filter(function (Invoice $invoice) use ($referenceDate) {
                 if (! $invoice->due_date) {
                     return false;
                 }

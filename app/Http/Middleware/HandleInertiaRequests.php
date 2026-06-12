@@ -43,15 +43,9 @@ class HandleInertiaRequests extends Middleware
                 'street', 'street_num', 'city', 'zip', 'state', 'ico', 'dic', 'ic_dph', 'iban',
                 'currency_id', 'company_logo_id', /*'invoice_color_id',*/ 'default_vat_type_id',
             ]);
-            try {
-                $authUser['company_logo'] = $user->companyLogo ? ['url' => $user->companyLogo->url] : null;
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::warning('Failed to resolve company logo', [
-                    'user_id' => $user->id,
-                    'exception' => $e->getMessage(),
-                ]);
-                $authUser['company_logo'] = null;
-            }
+            $authUser['company_logo'] = $user->companyLogo !== null
+                ? ['url' => $user->companyLogo->url]
+                : null;
         }
 
         return [

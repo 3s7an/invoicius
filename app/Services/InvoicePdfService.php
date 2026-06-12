@@ -18,7 +18,7 @@ class InvoicePdfService
     {
         $invoice->load(['items', 'currency', 'recipient', 'user.companyLogo']);
         $issuer = $invoice->user;
-        $currencySymbol = $invoice->currency?->symbol ?? '€';
+        $currencySymbol = $invoice->currency !== null ? $invoice->currency->symbol : '€';
 
         $logoDataUrl = null;
         if ($issuer->companyLogo) {

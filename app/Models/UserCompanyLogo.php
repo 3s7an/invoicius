@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $link
+ * @property string $file_name
+ * @property-read string $url
+ */
 class UserCompanyLogo extends Model
 {
     protected $table = 'user_company_logos';
@@ -20,6 +27,7 @@ class UserCompanyLogo extends Model
 
     protected $appends = ['url'];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

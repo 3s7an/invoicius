@@ -10,10 +10,26 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
-
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int|null $recipient_id
+ * @property string $name
+ * @property AutomatizationType $type
+ * @property Carbon|null $date_trigger
+ * @property int|null $due_offset_days
+ * @property bool $is_active
+ * @property Carbon|null $last_run_at
+ * @property array<string, mixed>|null $result_data
+ * @property list<string>|null $item_names
+ * @property-read User|null $user
+ * @property-read Recipient|null $recipient
+ */
 class Automatization extends Model
 {
+    /** @use HasFactory<\Database\Factories\AutomatizationFactory> */
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
@@ -33,7 +49,7 @@ class Automatization extends Model
     {
         return [
             'type' => AutomatizationType::class,
-            'date_trigger' => 'date:Y-m-d',
+            'date_trigger' => 'date',
             'due_offset_days' => 'integer',
             'is_active' => 'boolean',
             'last_run_at' => 'datetime',
@@ -53,11 +69,13 @@ class Automatization extends Model
             ->where('is_active', true);
     }
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /** @return BelongsTo<Recipient, $this> */
     public function recipient(): BelongsTo
     {
         return $this->belongsTo(Recipient::class);
