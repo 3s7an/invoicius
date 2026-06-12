@@ -197,15 +197,25 @@ docker compose -f docker-compose.prod.yml exec -T app php artisan db:seed --forc
 
 Produkčný `docker-compose.prod.yml` je na serveri (nie v repozitári). Secrets: `SERVER_IP`, `SSH_PRIVATE_KEY`, `GITHUB_TOKEN`.
 
-## Testovanie
+## Testovanie a statická analýza
+
+Vyžaduje **dev overlay** (`docker-compose.dev.yml`), aby boli v `vendor` nainštalované dev závislosti (PHPUnit, Larastan).
+
+> **Pozor:** `docker compose up` bez `-f docker-compose.dev.yml` spustí `vendor-init` s `--no-dev` a odstráni PHPStan/PHPUnit z volume `app_vendor`. Pre lokálny vývoj vždy používaj dev stack (`npm run docker:dev:up`). Ak si to omylom spustil, obnov dev závislosti: `npm run docker:vendor`.
 
 ```bash
-# v Dockeri
-docker compose exec app php artisan test
+# obnov dev závislosti 
+npm run docker:vendor
 
-# lokálne
+# testy v Dockeri (vyžaduje bežiaci dev stack)
+npm run docker:test
+
+# PHPStan (Larastan) – beží cez vendor-init, netreba bežiaci app kontajner
+npm run docker:analyse
+
+# lokálne (bez Dockeru)
 composer run test
-# alebo: vendor/bin/phpunit
+composer run analyse
 ```
 
 ## Licencia

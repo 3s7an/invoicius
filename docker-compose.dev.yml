@@ -1,4 +1,5 @@
-# Development overlay: live Vue/CSS via Vite (HMR). Usage:
+# Development overlay: live Vue/CSS via Vite (HMR), dev Composer deps (PHPUnit, PHPStan).
+# Usage:
 #   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 # Or: npm run docker:dev
 
@@ -11,7 +12,7 @@ services:
       - app_vendor:/app/vendor
     command: >
       sh -c "
-        composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+        composer install --no-interaction --prefer-dist --optimize-autoloader
       "
     restart: "no"
 
@@ -29,6 +30,9 @@ services:
       - ./database:/var/www/html/database
       - ./resources:/var/www/html/resources
       - ./public:/var/www/html/public
+      - ./tests:/var/www/html/tests
+      - ./phpstan.neon:/var/www/html/phpstan.neon:ro
+      - ./phpunit.xml:/var/www/html/phpunit.xml:ro
       - ./vite.config.js:/var/www/html/vite.config.js
       - ./tailwind.config.js:/var/www/html/tailwind.config.js
       - ./postcss.config.js:/var/www/html/postcss.config.js
