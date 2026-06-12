@@ -19,7 +19,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', /*'verified'*/])
     ->name('dashboard');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function () {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices');
     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
     Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
