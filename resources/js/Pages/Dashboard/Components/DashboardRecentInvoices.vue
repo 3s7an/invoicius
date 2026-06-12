@@ -1,6 +1,12 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import Button from 'primevue/button';
+import Column from 'primevue/column';
+import DataTable from 'primevue/datatable';
+import Tag from 'primevue/tag';
+import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import { invoiceStatusSeverity } from '@/Pages/Dashboard/Utils/statusSeverity';
 
 defineProps({
     recent_invoices: {
@@ -15,49 +21,97 @@ defineProps({
 </script>
 
 <template>
-    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <div>
-                <h2 class="text-base font-semibold text-gray-900">Posledné faktúry</h2>
-            </div>
-            <Link :href="route('invoices')" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800">
-                Zobraziť všetky
+    <DashboardPanel title="Posledné faktúry">
+        <template #actions>
+            <Link :href="route('invoices')">
+                <Button label="Zobraziť všetky" icon="pi pi-arrow-right" iconPos="right" link size="small" />
+            </Link>
+        </template>
+
+        <div
+            v-if="recent_invoices.length === 0"
+            class="flex flex-col items-center justify-center px-5 py-10 text-center sm:px-6"
+        >
+            <i class="pi pi-inbox mb-3 text-3xl text-gray-300" aria-hidden="true" />
+            <p class="text-sm text-gray-600">Zatiaľ tu nie sú žiadne faktúry.</p>
+            <Link :href="route('invoices.create')" class="mt-4">
+                <Button label="Vytvoriť faktúru" icon="pi pi-plus" size="small" />
             </Link>
         </div>
 
-        <div v-if="recent_invoices.length === 0" class="mt-4 rounded-xl bg-gray-50 p-6 text-sm text-gray-600">
-            Zatiaľ tu nie sú žiadne faktúry.
-        </div>
-
-        <div v-else class="mt-4 overflow-hidden rounded-xl ring-1 ring-gray-200">
-            <div class="grid grid-cols-12 gap-0 bg-gray-50 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500">
-                <div class="col-span-6">Číslo</div>
-                <div class="col-span-4">Klient / Stav</div>
-                <div class="col-span-2 text-right">Suma</div>
-            </div>
-
-            <div class="divide-y divide-gray-100 bg-white">
-                <div
-                    v-for="inv in recent_invoices"
-                    :key="inv.id"
-                    class="grid grid-cols-12 items-center gap-0 px-4 py-3"
+        <template v-else>
+            <ul class="divide-y divide-gray-200 px-5 sm:px-6 md:hidden">
+                <li
+                    v-for="invoice in recent_invoices"
+                    :key="invoice.id"
+                    class="py-3 first:pt-4 last:pb-4"
                 >
-                    <div class="col-span-6 min-w-0">
-                        <p class="truncate text-sm font-semibold text-gray-900">{{ inv.number }}</p>
-                        <p class="truncate text-xs text-gray-500">
-                            {{ inv.created_at ? formatDate(inv.created_at) : '—' }}
-                        </p>
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="truncate text-sm font-medium text-gray-800">{{ invoice.number || '—' }}</p>
+                            <p class="mt-0.5 truncate text-xs text-gray-500">
+                                {{ invoice.recipient_name || '—' }}
+                            </p>
+                            <p class="mt-1 text-xs text-gray-500">
+                                {{ invoice.created_at ? formatDate(invoice.created_at) : '—' }}
+                            </p>
+                        </div>
+                        <div class="shrink-0 text-right">
+                            <Tag
+                                v-if="invoice.status_name"
+                                :value="invoice.status_name"
+                                :severity="invoiceStatusSeverity(invoice.status_name)"
+                                rounded
+                            />
+                            <p class="mt-1.5 text-sm font-medium tabular-nums text-gray-800">
+                                {{ formatAmount(invoice.total_price) }} {{ currency_symbol }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="col-span-4 min-w-0">
-                        <p class="truncate text-sm text-gray-900">{{ inv.recipient_name || '—' }}</p>
-                        <p class="truncate text-xs text-gray-500">{{ inv.status_name || '—' }}</p>
-                    </div>
-                    <div class="col-span-2 text-right text-sm font-semibold text-gray-900">
-                        {{ formatAmount(inv.total_price) }} {{ currency_symbol }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
+                </li>
+            </ul>
 
+            <div class="hidden overflow-hidden md:block">
+                <DataTable
+                    :value="recent_invoices"
+                    size="small"
+                    class="text-sm"
+                >
+                    <Column field="number" header="Číslo">
+                        <template #body="{ data }">
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-medium text-gray-800">{{ data.number || '—' }}</p>
+                                <p class="text-xs text-gray-500">
+                                    {{ data.created_at ? formatDate(data.created_at) : '—' }}
+                                </p>
+                            </div>
+                        </template>
+                    </Column>
+                    <Column field="recipient_name" header="Klient">
+                        <template #body="{ data }">
+                            <span class="block truncate">{{ data.recipient_name || '—' }}</span>
+                        </template>
+                    </Column>
+                    <Column field="status_name" header="Stav">
+                        <template #body="{ data }">
+                            <Tag
+                                v-if="data.status_name"
+                                :value="data.status_name"
+                                :severity="invoiceStatusSeverity(data.status_name)"
+                                rounded
+                            />
+                            <span v-else class="text-gray-400">—</span>
+                        </template>
+                    </Column>
+                    <Column field="total_price" header="Suma" class="text-right">
+                        <template #body="{ data }">
+                            <span class="font-medium tabular-nums text-gray-800">
+                                {{ formatAmount(data.total_price) }} {{ currency_symbol }}
+                            </span>
+                        </template>
+                    </Column>
+                </DataTable>
+            </div>
+        </template>
+    </DashboardPanel>
+</template>

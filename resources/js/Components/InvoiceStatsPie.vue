@@ -17,7 +17,9 @@ const props = defineProps({
 });
 
 const canvasRef = ref(null);
+const chartContainerRef = ref(null);
 let chart = null;
+let resizeObserver = null;
 
 const dataValues = computed(() => {
     const paid = Number(props.stats?.paid ?? 0);
@@ -75,17 +77,19 @@ function renderChart() {
 
             const x = meta.data[0].x;
             const y = meta.data[0].y;
+            const amountSize = Math.min(18, Math.max(13, c.width / 14));
+            const labelSize = Math.min(12, Math.max(10, c.width / 22));
 
             ctx.save();
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#111827';
 
-            ctx.font = '600 18px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+            ctx.font = `500 ${amountSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
             ctx.fillText(`${formatAmount(total.value)} ${props.currencySymbol}`, x, y - 8);
 
             ctx.fillStyle = '#6b7280';
-            ctx.font = '500 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial';
+            ctx.font = `500 ${labelSize}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial`;
             ctx.fillText('spolu', x, y + 14);
             ctx.restore();
         },
@@ -110,7 +114,8 @@ function renderChart() {
         plugins: [centerTextPlugin],
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            aspectRatio: 1,
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -128,8 +133,21 @@ function renderChart() {
     });
 }
 
-onMounted(renderChart);
-onBeforeUnmount(destroyChart);
+onMounted(() => {
+    renderChart();
+
+    if (chartContainerRef.value) {
+        resizeObserver = new ResizeObserver(() => {
+            chart?.resize();
+        });
+        resizeObserver.observe(chartContainerRef.value);
+    }
+});
+
+onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
+    destroyChart();
+});
 
 watch(
     () => [
@@ -144,40 +162,44 @@ watch(
 </script>
 
 <template>
-    <div class="h-full rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-        <div class="flex items-start justify-between gap-4">
-            <div>
-                <h2 class="text-base font-semibold text-gray-900">Rozdelenie faktúr</h2>
-                <p class="mt-1 text-sm text-gray-500">Prehľad podľa stavu faktúr:</p>
-            </div>
+    <div class="h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <div class="border-b border-gray-100 pb-4">
+            <h2 class="text-sm font-medium text-gray-800">Rozdelenie faktúr</h2>
+            <p class="mt-1 text-sm text-gray-600">Podiel podľa stavu</p>
         </div>
 
         <div class="mt-5">
             <div v-if="!hasAny" class="rounded-xl bg-gray-50 p-6 text-sm text-gray-600">
                 Zatiaľ nemáš žiadne sumy na rozdelenie.
             </div>
-            <div v-else class="grid gap-6 lg:grid-cols-12 lg:items-center">
-                <div class="lg:col-span-7">
-                    <div class="mx-auto h-64 max-w-[520px]">
-                        <canvas ref="canvasRef" />
+
+            <div
+                v-else
+                class="flex flex-col items-center gap-6 lg:grid lg:grid-cols-12 lg:items-center lg:gap-8"
+            >
+                <div class="w-full min-w-0 lg:col-span-7">
+                    <div
+                        ref="chartContainerRef"
+                        class="relative mx-auto aspect-square w-full max-w-[200px] sm:max-w-[260px] md:max-w-[320px] lg:max-w-[400px]"
+                    >
+                        <canvas ref="canvasRef" class="max-h-full max-w-full" />
                     </div>
                 </div>
 
-                <div class="lg:col-span-5">
-                    <div class="space-y-4">
+                <div class="w-full min-w-0 lg:col-span-5">
+                    <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-1 lg:gap-0 lg:space-y-4">
                         <div
                             v-for="s in segments"
                             :key="s.key"
-                            class="flex items-start gap-3"
+                            class="flex items-start gap-2.5 sm:gap-3"
                         >
                             <span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" :class="s.bg" aria-hidden="true" />
                             <div class="min-w-0">
-                                <p class="text-sm font-semibold text-gray-900">{{ s.label }}</p>
-                                <p class="mt-1 text-sm font-semibold tabular-nums text-gray-900">
+                                <p class="text-sm text-gray-700">{{ s.label }}</p>
+                                <p class="mt-0.5 text-sm tabular-nums text-gray-900">
                                     {{ formatAmount(s.value) }} {{ currencySymbol }}
                                 </p>
                                 <p class="text-xs text-gray-500">{{ s.pct }}%</p>
-                               
                             </div>
                         </div>
                     </div>
@@ -186,4 +208,3 @@ watch(
         </div>
     </div>
 </template>
-
