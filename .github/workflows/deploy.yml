@@ -9,7 +9,51 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  test:
+    name: Backend tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        ports:
+          - 3307:3306
+        env:
+          MYSQL_DATABASE: invoicer_test
+          MYSQL_USER: invoicer
+          MYSQL_PASSWORD: invoicer
+          MYSQL_ROOT_PASSWORD: root
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uinvoicer -pinvoicer"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_mysql, bcmath, gd, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Prepare Laravel
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run PHPUnit
+        run: composer test
+
   build-and-deploy:
+    name: Build & deploy
+    needs: test
     runs-on: ubuntu-latest
     permissions:
       contents: read
