@@ -40,6 +40,11 @@ class InvoiceControllerTest extends TestCase
     {
         $response = $this->actingAs($this->user)->get(route('invoices'));
         $response->assertOk();
+        $response->assertInertia(fn ($page) => $page
+            ->component('Invoices/Index')
+            ->has('invoices')
+            ->has('invoice_stats')
+            ->has('invoice_statuses'));
     }
 
     public function test_user_can_view_create_invoice_page(): void
@@ -123,6 +128,37 @@ class InvoiceControllerTest extends TestCase
         $response->assertHeader('content-type', 'application/pdf');
     }
 
+    public function test_store_rejects_duplicate_invoice_number(): void
+    {
+        $this->actingAs($this->user)->post(
+            route('invoices.store'),
+            $this->validInvoicePayload(['number' => 'INV-DUP']),
+        );
+
+        $response = $this->actingAs($this->user)->post(
+            route('invoices.store'),
+            $this->validInvoicePayload([
+                'number' => 'INV-DUP',
+                'variable_symbol' => 'VS-DUP-2',
+            ]),
+        );
+
+        $response->assertSessionHasErrors(['number']);
+    }
+
+    public function test_store_rejects_due_date_before_issue_date(): void
+    {
+        $response = $this->actingAs($this->user)->post(
+            route('invoices.store'),
+            $this->validInvoicePayload([
+                'issue_date' => now()->toDateString(),
+                'due_date' => now()->subDay()->toDateString(),
+            ]),
+        );
+
+        $response->assertSessionHasErrors(['due_date']);
+    }
+
     public function test_user_can_update_invoice_status(): void
     {
         $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
@@ -139,6 +175,32 @@ class InvoiceControllerTest extends TestCase
             'id' => $invoice->id,
             'invoice_status_id' => $paidStatus->id,
         ]);
+    }
+
+    public function test_update_status_rejects_invalid_status_id(): void
+    {
+        $invoice = $this->makeInvoice(['number' => 'INV-STATUS-ERR']);
+
+        $response = $this->actingAs($this->user)
+            ->patch(route('invoices.update-status', $invoice), [
+                'invoice_status_id' => 99999,
+            ]);
+
+        $response->assertSessionHasErrors(['invoice_status_id']);
+    }
+
+    public function test_user_cannot_update_other_users_invoice_status(): void
+    {
+        $otherUser = User::factory()->create();
+        $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-STATUS']);
+        $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
+
+        $response = $this->actingAs($this->user)
+            ->patch(route('invoices.update-status', $invoice), [
+                'invoice_status_id' => $paidStatus->id,
+            ]);
+
+        $response->assertForbidden();
     }
 
     public function test_user_can_delete_invoice(): void
@@ -220,6 +282,10 @@ class InvoiceControllerTest extends TestCase
                 'recipient_street_num' => '1',
                 'recipient_city' => 'Bratislava',
                 'recipient_state' => 'SK',
+                'recipient_ico' => null,
+                'recipient_dic' => null,
+                'recipient_ic_dph' => null,
+                'recipient_iban' => null,
             ],
             'items' => [
                 [
