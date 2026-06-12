@@ -49,14 +49,14 @@ const userName = computed(() => {
                 </template>
 
                 <template #actions>
-                    <Link :href="route('invoices.create')" class="block w-full sm:w-auto">
-                        <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-sm w-full sm:w-auto" />
+                    <Link :href="route('invoices.create')">
+                        <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-sm" />
                     </Link>
-                    <Link :href="route('automatizations.create')" class="block w-full sm:w-auto">
+                    <Link :href="route('automatizations.create')">
                         <Button
                             label="Nová automatizácia"
                             icon="pi pi-bolt"
-                            class="p-button-sm w-full !border !border-gray-200 !bg-white !text-gray-700 shadow-sm hover:!bg-gray-50 sm:w-auto"
+                            class="p-button-sm !border !border-gray-200 !bg-white !text-gray-700 shadow-sm hover:!bg-gray-50"
                         />
                     </Link>
                 </template>

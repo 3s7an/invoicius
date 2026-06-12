@@ -1,11 +1,12 @@
 <template>
     <div v-if="variant === 'page'" class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <h1 class="text-lg font-medium text-gray-900">{{ heading }}</h1>
-            <Link :href="route('recipients.index')">
-                <Button label="Späť na klientov" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
-            </Link>
-        </div>
+        <PageHeader :title="heading">
+            <template #actions>
+                <Link :href="route('recipients.index')">
+                    <Button label="Späť na klientov" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                </Link>
+            </template>
+        </PageHeader>
 
         <form class="space-y-8" @submit.prevent="submit">
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
@@ -186,6 +187,7 @@
 <script setup>
 import { computed } from 'vue';
 import Button from 'primevue/button';
+import PageHeader from '@/Components/PageHeader.vue';
 import { Link } from '@inertiajs/vue3';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
