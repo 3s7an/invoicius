@@ -111,11 +111,7 @@ watch(
     <form class="space-y-8" @submit.prevent="submit">
         <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
             <section>
-                <header>
-                    <h2 class="text-lg font-medium text-gray-900">Nastavenia automatizácie</h2>
-                </header>
-
-                <div class="mt-6 space-y-6">
+                <div class="space-y-6">
                     <div>
                         <InputLabel for="auto-type" value="Typ" />
                         <AppSelect
