@@ -8,6 +8,7 @@ use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
 use App\Models\User;
+use App\Services\InvoicePdfService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -41,35 +42,20 @@ class InvoiceControllerTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_user_can_view_create_invoice_page(): void
+    {
+        $response = $this->actingAs($this->user)->get(route('invoices.create'));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page->component('Invoices/Create'));
+    }
+
     public function test_user_can_create_invoice(): void
     {
-        $currency = Currency::first();
-
-        $response = $this->actingAs($this->user)->post(route('invoices.store'), [
-            'number' => 'INV-001',
-            'variable_symbol' => 'VS-001',
-            'issue_date' => now()->toDateString(),
-            'due_date' => now()->addDays(14)->toDateString(),
-            'currency_id' => $currency->id,
-            'recipient_id' => null,
-            'issuer' => ['name' => 'Test Company'],
-            'recipient' => [
-                'recipient_name' => 'Client Inc.',
-                'recipient_street' => '123 Main St',
-                'recipient_street_num' => '1',
-                'recipient_city' => 'Bratislava',
-                'recipient_state' => 'SK',
-            ],
-            'items' => [
-                [
-                    'name' => 'Web Development',
-                    'quantity' => 10,
-                    'unit' => 'hrs',
-                    'unit_price' => 50.00,
-                    'vat_type_id' => null,
-                ],
-            ],
-        ]);
+        $response = $this->actingAs($this->user)->post(
+            route('invoices.store'),
+            $this->validInvoicePayload(['number' => 'INV-001']),
+        );
 
         $response->assertRedirect(route('invoices'));
         $this->assertDatabaseHas('invoices', [
@@ -88,18 +74,60 @@ class InvoiceControllerTest extends TestCase
         $response->assertSessionHasErrors(['number', 'items']);
     }
 
+    public function test_user_can_edit_invoice(): void
+    {
+        $invoice = $this->makeInvoice(['number' => 'INV-EDIT']);
+
+        $response = $this->actingAs($this->user)->get(route('invoices.edit', $invoice));
+
+        $response->assertOk();
+        $response->assertInertia(fn ($page) => $page->component('Invoices/Edit'));
+    }
+
+    public function test_user_can_update_invoice(): void
+    {
+        $invoice = $this->makeInvoice(['number' => 'INV-UPDATE']);
+
+        $response = $this->actingAs($this->user)->put(
+            route('invoices.update', $invoice),
+            $this->validInvoicePayload([
+                'number' => 'INV-UPDATED',
+                'variable_symbol' => 'VS-UPDATED',
+            ]),
+        );
+
+        $response->assertRedirect(route('invoices'));
+        $this->assertDatabaseHas('invoices', [
+            'id' => $invoice->id,
+            'number' => 'INV-UPDATED',
+            'varsym' => 'VS-UPDATED',
+        ]);
+    }
+
+    public function test_user_can_download_invoice_pdf(): void
+    {
+        $invoice = $this->makeInvoice(['number' => 'INV-PDF']);
+
+        $this->mock(InvoicePdfService::class, function ($mock) use ($invoice): void {
+            $mock->shouldReceive('getPdfDownloadResponse')
+                ->once()
+                ->withArgs(fn (Invoice $arg): bool => $arg->is($invoice))
+                ->andReturn(response('pdf-binary', 200, [
+                    'Content-Type' => 'application/pdf',
+                ]));
+        });
+
+        $response = $this->actingAs($this->user)->get(route('invoices.pdf', $invoice));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+    }
+
     public function test_user_can_update_invoice_status(): void
     {
-        $currency = Currency::first();
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
         $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
 
-        $invoice = Invoice::factory()->create([
-            'user_id' => $this->user->id,
-            'number' => 'INV-STATUS',
-            'currency_id' => $currency->id,
-            'invoice_status_id' => $draftStatus->id,
-        ]);
+        $invoice = $this->makeInvoice(['number' => 'INV-STATUS']);
 
         $response = $this->actingAs($this->user)
             ->patch(route('invoices.update-status', $invoice), [
@@ -115,15 +143,7 @@ class InvoiceControllerTest extends TestCase
 
     public function test_user_can_delete_invoice(): void
     {
-        $currency = Currency::first();
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-
-        $invoice = Invoice::factory()->create([
-            'user_id' => $this->user->id,
-            'number' => 'INV-DEL',
-            'currency_id' => $currency->id,
-            'invoice_status_id' => $draftStatus->id,
-        ]);
+        $invoice = $this->makeInvoice(['number' => 'INV-DEL']);
 
         $response = $this->actingAs($this->user)
             ->delete(route('invoices.destroy', $invoice));
@@ -135,19 +155,103 @@ class InvoiceControllerTest extends TestCase
     public function test_user_cannot_access_other_users_invoice(): void
     {
         $otherUser = User::factory()->create();
-        $currency = Currency::first();
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-
-        $invoice = Invoice::factory()->create([
-            'user_id' => $otherUser->id,
-            'number' => 'OTHER-001',
-            'currency_id' => $currency->id,
-            'invoice_status_id' => $draftStatus->id,
-        ]);
+        $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-001']);
 
         $response = $this->actingAs($this->user)
             ->delete(route('invoices.destroy', $invoice));
 
         $response->assertForbidden();
+    }
+
+    public function test_user_cannot_edit_other_users_invoice(): void
+    {
+        $otherUser = User::factory()->create();
+        $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-EDIT']);
+
+        $response = $this->actingAs($this->user)->get(route('invoices.edit', $invoice));
+
+        $response->assertForbidden();
+    }
+
+    public function test_user_cannot_update_other_users_invoice(): void
+    {
+        $otherUser = User::factory()->create();
+        $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-UPDATE']);
+
+        $response = $this->actingAs($this->user)->put(
+            route('invoices.update', $invoice),
+            $this->validInvoicePayload(['number' => 'HACKED']),
+        );
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('invoices', [
+            'id' => $invoice->id,
+            'number' => 'OTHER-UPDATE',
+        ]);
+    }
+
+    public function test_user_cannot_download_other_users_invoice_pdf(): void
+    {
+        $otherUser = User::factory()->create();
+        $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-PDF']);
+
+        $response = $this->actingAs($this->user)->get(route('invoices.pdf', $invoice));
+
+        $response->assertForbidden();
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function validInvoicePayload(array $overrides = []): array
+    {
+        return array_merge([
+            'number' => 'INV-001',
+            'variable_symbol' => 'VS-001',
+            'issue_date' => now()->toDateString(),
+            'due_date' => now()->addDays(14)->toDateString(),
+            'currency_id' => Currency::first()->id,
+            'recipient_id' => null,
+            'issuer' => ['name' => 'Test Company'],
+            'recipient' => [
+                'recipient_name' => 'Client Inc.',
+                'recipient_street' => '123 Main St',
+                'recipient_street_num' => '1',
+                'recipient_city' => 'Bratislava',
+                'recipient_state' => 'SK',
+            ],
+            'items' => [
+                [
+                    'name' => 'Web Development',
+                    'quantity' => 10,
+                    'unit' => 'hrs',
+                    'unit_price' => 50.00,
+                    'vat_type_id' => null,
+                ],
+            ],
+        ], $overrides);
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function makeInvoice(array $attributes = []): Invoice
+    {
+        return $this->makeInvoiceForUser($this->user, $attributes);
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     */
+    private function makeInvoiceForUser(User $user, array $attributes = []): Invoice
+    {
+        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+
+        return Invoice::factory()->create(array_merge([
+            'user_id' => $user->id,
+            'currency_id' => Currency::first()->id,
+            'invoice_status_id' => $draftStatus->id,
+        ], $attributes));
     }
 }
