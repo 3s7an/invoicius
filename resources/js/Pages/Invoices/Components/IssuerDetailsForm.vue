@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue';
+import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -23,9 +24,6 @@ const props = defineProps({
 const countries = computed(() => getCountriesSk());
 
 const id = (name) => prefixedId(props.idPrefix, name);
-
-const selectClass =
-    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 </script>
 
 <template>
@@ -124,17 +122,17 @@ const selectClass =
                 </div>
                 <div class="sm:col-span-2">
                     <InputLabel :for="id('state')" value="Krajina" />
-                    <select
-                        :id="id('state')"
+                    <AppSelect
+                        :inputId="id('state')"
                         v-model="modelValue.state"
-                        :class="selectClass"
-                        autocomplete="country"
-                    >
-                        <option value="">Vyberte krajinu</option>
-                        <option v-for="c in countries" :key="c.code" :value="c.code">
-                            {{ c.name }}
-                        </option>
-                    </select>
+                        :options="countries"
+                        option-label="name"
+                        option-value="code"
+                        placeholder="Vyberte krajinu"
+                        show-clear
+                        filter
+                        class="mt-1"
+                    />
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import DatePicker from 'primevue/datepicker';
+import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -52,6 +53,13 @@ watch(
 );
 
 const id = (name) => prefixedId(props.idPrefix, name);
+
+const currencyOptions = computed(() =>
+    props.currencies.map((currency) => ({
+        value: currency.id,
+        label: `${currency.name} (${currency.symbol})`,
+    })),
+);
 </script>
 
 <template>
@@ -111,19 +119,12 @@ const id = (name) => prefixedId(props.idPrefix, name);
             </div>
             <div v-if="currencies.length">
                 <InputLabel :for="id('currency_id')" value="Mena" />
-                <select
-                    :id="id('currency_id')"
+                <AppSelect
+                    :inputId="id('currency_id')"
                     v-model="header.currency_id"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                >
-                    <option
-                        v-for="c in currencies"
-                        :key="c.id"
-                        :value="c.id"
-                    >
-                        {{ c.name }} ({{ c.symbol }})
-                    </option>
-                </select>
+                    :options="currencyOptions"
+                    class="mt-1"
+                />
                 <InputError class="mt-2" :message="errors.currency_id" />
             </div>
         </div>

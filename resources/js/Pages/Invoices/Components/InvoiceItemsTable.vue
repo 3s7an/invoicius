@@ -95,18 +95,11 @@
                             />
                         </td>
                         <td class="whitespace-nowrap px-3 py-3">
-                            <select
+                            <AppSelect
                                 v-model="item.unit"
-                                class="block w-full rounded-md border-gray-300 py-1.5 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
-                                <option
-                                    v-for="unit in UNITS"
-                                    :key="unit.value"
-                                    :value="unit.value"
-                                >
-                                    {{ unit.label }}
-                                </option>
-                            </select>
+                                :options="UNITS"
+                                size="small"
+                            />
                         </td>
                         <td class="whitespace-nowrap px-3 py-3">
                             <TextInput
@@ -118,19 +111,13 @@
                             />
                         </td>
                         <td v-if="vatTypesList.length" class="whitespace-nowrap px-3 py-3">
-                            <select
+                            <AppSelect
                                 v-model="item.vat_type_id"
-                                class="block w-full rounded-md border-gray-300 py-1.5 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
-                                <option value="">-</option>
-                                <option
-                                    v-for="vatType in vatTypesList"
-                                    :key="vatType.id"
-                                    :value="vatType.id"
-                                >
-                                    {{ formatVatTypeLabel(vatType) }}
-                                </option>
-                            </select>
+                                :options="vatTypeOptions"
+                                placeholder="-"
+                                show-clear
+                                size="small"
+                            />
                         </td>
                         <td class="whitespace-nowrap px-3 py-3 text-right text-sm tabular-nums text-gray-700">
                             {{ currencySymbol }} {{ lineTotal(item).toFixed(2) }}
@@ -197,6 +184,7 @@ import { computed, ref, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
+import AppSelect from '@/Components/AppSelect.vue';
 import { defaultInvoiceItem } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
 import { UNITS } from '@/utils/units';
 import { usePage } from '@inertiajs/vue3';
@@ -229,6 +217,13 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const vatTypesList = computed(() => props.vatTypes ?? []);
+
+const vatTypeOptions = computed(() =>
+    vatTypesList.value.map((vatType) => ({
+        value: vatType.id,
+        label: formatVatTypeLabel(vatType),
+    })),
+);
 
 function mergeItem(item) {
     const defaults = defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value);

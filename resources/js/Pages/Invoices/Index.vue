@@ -28,19 +28,12 @@
                     </Column>
                     <Column field="invoice_status_id" header="Stav">
                         <template #body="{ data }">
-                            <select
-                                :value="data.invoice_status_id"
-                                @change="updateStatus(data, $event.target.value)"
-                                class="rounded-md border-gray-300 py-1.5 pl-2 pr-8 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            >
-                                <option
-                                    v-for="opt in statusOptions"
-                                    :key="opt.value"
-                                    :value="opt.value"
-                                >
-                                    {{ opt.label }}
-                                </option>
-                            </select>
+                            <AppSelect
+                                :model-value="data.invoice_status_id"
+                                :options="statusOptions"
+                                size="small"
+                                @update:model-value="(value) => updateStatus(data, value)"
+                            />
                         </template>
                     </Column>
                     <Column header="Akcie">
@@ -66,6 +59,7 @@
 </template>
 
 <script setup>
+import AppSelect from '@/Components/AppSelect.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import InvoiceCardList from '@/Pages/Invoices/Components/InvoiceCardList.vue';

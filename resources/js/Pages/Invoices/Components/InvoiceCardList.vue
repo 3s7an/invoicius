@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
+import AppSelect from '@/Components/AppSelect.vue';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
 
@@ -65,15 +66,12 @@ function confirmDeleteInvoice(invoice) {
                 <div>
                     <dt class="text-xs font-medium uppercase tracking-wide text-gray-500">Stav</dt>
                     <dd class="mt-0.5">
-                        <select
-                            :value="invoice.invoice_status_id"
-                            class="w-full rounded-md border-gray-300 py-1.5 pl-2 pr-8 text-sm shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
-                            @change="updateStatus(invoice, $event.target.value)"
-                        >
-                            <option v-for="opt in statusOptions" :key="opt.value" :value="opt.value">
-                                {{ opt.label }}
-                            </option>
-                        </select>
+                        <AppSelect
+                            :model-value="invoice.invoice_status_id"
+                            :options="statusOptions"
+                            size="small"
+                            @update:model-value="(value) => updateStatus(invoice, value)"
+                        />
                     </dd>
                 </div>
             </dl>

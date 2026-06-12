@@ -1,6 +1,7 @@
 <script setup>
 import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
@@ -46,7 +47,12 @@ watch(
     }
 );
 
-const recipientLabel = (r) => r.company_name || r.name;
+const recipientOptions = computed(() =>
+    props.recipients.map((recipient) => ({
+        value: recipient.id,
+        label: recipient.company_name || recipient.name,
+    })),
+);
 
 const inputClass =
     'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
@@ -82,19 +88,14 @@ watch(
                 <div class="mt-6 space-y-6">
                     <div>
                         <InputLabel for="auto-type" value="Typ" />
-                        <select
-                            id="auto-type"
+                        <AppSelect
+                            inputId="auto-type"
                             v-model="form.type"
-                            :class="inputClass"
-                        >
-                            <option
-                                v-for="entry in automatization_types"
-                                :key="entry.value"
-                                :value="entry.value"
-                            >
-                                {{ entry.label }}
-                            </option>
-                        </select>
+                            :options="automatization_types"
+                            option-label="label"
+                            option-value="value"
+                            class="mt-1"
+                        />
                         <InputError class="mt-2" :message="form.errors.type" />
                     </div>
 
@@ -130,20 +131,15 @@ watch(
 
                     <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
                         <InputLabel for="auto-recipient" value="Klient" />
-                        <select
-                            id="auto-recipient"
+                        <AppSelect
+                            inputId="auto-recipient"
                             v-model="form.recipient_id"
-                            :class="inputClass"
-                        >
-                            <option value="">Vyberte klienta</option>
-                            <option
-                                v-for="r in recipients"
-                                :key="r.id"
-                                :value="r.id"
-                            >
-                                {{ recipientLabel(r) }}
-                            </option>
-                        </select>
+                            :options="recipientOptions"
+                            placeholder="Vyberte klienta"
+                            show-clear
+                            filter
+                            class="mt-1"
+                        />
                         <InputError class="mt-2" :message="form.errors.recipient_id" />
                     </div>
 

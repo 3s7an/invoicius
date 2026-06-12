@@ -10,23 +10,27 @@
         <div class="mt-6 space-y-6">
             <div v-if="currencies.length" class="max-w-xl">
                 <InputLabel :for="id('currency_id')" value="Predvolená mena" />
-                <select :id="id('currency_id')" v-model="form.currency_id" :class="selectClass">
-                    <option value="">—</option>
-                    <option v-for="c in currencies" :key="c.id" :value="c.id">
-                        {{ c.name }} ({{ c.symbol }})
-                    </option>
-                </select>
+                <AppSelect
+                    :inputId="id('currency_id')"
+                    v-model="form.currency_id"
+                    :options="currencyOptions"
+                    placeholder="—"
+                    show-clear
+                    class="mt-1"
+                />
                 <InputError class="mt-2" :message="form.errors.currency_id" />
             </div>
 
             <div v-if="vatTypes.length" class="max-w-xl">
                 <InputLabel :for="id('default_vat_type_id')" value="Predvolený typ DPH" />
-                <select :id="id('default_vat_type_id')" v-model="form.default_vat_type_id" :class="selectClass">
-                    <option value="">—</option>
-                    <option v-for="vt in vatTypes" :key="vt.id" :value="vt.id">
-                        {{ formatVatTypeLabel(vt) }}
-                    </option>
-                </select>
+                <AppSelect
+                    :inputId="id('default_vat_type_id')"
+                    v-model="form.default_vat_type_id"
+                    :options="vatTypeOptions"
+                    placeholder="—"
+                    show-clear
+                    class="mt-1"
+                />
                 <InputError class="mt-2" :message="form.errors.default_vat_type_id" />
             </div>
 
@@ -73,10 +77,17 @@
                 </div>
                 <div class="sm:col-span-2">
                     <InputLabel :for="id('state')" value="Krajina" />
-                    <select :id="id('state')" v-model="form.state" :class="selectClass" autocomplete="country">
-                        <option value="">Vyberte krajinu</option>
-                        <option v-for="c in countries" :key="c.code" :value="c.code">{{ c.name }}</option>
-                    </select>
+                    <AppSelect
+                        :inputId="id('state')"
+                        v-model="form.state"
+                        :options="countries"
+                        option-label="name"
+                        option-value="code"
+                        placeholder="Vyberte krajinu"
+                        show-clear
+                        filter
+                        class="mt-1"
+                    />
                     <InputError class="mt-2" :message="form.errors.state" />
                 </div>
             </div>
@@ -99,6 +110,7 @@
 <script setup>
 import { computed } from 'vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
+import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -126,12 +138,23 @@ const props = defineProps({
 
 const countries = computed(() => getCountriesSk());
 
+const currencyOptions = computed(() =>
+    props.currencies.map((currency) => ({
+        value: currency.id,
+        label: `${currency.name} (${currency.symbol})`,
+    })),
+);
+
+const vatTypeOptions = computed(() =>
+    props.vatTypes.map((vatType) => ({
+        value: vatType.id,
+        label: formatVatTypeLabel(vatType),
+    })),
+);
+
 function id(name) {
     return `${props.idPrefix}-${name}`;
 }
-
-const selectClass =
-    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 </script>
 
 
