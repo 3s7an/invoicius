@@ -33,7 +33,7 @@ class StoreAutomatizationRequest extends FormRequest
                 Rule::requiredIf(fn () => $this->enum('type', AutomatizationType::class) === AutomatizationType::InvoiceAutoGen),
                 'nullable',
                 'array',
-                'min:1',
+                'min:0',
                 'max:20',
             ],
             'item_names.*' => ['required', 'string', 'max:255'],

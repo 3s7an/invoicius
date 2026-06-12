@@ -108,6 +108,7 @@ watch(
                             v-model="form.item_count"
                             :class="inputClass"
                             maxlength="255"
+                            min="0"
                             required
                         />
                         <InputError class="mt-2" :message="form.errors.name" />
