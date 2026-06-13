@@ -14,37 +14,17 @@
     </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceForm from './Components/InvoiceForm.vue';
 
-defineProps({
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    suggested_number: {
-        type: String,
-        default: '',
-    },
-    preselected_recipient: {
-        type: Object,
-        default: null,
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vat_types: {
-        type: Array,
-        default: () => [],
-    },
-    default_currency_id: {
-        type: [Number, String],
-        default: null,
-    },
-});
-
+defineProps<{
+    recipients: App.Http.Resources.RecipientResource[]
+    suggested_number?: string
+    preselected_recipient?: App.Http.Resources.RecipientResource | null
+    currencies: App.Http.Resources.CurrencyResource[]
+    vat_types: App.Http.Resources.VatTypeResource[]
+    default_currency_id?: number | null
+}>();
 </script>
-

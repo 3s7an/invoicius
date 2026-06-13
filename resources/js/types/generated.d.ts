@@ -84,6 +84,7 @@ recipient_id: number | null,
 invoice_status_id: number,
 invoice_status: App.Http.Resources.InvoiceStatusResource | null,
 items: App.Http.Resources.InvoiceItemResource[] | null,
+created_at: string | null,
 };
 export type InvoiceStatusResource = {
 id: number,

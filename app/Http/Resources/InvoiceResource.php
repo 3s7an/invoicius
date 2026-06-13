@@ -31,6 +31,7 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
     'invoice_status_id'    => 'number',
     'invoice_status'       => 'App.Http.Resources.InvoiceStatusResource | null',
     'items'                => 'App.Http.Resources.InvoiceItemResource[] | null',
+    'created_at'           => 'string | null',
 ])]
 class InvoiceResource extends JsonResource
 {
@@ -57,6 +58,7 @@ class InvoiceResource extends JsonResource
             'invoice_status_id'    => $this->invoice_status_id,
             'invoice_status'       => InvoiceStatusResource::make($this->whenLoaded('invoiceStatus')),
             'items'                => InvoiceItemResource::collection($this->whenLoaded('items')),
+            'created_at'           => $this->created_at?->toDateString(),
         ];
     }
 }
