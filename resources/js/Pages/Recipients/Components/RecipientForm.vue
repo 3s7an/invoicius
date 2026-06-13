@@ -184,7 +184,7 @@
     </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import Button from 'primevue/button';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -196,42 +196,28 @@ import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import { useRecipientForm } from '../Composables/useRecipientForm';
 
-const props = defineProps({
-    variant: {
-        type: String,
-        default: 'page',
-        validator: (v) => ['page', 'section'].includes(v),
-    },
-    fieldsMode: {
-        type: String,
-        default: 'recipient',
-        validator: (v) => ['recipient', 'invoice'].includes(v),
-    },
-    modelValue: {
-        type: Object,
-        default: null,
-    },
-    errors: {
-        type: Object,
-        default: () => ({}),
-    },
-    idPrefix: {
-        type: String,
-        default: 'recipient',
-    },
-    mode: {
-        type: String,
-        default: 'create',
-        validator: (value) => ['create', 'edit'].includes(value),
-    },
-    recipient: {
-        type: Object,
-        default: null,
-    },
-    fromInvoice: {
-        type: Boolean,
-        default: false,
-    },
+type FormProxy = Record<string, string | null | undefined>
+
+interface Props {
+    variant?: 'page' | 'section'
+    fieldsMode?: 'recipient' | 'invoice'
+    modelValue?: App.DTOs.Forms.InvoiceRecipientData | null
+    errors?: Record<string, string | undefined>
+    idPrefix?: string
+    mode?: 'create' | 'edit'
+    recipient?: App.Http.Resources.RecipientResource | null
+    fromInvoice?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    variant: 'page',
+    fieldsMode: 'recipient',
+    modelValue: null,
+    errors: () => ({}),
+    idPrefix: 'recipient',
+    mode: 'create',
+    recipient: null,
+    fromInvoice: false,
 });
 
 const {
@@ -242,10 +228,18 @@ const {
     submit,
 } = useRecipientForm(props);
 
-const model = computed(() => (props.variant === 'page' ? form : props.modelValue));
-const fieldErrors = computed(() => (props.variant === 'page' ? form.errors : props.errors));
+const model = computed<FormProxy | null>(() =>
+    props.variant === 'page'
+        ? (form as unknown as FormProxy)
+        : (props.modelValue as FormProxy | null) ?? null
+);
+const fieldErrors = computed<Record<string, string | undefined>>(() =>
+    props.variant === 'page'
+        ? (form.errors as Record<string, string | undefined>)
+        : (props.errors ?? {})
+);
 
-function id(name) {
+function id(name: string): string {
     return prefixedId(props.idPrefix, name);
 }
 
@@ -253,10 +247,10 @@ const isInvoice = computed(() => props.fieldsMode === 'invoice');
 
 const countries = computed(() => getCountriesSk());
 
-function proxy(getKey, setKey) {
-    return computed({
-        get: () => (model.value ? model.value[getKey()] : ''),
-        set: (v) => {
+function proxy(getKey: () => string, setKey: () => string) {
+    return computed<string>({
+        get: () => String(model.value?.[getKey()] ?? ''),
+        set: (v: string) => {
             if (!model.value) return;
             model.value[setKey()] = v;
         },
@@ -301,8 +295,8 @@ function proxy(getKey, setKey) {
         () => (isInvoice.value ? 'recipient_iban' : 'iban')
     );
 
-function err(key) {
-    if (!fieldErrors.value) return '';
+function err(key: string): string | undefined {
+    if (!fieldErrors.value) return undefined;
     if (isInvoice.value) {
         if (key === 'name') return fieldErrors.value.recipient_name;
         return fieldErrors.value[`recipient_${key}`];

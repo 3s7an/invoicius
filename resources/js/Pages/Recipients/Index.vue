@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang=”ts”>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import RecipientCardList from '@/Pages/Recipients/Components/RecipientCardList.vue';
@@ -7,19 +7,16 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 
-const props = defineProps({
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    recipients: App.Http.Resources.RecipientResource[]
+}>();
 
-function displayName(recipient) {
+function displayName(recipient: App.Http.Resources.RecipientResource): string {
     return recipient.company_name || recipient.name || '—';
 }
 
-function confirmDeleteRecipient(recipient) {
-    if (!confirm(`Zmazať „${displayName(recipient)}“?`)) return;
+function confirmDeleteRecipient(recipient: App.Http.Resources.RecipientResource): void {
+    if (!confirm(`Zmazať „${displayName(recipient)}”?`)) return;
     router.delete(route('recipients.destroy', recipient.id));
 }
 </script>

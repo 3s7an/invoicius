@@ -1,20 +1,17 @@
-<script setup>
+<script setup lang=”ts”>
 import { Link, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 
-defineProps({
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    recipients: App.Http.Resources.RecipientResource[]
+}>();
 
-function displayName(recipient) {
+function displayName(recipient: App.Http.Resources.RecipientResource): string {
     return recipient.company_name || recipient.name || '—';
 }
 
-function confirmDeleteRecipient(recipient) {
-    if (!confirm(`Zmazať „${displayName(recipient)}“?`)) return;
+function confirmDeleteRecipient(recipient: App.Http.Resources.RecipientResource): void {
+    if (!confirm(`Zmazať „${displayName(recipient)}”?`)) return;
     router.delete(route('recipients.destroy', recipient.id));
 }
 </script>
