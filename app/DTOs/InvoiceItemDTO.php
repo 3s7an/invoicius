@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
+use App\DTOs\Forms\InvoiceItemData;
+
 final readonly class InvoiceItemDTO
 {
     public function __construct(
@@ -13,6 +15,17 @@ final readonly class InvoiceItemDTO
         public string $unit,
         public ?int $vatTypeId,
     ) {
+    }
+
+    public static function fromFormData(InvoiceItemData $data): self
+    {
+        return new self(
+            name:       $data->name,
+            quantity:   $data->quantity,
+            unitPrice:  $data->unit_price,
+            unit:       $data->unit,
+            vatTypeId:  $data->vat_type_id,
+        );
     }
 
     /**

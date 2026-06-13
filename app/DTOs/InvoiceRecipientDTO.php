@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
+use App\DTOs\Forms\InvoiceRecipientData;
 use App\Models\Recipient;
 
 final readonly class InvoiceRecipientDTO
@@ -19,6 +20,21 @@ final readonly class InvoiceRecipientDTO
         public ?string $recipientIcDph,
         public ?string $recipientIban,
     ) {
+    }
+
+    public static function fromFormData(InvoiceRecipientData $data): self
+    {
+        return new self(
+            recipientName:      $data->recipient_name,
+            recipientStreet:    $data->recipient_street,
+            recipientStreetNum: $data->recipient_street_num,
+            recipientCity:      $data->recipient_city,
+            recipientState:     $data->recipient_state,
+            recipientIco:       $data->recipient_ico,
+            recipientDic:       $data->recipient_dic,
+            recipientIcDph:     $data->recipient_ic_dph,
+            recipientIban:      $data->recipient_iban,
+        );
     }
 
     public static function fromModel(Recipient $recipient): self
