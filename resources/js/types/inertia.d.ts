@@ -5,6 +5,12 @@ declare global {
     const route: typeof Ziggy
 }
 
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        route: typeof Ziggy
+    }
+}
+
 export interface AuthUser {
     id: number
     name: string

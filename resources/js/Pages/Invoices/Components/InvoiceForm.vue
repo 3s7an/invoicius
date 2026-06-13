@@ -72,12 +72,6 @@ import InvoiceSettings from './InvoiceSettings.vue';
 import IssuerDetailsForm from './IssuerDetailsForm.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
 import type { AuthUser } from '@/types/inertia';
-import type {
-    InvoiceResource,
-    CurrencyResource,
-    VatTypeResource,
-    RecipientResource,
-} from '@/types/generated';
 
 interface Props {
     mode?: 'create' | 'edit'
@@ -101,7 +95,7 @@ const props = withDefaults(defineProps<Props>(), {
     defaultCurrencyId: null,
 });
 
-const user = usePage().props.auth?.user as AuthUser | undefined;
+const user = (usePage().props as { auth?: { user: AuthUser } }).auth?.user;
 
 const {
     form,

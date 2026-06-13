@@ -32,7 +32,7 @@
                                 :model-value="data.invoice_status_id"
                                 :options="statusOptions"
                                 size="small"
-                                @update:model-value="(value) => updateStatus(data, value)"
+                                @update:model-value="(value: unknown) => updateStatus(data, value)"
                             />
                         </template>
                     </Column>
