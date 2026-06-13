@@ -61,7 +61,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Button from 'primevue/button';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -71,44 +71,37 @@ import InvoiceRecipientSection from './InvoiceRecipientSection.vue';
 import InvoiceSettings from './InvoiceSettings.vue';
 import IssuerDetailsForm from './IssuerDetailsForm.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
+import type { AuthUser } from '@/types/inertia';
+import type {
+    InvoiceResource,
+    CurrencyResource,
+    VatTypeResource,
+    RecipientResource,
+} from '@/types/generated';
 
-const props = defineProps({
-    mode: {
-        type: String,
-        default: 'create',
-        validator: (value) => ['create', 'edit'].includes(value),
-    },
-    invoice: {
-        type: Object,
-        default: null,
-    },
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    suggestedNumber: {
-        type: String,
-        default: '',
-    },
-    preselectedRecipient: {
-        type: Object,
-        default: null,
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vatTypes: {
-        type: Array,
-        default: () => [],
-    },
-    defaultCurrencyId: {
-        type: [Number, String],
-        default: null,
-    },
+interface Props {
+    mode?: 'create' | 'edit'
+    invoice?: App.Http.Resources.InvoiceResource | null
+    recipients?: App.Http.Resources.RecipientResource[]
+    suggestedNumber?: string
+    preselectedRecipient?: App.Http.Resources.RecipientResource | null
+    currencies?: App.Http.Resources.CurrencyResource[]
+    vatTypes?: App.Http.Resources.VatTypeResource[]
+    defaultCurrencyId?: number | null
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    mode: 'create',
+    invoice: null,
+    recipients: () => [],
+    suggestedNumber: '',
+    preselectedRecipient: null,
+    currencies: () => [],
+    vatTypes: () => [],
+    defaultCurrencyId: null,
 });
 
-const user = usePage().props.auth?.user;
+const user = usePage().props.auth?.user as AuthUser | undefined;
 
 const {
     form,

@@ -58,7 +58,7 @@
     </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AppSelect from '@/Components/AppSelect.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -70,20 +70,19 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
 
-const props = defineProps({
-    invoices: {
-        type: Array,
-        default: () => [],
-    },
-    invoice_stats: {
-        type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
-    },
-    invoice_statuses: {
-        type: Array,
-        default: () => [],
-    },
-});
+interface InvoiceStats {
+    total_invoiced: number
+    paid: number
+    awaiting: number
+    overdue: number
+    draft: number
+}
+
+const props = defineProps<{
+    invoices: App.Http.Resources.InvoiceResource[]
+    invoice_stats: InvoiceStats
+    invoice_statuses: App.Http.Resources.InvoiceStatusResource[]
+}>();
 
 const statusOptions = computed(() =>
     (props.invoice_statuses || []).map((s) => ({
@@ -92,13 +91,13 @@ const statusOptions = computed(() =>
     }))
 );
 
-function updateStatus(invoice, newStatusId) {
+function updateStatus(invoice: App.Http.Resources.InvoiceResource, newStatusId: unknown): void {
     const id = newStatusId != null ? Number(newStatusId) : null;
     if (id === invoice.invoice_status_id) return;
     router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
 }
 
-function confirmDeleteInvoice(invoice) {
+function confirmDeleteInvoice(invoice: App.Http.Resources.InvoiceResource): void {
     if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
     router.delete(route('invoices.destroy', invoice.id));
 }

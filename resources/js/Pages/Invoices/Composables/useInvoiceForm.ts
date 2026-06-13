@@ -1,8 +1,20 @@
 import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { createInvoiceFormDefaults, invoicePayload } from '../Utils/invoiceFormDefaults';
+import type { AuthUser } from '@/types/inertia';
 
-function firstErrorMatching(errors, prefixes) {
+interface InvoiceFormProps {
+    mode?: 'create' | 'edit'
+    invoice?: App.Http.Resources.InvoiceResource | null
+    recipients?: App.Http.Resources.RecipientResource[]
+    suggestedNumber?: string
+    preselectedRecipient?: App.Http.Resources.RecipientResource | null
+    currencies?: App.Http.Resources.CurrencyResource[]
+    vatTypes?: App.Http.Resources.VatTypeResource[]
+    defaultCurrencyId?: number | null
+}
+
+function firstErrorMatching(errors: Record<string, string>, prefixes: string[]): string | undefined {
     const key = Object.keys(errors).find((errorKey) =>
         prefixes.some((prefix) => errorKey === prefix || errorKey.startsWith(`${prefix}.`))
     );
@@ -10,7 +22,7 @@ function firstErrorMatching(errors, prefixes) {
     return key ? errors[key] : undefined;
 }
 
-function displayErrors(errors) {
+function displayErrors(errors: Record<string, string>) {
     return {
         ...errors,
         issuer_name: errors['issuer.name'] ?? errors.issuer_name,
@@ -19,11 +31,11 @@ function displayErrors(errors) {
     };
 }
 
-export function useInvoiceForm(props, user) {
+export function useInvoiceForm(props: InvoiceFormProps, user: AuthUser | undefined) {
     const isEdit = computed(() => props.mode === 'edit');
-    const sourceInvoice = computed(() => props.invoice ?? {});
+    const sourceInvoice = computed(() => props.invoice ?? ({} as App.Http.Resources.InvoiceResource));
 
-    const form = useForm(
+    const form = useForm<App.DTOs.Forms.InvoiceFormData>(
         createInvoiceFormDefaults({
             mode: props.mode,
             invoice: props.invoice,
@@ -80,7 +92,7 @@ export function useInvoiceForm(props, user) {
     const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
     const errors = computed(() => displayErrors(form.errors));
 
-    function submit() {
+    function submit(): void {
         const request = form.transform(invoicePayload);
 
         if (isEdit.value) {
