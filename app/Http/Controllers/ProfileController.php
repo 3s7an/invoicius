@@ -44,7 +44,7 @@ class ProfileController extends Controller
             $request->validated(),
         );
 
-        return redirect()->route('profile.edit');
+        return to_route('profile.edit');
     }
 
     public function updateDetails(UpdateProfileDetailsRequest $request): RedirectResponse
@@ -55,7 +55,7 @@ class ProfileController extends Controller
             $request->file('company_logo'),
         );
 
-        return redirect()->route('profile.edit');
+        return to_route('profile.edit');
     }
 
     public function updateInvoiceSettings(UpdateInvoiceSettingsRequest $request): RedirectResponse
@@ -66,7 +66,7 @@ class ProfileController extends Controller
             $request->file('company_logo'),
         );
 
-        return redirect()->route('profile.edit');
+        return to_route('profile.edit');
     }
 
     /**

@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(AutomatizationProcessor::class, function ($app) {
+        $this->app->singleton(function ($app): \App\Services\AutomatizationProcessor {
             $processor = new AutomatizationProcessor();
             $processor->registerHandler($app->make(InvoiceAutoGenerationHandler::class));
             $processor->registerHandler($app->make(InvoiceReportHandler::class));

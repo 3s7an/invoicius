@@ -33,7 +33,7 @@ class UserCompanyLogo extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getUrlAttribute(): string
+    protected function getUrlAttribute(): string
     {
         return Storage::disk('public')->url($this->link);
     }

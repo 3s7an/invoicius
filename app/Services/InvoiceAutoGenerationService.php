@@ -49,11 +49,9 @@ class InvoiceAutoGenerationService
         try {
             $invoice = $this->invoiceService->createInvoice($data);
         } catch (DuplicateInvoiceNumberException|UniqueConstraintViolationException $e) {
-            throw new AutomatizationException(
-                $e instanceof DuplicateInvoiceNumberException
-                    ? $e->getMessage()
-                    : 'Číslo faktúry už existuje.',
-            );
+            throw new AutomatizationException($e instanceof DuplicateInvoiceNumberException
+                ? $e->getMessage()
+                : 'Číslo faktúry už existuje.', $e->getCode(), $e);
         }
 
         return [

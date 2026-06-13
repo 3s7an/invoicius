@@ -64,8 +64,7 @@ class AutomatizationController extends Controller
             AutomatizationDTO::fromValidated($request->validated(), $request->user()->id),
         );
 
-        return redirect()
-            ->route('automatizations.index')
+        return to_route('automatizations.index')
             ->with('success', 'Automatizácia bola vytvorená.');
     }
 
@@ -78,8 +77,7 @@ class AutomatizationController extends Controller
             AutomatizationDTO::fromValidated($request->validated(), $automatization->user_id),
         );
 
-        return redirect()
-            ->route('automatizations.index')
+        return to_route('automatizations.index')
             ->with('success', 'Automatizácia bola upravená.');
     }
 
@@ -89,8 +87,7 @@ class AutomatizationController extends Controller
 
         $this->automatizationService->delete($automatization);
 
-        return redirect()
-            ->route('automatizations.index')
+        return to_route('automatizations.index')
             ->with('success', 'Automatizácia bola zmazaná.');
     }
 }

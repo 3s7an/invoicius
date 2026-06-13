@@ -28,7 +28,8 @@ class Recipient extends Model
     /** @use HasFactory<\Database\Factories\RecipientFactory> */
     use HasFactory, SoftDeletes;
 
-    public function scopeForUser(Builder $query, int $userId): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forUser(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
@@ -54,11 +55,17 @@ class Recipient extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Automatization, $this>
+     */
     public function automatizations(): HasMany
     {
         return $this->hasMany(Automatization::class);

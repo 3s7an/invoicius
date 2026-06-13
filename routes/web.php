@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\AutomatizationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
@@ -10,16 +12,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::check()) {
-        return redirect()->route('dashboard');
+        return to_route('dashboard');
     }
-    return redirect()->route('login');
+    return to_route('login');
 })->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', /*'verified'*/])
     ->name('dashboard');
 
-Route::middleware(['auth', /*'verified'*/])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function (): void {
     Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices');
     Route::get('/invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
     Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
@@ -30,16 +32,16 @@ Route::middleware(['auth', /*'verified'*/])->group(function () {
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
 });
 
-Route::middleware(['auth', /*'verified'*/])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function (): void {
     Route::resource('recipients', RecipientController::class)->except(['show']);
 });
 
-Route::middleware(['auth', /*'verified'*/])->group(function () {
+Route::middleware(['auth', /*'verified'*/])->group(function (): void {
     Route::resource('automatizations', AutomatizationController::class)
         ->except(['show']);
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/details', [ProfileController::class, 'updateDetails'])->name('profile.details.update');

@@ -38,7 +38,7 @@ final readonly class InvoiceDTO
 
         if ($itemNames !== []) {
             $items = array_map(
-                fn (string $name) => new InvoiceItemDTO(
+                fn (string $name): \App\DTOs\InvoiceItemDTO => new InvoiceItemDTO(
                     name: $name,
                     quantity: 1,
                     unitPrice: 0,
@@ -63,8 +63,8 @@ final readonly class InvoiceDTO
             userId: $automatization->user_id,
             number: $suggestedNumber,
             variableSymbol: $suggestedNumber,
-            issueDate: Carbon::today(),
-            dueDate: Carbon::today()->addDays(14),
+            issueDate: \Illuminate\Support\Facades\Date::today(),
+            dueDate: \Illuminate\Support\Facades\Date::today()->addDays(14),
             currencyId: $defaultCurrencyId,
             recipientId: $automatization->recipient_id,
             recipient: InvoiceRecipientDTO::fromModel($recipient),
@@ -81,13 +81,13 @@ final readonly class InvoiceDTO
             userId: $userId,
             number: $validated['number'],
             variableSymbol: $validated['variable_symbol'],
-            issueDate: Carbon::parse($validated['issue_date']),
-            dueDate: Carbon::parse($validated['due_date']),
+            issueDate: \Illuminate\Support\Facades\Date::parse($validated['issue_date']),
+            dueDate: \Illuminate\Support\Facades\Date::parse($validated['due_date']),
             currencyId: (int) $validated['currency_id'],
             recipientId: $validated['recipient_id'] === null ? null : (int) $validated['recipient_id'],
             recipient: InvoiceRecipientDTO::fromArray($validated['recipient']),
             items: array_map(
-                fn (array $row) => InvoiceItemDTO::fromArray($row),
+                InvoiceItemDTO::fromArray(...),
                 $validated['items'],
             ),
         );

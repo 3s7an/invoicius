@@ -25,7 +25,7 @@ class InvoiceDueReminderService
     public function buildReminderData(Automatization $automatization): array
     {
         $offsetDays = (int) ($automatization->due_offset_days ?? 0);
-        $targetDate = now()->startOfDay()->addDays($offsetDays);
+        $targetDate = today()->addDays($offsetDays);
 
         $allInvoices = $this->invoiceService
             ->getInvoices($automatization->user_id)
@@ -43,18 +43,16 @@ class InvoiceDueReminderService
             return $invoice->due_date->isSameDay($targetDate);
         })->values();
 
-        $invoiceData = $dueInvoices->map(function ($invoice) use ($targetDate, $offsetDays) {
-            return [
-                'id' => $invoice->id,
-                'number' => $invoice->number,
-                'recipient_name' => $invoice->recipient_name,
-                'due_date' => optional($invoice->due_date)->toDateString(),
-                'status_code' => $invoice->invoiceStatus?->code,
-                'status_name' => $invoice->invoiceStatus?->name,
-                'days_from_today' => $offsetDays,
-                'target_date' => $targetDate->toDateString(),
-            ];
-        })->all();
+        $invoiceData = $dueInvoices->map(fn($invoice) => [
+            'id' => $invoice->id,
+            'number' => $invoice->number,
+            'recipient_name' => $invoice->recipient_name,
+            'due_date' => $invoice->due_date?->toDateString(),
+            'status_code' => $invoice->invoiceStatus?->code,
+            'status_name' => $invoice->invoiceStatus?->name,
+            'days_from_today' => $offsetDays,
+            'target_date' => $targetDate->toDateString(),
+        ])->all();
 
         return [
             'user_email' => $automatization->user->email,

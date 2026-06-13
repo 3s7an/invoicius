@@ -45,7 +45,7 @@ class AutomatizationProcessor
             try {
                 $handler = $this->resolveHandler($automatization->type);
 
-                $result = DB::transaction(function () use ($automatization, $handler) {
+                $result = DB::transaction(function () use ($automatization, $handler): \App\DTOs\AutomatizationResultDTO {
                     $locked = Automatization::query()
                         ->with(['user', 'recipient'])
                         ->whereKey($automatization->id)

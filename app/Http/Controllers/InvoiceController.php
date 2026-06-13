@@ -59,8 +59,7 @@ class InvoiceController extends Controller
         $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
         $this->invoiceService->createInvoice($data);
 
-        return redirect()
-            ->route('invoices')
+        return to_route('invoices')
             ->with('success', 'Faktúra bola vytvorená.');
     }
 
@@ -80,8 +79,7 @@ class InvoiceController extends Controller
         $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
         $this->invoiceService->updateInvoice($invoice, $data);
 
-        return redirect()
-            ->route('invoices')
+        return to_route('invoices')
             ->with('success', 'Faktúra bola upravená.');
     }
 
@@ -91,8 +89,7 @@ class InvoiceController extends Controller
         
         $this->invoiceService->updateStatus($invoice, (int) $request->validated('invoice_status_id'));
 
-        return redirect()
-            ->back()
+        return back()
             ->with('success', 'Stav faktúry bol aktualizovaný.');
     }
 
@@ -101,8 +98,7 @@ class InvoiceController extends Controller
         $this->authorize('delete', $invoice);
         $this->invoiceService->delete($invoice);
 
-        return redirect()
-            ->route('invoices')
+        return to_route('invoices')
             ->with('success', 'Faktúra bola zmazaná.');
     }
 

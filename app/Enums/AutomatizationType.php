@@ -60,7 +60,7 @@ enum AutomatizationType: string
     public static function optionsForFrontend(): array
     {
         return array_map(
-            fn (self $type) => [
+            fn (self $type): array => [
                 'value' => $type->value,
                 'label' => $type->label(),
                 'requires_recipient' => $type->requiresRecipient(),

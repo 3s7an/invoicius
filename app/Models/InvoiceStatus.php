@@ -32,6 +32,9 @@ class InvoiceStatus extends Model
         return static::where('code', $code)->first();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'invoice_status_id');

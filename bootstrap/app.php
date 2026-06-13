@@ -23,12 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (\Throwable $e, $request) {
             if (! $request->expectsJson() && $request->isMethod('POST')) {
                 if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
-                    return redirect()->back()
+                    return back()
                         ->withInput()
                         ->with('error', 'Faktúra s týmto číslom už existuje. Skúste to znova.');
                 }
                 if ($e instanceof \App\Exceptions\DuplicateInvoiceNumberException) {
-                    return redirect()->back()
+                    return back()
                         ->withInput()
                         ->with('error', $e->getMessage());
                 }

@@ -61,12 +61,13 @@ class Automatization extends Model
         ];
     }
 
-    public function scopeForUser(Builder $query, int $userId): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forUser(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
 
-    public function getTypeLabelAttribute(): string
+    protected function getTypeLabelAttribute(): string
     {
         return $this->type->label();
     }
@@ -85,7 +86,8 @@ class Automatization extends Model
         return $attributes;
     }
 
-    public function scopeDueToday(Builder $query): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function dueToday(Builder $query): Builder
     {
         return $query->whereDate('date_trigger', now()->toDateString())
             ->where('is_active', true);

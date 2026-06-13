@@ -22,11 +22,11 @@ class InvoiceStatsCalculator
         $totalInvoiced = (float) $invoices->sum('total_price');
 
         $paid = (float) $invoices
-            ->filter(fn (Invoice $invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
+            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
             ->sum('total_price');
 
         $draft = (float) $invoices
-            ->filter(fn (Invoice $invoice) => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
+            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
             ->sum('total_price');
 
         $overdue = (float) $invoices

@@ -71,7 +71,7 @@ class InvoiceSeeder extends Seeder
             $statusCode = $data['status_code'];
             unset($data['items'], $data['status_code']);
 
-            $issueDate = now()->subDays(rand(5, 60));
+            $issueDate = now()->subDays(random_int(5, 60));
             $dueDate = $issueDate->copy()->addDays(14);
             $totalPrice = array_sum(array_column($itemsData, 'line_total'));
             $woVatPrice = round($totalPrice / (1 + $vatRate), 2);
@@ -79,7 +79,7 @@ class InvoiceSeeder extends Seeder
 
             $invoice = Invoice::create(array_merge([
                 'user_id' => $user->id,
-                'varsym' => str_pad((string) rand(1, 99999), 5, '0', STR_PAD_LEFT),
+                'varsym' => str_pad((string) random_int(1, 99999), 5, '0', STR_PAD_LEFT),
                 'recipient_street' => 'Hlavná 1',
                 'recipient_street_num' => '1',
                 'recipient_city' => 'Bratislava',

@@ -41,7 +41,7 @@ class ProfileService
         $user->fill($data);
         $user->save();
 
-        if ($companyLogo !== null) {
+        if ($companyLogo instanceof \Illuminate\Http\UploadedFile) {
             $this->updateCompanyLogo($user, $companyLogo);
         }
     }
@@ -70,7 +70,7 @@ class ProfileService
 
     public function deleteAccount(User $user): void
     {
-        DB::transaction(function () use ($user) {
+        DB::transaction(function () use ($user): void {
             $user->delete();
             Auth::logout();
         });

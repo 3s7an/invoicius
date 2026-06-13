@@ -91,26 +91,41 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(UserCompanyLogo::class, 'company_logo_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\InvoiceColor, $this>
+     */
     public function invoiceColor(): BelongsTo
     {
         return $this->belongsTo(InvoiceColor::class, 'invoice_color_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Recipient, $this>
+     */
     public function recipients(): HasMany
     {
         return $this->hasMany(Recipient::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\VatType, $this>
+     */
     public function defaultVatType(): BelongsTo
     {
         return $this->belongsTo(VatType::class, 'default_vat_type_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Automatization, $this>
+     */
     public function automatizations(): HasMany
     {
         return $this->hasMany(Automatization::class);

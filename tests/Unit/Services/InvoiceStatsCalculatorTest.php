@@ -31,7 +31,7 @@ class InvoiceStatsCalculatorTest extends TestCase
 
     public function test_handles_empty_collection(): void
     {
-        $stats = $this->calculator->calculateForCollection(collect(), Carbon::today());
+        $stats = $this->calculator->calculateForCollection(collect(), \Illuminate\Support\Facades\Date::today());
 
         $this->assertSame([
             'total_invoiced' => 0.0,
@@ -81,7 +81,7 @@ class InvoiceStatsCalculatorTest extends TestCase
             ]),
         ])->each->load('invoiceStatus');
 
-        $stats = $this->calculator->calculateForCollection($invoices, Carbon::today());
+        $stats = $this->calculator->calculateForCollection($invoices, \Illuminate\Support\Facades\Date::today());
 
         $this->assertSame(500.0, $stats['total_invoiced']);
         $this->assertSame(200.0, $stats['paid']);

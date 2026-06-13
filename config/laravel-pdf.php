@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'driver' => env('LARAVEL_PDF_DRIVER', 'dompdf'),
 

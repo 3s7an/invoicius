@@ -39,7 +39,7 @@ class InvoiceService
     {
         return $this->invoiceStatsCalculator->calculateForCollection(
             $this->getInvoices($userId),
-            now()->startOfDay(),
+            today(),
         );
     }
 
@@ -193,7 +193,7 @@ class InvoiceService
     {
         $today = now()->format('Ymd');
         $existingCount = Invoice::forUser($userId)
-            ->where(function ($q) use ($today) {
+            ->where(function ($q) use ($today): void {
                 $q->where('number', $today)
                     ->orWhere('number', 'like', $today . '-%');
             })

@@ -87,8 +87,8 @@ class InvoiceServiceTest extends TestCase
                 new InvoiceItemDTO(
                     name: 'Service A',
                     quantity: 2.0,
-                    unit: 'hrs',
                     unitPrice: 100.00,
+                    unit: 'hrs',
                     vatTypeId: $vat23->id,
                 ),
             ],
@@ -130,8 +130,8 @@ class InvoiceServiceTest extends TestCase
                 new InvoiceItemDTO(
                     name: 'Item',
                     quantity: 1.0,
-                    unit: 'pcs',
                     unitPrice: 50.00,
+                    unit: 'pcs',
                     vatTypeId: $mimo->id,
                 ),
             ],
@@ -205,8 +205,8 @@ class InvoiceServiceTest extends TestCase
                 new InvoiceItemDTO(
                     name: 'Item',
                     quantity: 1.0,
-                    unit: 'pcs',
                     unitPrice: 100.00,
+                    unit: 'pcs',
                     vatTypeId: null,
                 ),
             ],

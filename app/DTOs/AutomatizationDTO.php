@@ -36,7 +36,7 @@ final readonly class AutomatizationDTO
                 : (int) $recipientId,
             type: $type,
             dateTrigger: $type->usesDailySchedule()
-                ? now()->startOfDay()
+                ? today()
                 : self::parseDateTrigger((string) $validated['date_trigger']),
             dueOffsetDays: ($dueOffsetDays === null || $dueOffsetDays === '' ? null : (int) $dueOffsetDays),
             itemNames: $type->requiresItemNames()
@@ -48,6 +48,6 @@ final readonly class AutomatizationDTO
 
     private static function parseDateTrigger(string $date): Carbon
     {
-        return Carbon::createFromFormat('Y-m-d', $date, config('app.timezone'))->startOfDay();
+        return \Illuminate\Support\Facades\Date::createFromFormat('Y-m-d', $date, config('app.timezone'))->startOfDay();
     }
 }

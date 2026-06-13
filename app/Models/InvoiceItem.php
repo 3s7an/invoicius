@@ -41,11 +41,17 @@ class InvoiceItem extends Model
         ];
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Invoice, $this>
+     */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\VatType, $this>
+     */
     public function vatType(): BelongsTo
     {
         return $this->belongsTo(VatType::class, 'vat_type_id');

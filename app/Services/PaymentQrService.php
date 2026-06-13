@@ -39,7 +39,7 @@ class PaymentQrService
 
         $normalized = strtoupper(preg_replace('/\s+/', '', $iban) ?? '');
 
-        return preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/', $normalized) === 1
+        return preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalized) === 1
             ? $normalized
             : null;
     }

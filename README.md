@@ -213,9 +213,15 @@ npm run docker:test
 # PHPStan (Larastan) – beží cez vendor-init, netreba bežiaci app kontajner
 npm run docker:analyse
 
+# Rector – náhľad / aplikácia refaktorov (vždy najprv --dry-run)
+npm run docker:rector:dry
+npm run docker:rector
+
 # lokálne (bez Dockeru)
 composer run test
 composer run analyse
+composer run rector:dry
+composer run rector
 ```
 
 ## Licencia

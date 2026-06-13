@@ -14,7 +14,7 @@ class InvoicePdfService
         private readonly PaymentQrService $paymentQrService,
     ) {}
 
-    public function getPdfDownloadResponse(Invoice $invoice)
+    public function getPdfDownloadResponse(Invoice $invoice): \Spatie\LaravelPdf\PdfBuilder
     {
         $invoice->load(['items', 'currency', 'recipient', 'user.companyLogo']);
         $issuer = $invoice->user;

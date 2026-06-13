@@ -44,12 +44,12 @@ class InvoiceReportService
         $stats = $this->invoiceStatsCalculator->calculateForCollection($monthlyInvoices, $periodEnd);
 
         $invoiceData = $monthlyInvoices
-            ->map(fn ($invoice) => [
+            ->map(fn ($invoice): array => [
                 'id' => $invoice->id,
                 'number' => $invoice->number,
                 'varsym' => $invoice->varsym,
-                'issue_date' => optional($invoice->issue_date)->toDateString(),
-                'due_date' => optional($invoice->due_date)->toDateString(),
+                'issue_date' => $invoice->issue_date?->toDateString(),
+                'due_date' => $invoice->due_date?->toDateString(),
                 'total_price' => (float) $invoice->total_price,
                 'status_code' => $invoice->invoiceStatus?->code,
                 'status_name' => $invoice->invoiceStatus?->name,

@@ -10,7 +10,9 @@
         "docker:dev:build": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
         "docker:vendor": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init",
         "docker:test": "sh docker/dev-exec.sh php artisan test",
-        "docker:analyse": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M"
+        "docker:analyse": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M",
+        "docker:rector": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/rector process",
+        "docker:rector:dry": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/rector process --dry-run"
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",

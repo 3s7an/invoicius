@@ -53,7 +53,7 @@ class DashboardService
                 'created_at',
             ]);
 
-        return $invoices->map(fn (Invoice $i) => [
+        return $invoices->map(fn (Invoice $i): array => [
             'id' => $i->id,
             'number' => $i->number,
             'recipient_name' => $i->recipient_name,
@@ -91,7 +91,7 @@ class DashboardService
                 'updated_at',
             ]);
 
-        return $automatizations->map(fn (Automatization $a) => [
+        return $automatizations->map(fn (Automatization $a): array => [
             'id' => $a->id,
             'type_label' => $a->type->label(),
             'recipient_label' => $a->recipient

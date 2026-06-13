@@ -33,7 +33,8 @@ class Invoice extends Model
     /** @use HasFactory<\Database\Factories\InvoiceFactory> */
     use HasFactory, SoftDeletes;
 
-    public function scopeForUser(Builder $query, int $userId): Builder
+    #[\Illuminate\Database\Eloquent\Attributes\Scope]
+    protected function forUser(Builder $query, int $userId): Builder
     {
         return $query->where('user_id', $userId);
     }
@@ -82,6 +83,9 @@ class Invoice extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\InvoiceItem, $this>
+     */
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class)->orderBy('position');

@@ -44,13 +44,11 @@ class RecipientController extends Controller
         );
 
         if ($request->boolean('from_invoice')) {
-            return redirect()
-                ->route('invoices.create', ['created_recipient_id' => $recipient->id])
+            return to_route('invoices.create', ['created_recipient_id' => $recipient->id])
                 ->with('success', 'Odberateľ bol vytvorený.');
         }
 
-        return redirect()
-            ->route('recipients.index')
+        return to_route('recipients.index')
             ->with('success', 'Odberateľ bol vytvorený.');
     }
 
@@ -68,8 +66,7 @@ class RecipientController extends Controller
         $this->authorize('update', $recipient);
         $this->recipientService->update($recipient, $request->validated());
 
-        return redirect()
-            ->route('recipients.index')
+        return to_route('recipients.index')
             ->with('success', 'Odberateľ bol upravený.');
     }
 
@@ -78,8 +75,7 @@ class RecipientController extends Controller
         $this->authorize('delete', $recipient);
         $this->recipientService->delete($recipient);
 
-        return redirect()
-            ->route('recipients.index')
+        return to_route('recipients.index')
             ->with('success', 'Odberateľ bol zmazaný.');
     }
 }

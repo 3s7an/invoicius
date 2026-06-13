@@ -24,6 +24,9 @@ class VatType extends Model
         ];
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\InvoiceItem, $this>
+     */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class, 'vat_type_id');
