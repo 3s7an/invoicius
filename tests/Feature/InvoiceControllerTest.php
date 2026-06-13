@@ -10,6 +10,8 @@ use App\Models\InvoiceStatus;
 use App\Models\User;
 use App\Services\InvoicePdfService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
+use Spatie\LaravelPdf\PdfBuilder;
 use Tests\TestCase;
 
 class InvoiceControllerTest extends TestCase
@@ -113,13 +115,20 @@ class InvoiceControllerTest extends TestCase
     {
         $invoice = $this->makeInvoice(['number' => 'INV-PDF']);
 
-        $this->mock(InvoicePdfService::class, function ($mock) use ($invoice): void {
+        $httpResponse = response('pdf-binary', 200, [
+            'Content-Type' => 'application/pdf',
+        ]);
+
+        $pdfBuilder = Mockery::mock(PdfBuilder::class);
+        $pdfBuilder->shouldReceive('toResponse')
+            ->once()
+            ->andReturn($httpResponse);
+
+        $this->mock(InvoicePdfService::class, function ($mock) use ($invoice, $pdfBuilder): void {
             $mock->shouldReceive('getPdfDownloadResponse')
                 ->once()
                 ->withArgs(fn (Invoice $arg): bool => $arg->is($invoice))
-                ->andReturn(response('pdf-binary', 200, [
-                    'Content-Type' => 'application/pdf',
-                ]));
+                ->andReturn($pdfBuilder);
         });
 
         $response = $this->actingAs($this->user)->get(route('invoices.pdf', $invoice));
