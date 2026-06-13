@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -6,33 +6,19 @@ import PageHeader from '@/Components/PageHeader.vue';
 import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
 import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecentInvoices.vue';
 import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
+import type { AuthUser } from '@/types/inertia';
+import type { InvoiceStats, DashboardCounts, ActiveAutomatization } from './Utils/types';
 
-defineProps({
-    invoice_stats: {
-        type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
-    },
-    currency_symbol: {
-        type: String,
-        default: '€',
-    },
-    counts: {
-        type: Object,
-        default: () => ({ invoices: 0, clients: 0, automatizations_active: 0 }),
-    },
-    recent_invoices: {
-        type: Array,
-        default: () => [],
-    },
-    active_automatizations: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    invoice_stats: InvoiceStats
+    currency_symbol: string
+    counts: DashboardCounts
+    recent_invoices: App.Http.Resources.InvoiceResource[]
+    active_automatizations: ActiveAutomatization[]
+}>();
 
 const userName = computed(() => {
-    const user = usePage().props.auth?.user;
-
+    const user = (usePage().props as { auth?: { user: AuthUser } }).auth?.user;
     return user?.company_name || user?.name || null;
 });
 </script>

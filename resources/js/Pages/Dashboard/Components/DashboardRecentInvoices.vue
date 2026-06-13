@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
@@ -8,16 +8,10 @@ import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatAmount, formatDate } from '@/utils/formatters';
 import { invoiceStatusSeverity } from '@/Pages/Dashboard/Utils/statusSeverity';
 
-defineProps({
-    recent_invoices: {
-        type: Array,
-        default: () => [],
-    },
-    currency_symbol: {
-        type: String,
-        default: '€',
-    },
-});
+defineProps<{
+    recent_invoices: App.Http.Resources.InvoiceResource[]
+    currency_symbol: string
+}>();
 </script>
 
 <template>
@@ -58,9 +52,9 @@ defineProps({
                         </div>
                         <div class="shrink-0 text-right">
                             <Tag
-                                v-if="invoice.status_name"
-                                :value="invoice.status_name"
-                                :severity="invoiceStatusSeverity(invoice.status_name)"
+                                v-if="invoice.invoice_status?.name"
+                                :value="invoice.invoice_status?.name"
+                                :severity="invoiceStatusSeverity(invoice.invoice_status?.name)"
                                 rounded
                             />
                             <p class="mt-1.5 text-sm font-medium tabular-nums text-gray-800">
@@ -92,12 +86,12 @@ defineProps({
                             <span class="block truncate">{{ data.recipient_name || '—' }}</span>
                         </template>
                     </Column>
-                    <Column field="status_name" header="Stav">
+                    <Column field="invoice_status" header="Stav">
                         <template #body="{ data }">
                             <Tag
-                                v-if="data.status_name"
-                                :value="data.status_name"
-                                :severity="invoiceStatusSeverity(data.status_name)"
+                                v-if="data.invoice_status?.name"
+                                :value="data.invoice_status?.name"
+                                :severity="invoiceStatusSeverity(data.invoice_status?.name)"
                                 rounded
                             />
                             <span v-else class="text-gray-400">—</span>

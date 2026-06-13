@@ -1,23 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import Card from 'primevue/card';
 import InvoiceStatsPie from '@/Components/InvoiceStatsPie.vue';
+import type { InvoiceStats, DashboardCounts } from '../Utils/types';
 
-defineProps({
-    invoice_stats: {
-        type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
-    },
-    currency_symbol: {
-        type: String,
-        default: '€',
-    },
-    counts: {
-        type: Object,
-        default: () => ({ invoices: 0, clients: 0, automatizations_active: 0 }),
-    },
-});
+interface StatCard {
+    key: string
+    label: string
+    hint: string
+    icon: string
+    iconClass: string
+    value: (counts: DashboardCounts) => number
+}
 
-const statCards = [
+defineProps<{
+    invoice_stats: InvoiceStats
+    currency_symbol: string
+    counts: DashboardCounts
+}>();
+
+const statCards: StatCard[] = [
     {
         key: 'invoices',
         label: 'Faktúry',
