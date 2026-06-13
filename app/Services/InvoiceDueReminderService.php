@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\InvoiceStatusCode;
 use App\Models\Automatization;
-use App\Models\InvoiceStatus;
 
 class InvoiceDueReminderService
 {
@@ -36,7 +36,7 @@ class InvoiceDueReminderService
                 return false;
             }
 
-            if ($invoice->invoiceStatus->code === InvoiceStatus::CODE_PAID) {
+            if ($invoice->invoiceStatus->code === InvoiceStatusCode::Paid->value) {
                 return false;
             }
 

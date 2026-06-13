@@ -7,6 +7,7 @@ namespace Tests\Unit\Services;
 use App\DTOs\InvoiceDTO;
 use App\DTOs\InvoiceItemDTO;
 use App\DTOs\InvoiceRecipientDTO;
+use App\Enums\InvoiceStatusCode;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -46,7 +47,7 @@ class InvoiceServiceTest extends TestCase
     {
         $today = now()->format('Ymd');
         $currency = Currency::first();
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+        $draftStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Draft);
 
         Invoice::factory()->create([
             'user_id' => $this->user->id,
@@ -147,8 +148,8 @@ class InvoiceServiceTest extends TestCase
     public function test_stats_exclude_draft_from_awaiting(): void
     {
         $currency = Currency::first();
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-        $sentStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_SENT);
+        $draftStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Draft);
+        $sentStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Sent);
 
         Invoice::factory()->create([
             'user_id' => $this->user->id,

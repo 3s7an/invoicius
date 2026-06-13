@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Policies;
 
+use App\Enums\InvoiceStatusCode;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -54,7 +55,7 @@ class InvoicePolicyTest extends TestCase
         return Invoice::factory()->create([
             'user_id' => $user->id,
             'currency_id' => Currency::first()->id,
-            'invoice_status_id' => InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT)->id,
+            'invoice_status_id' => InvoiceStatus::getByCode(InvoiceStatusCode::Draft)->id,
         ]);
     }
 }

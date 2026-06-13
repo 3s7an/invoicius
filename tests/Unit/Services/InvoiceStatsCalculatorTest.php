@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
+use App\Enums\InvoiceStatusCode;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -46,9 +47,9 @@ class InvoiceStatsCalculatorTest extends TestCase
     {
         $user = User::factory()->create();
         $currency = Currency::first();
-        $draft = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
-        $paid = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
-        $sent = InvoiceStatus::getByCode(InvoiceStatus::CODE_SENT);
+        $draft = InvoiceStatus::getByCode(InvoiceStatusCode::Draft);
+        $paid = InvoiceStatus::getByCode(InvoiceStatusCode::Paid);
+        $sent = InvoiceStatus::getByCode(InvoiceStatusCode::Sent);
 
         $invoices = collect([
             Invoice::factory()->create([

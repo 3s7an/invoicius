@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Enums\InvoiceStatusCode;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -170,7 +171,7 @@ class InvoiceControllerTest extends TestCase
 
     public function test_user_can_update_invoice_status(): void
     {
-        $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
+        $paidStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Paid);
 
         $invoice = $this->makeInvoice(['number' => 'INV-STATUS']);
 
@@ -202,7 +203,7 @@ class InvoiceControllerTest extends TestCase
     {
         $otherUser = User::factory()->create();
         $invoice = $this->makeInvoiceForUser($otherUser, ['number' => 'OTHER-STATUS']);
-        $paidStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_PAID);
+        $paidStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Paid);
 
         $response = $this->actingAs($this->user)
             ->patch(route('invoices.update-status', $invoice), [
@@ -321,7 +322,7 @@ class InvoiceControllerTest extends TestCase
      */
     private function makeInvoiceForUser(User $user, array $attributes = []): Invoice
     {
-        $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+        $draftStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Draft);
 
         return Invoice::factory()->create(array_merge([
             'user_id' => $user->id,
