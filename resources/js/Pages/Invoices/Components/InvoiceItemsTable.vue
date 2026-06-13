@@ -179,42 +179,38 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
 import AppSelect from '@/Components/AppSelect.vue';
-import { defaultInvoiceItem } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
+import { defaultInvoiceItem, type InvoiceItemFormData } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
 import { UNITS } from '@/utils/units';
 import { usePage } from '@inertiajs/vue3';
+import type { AuthUser } from '@/types/inertia';
 
-const defaultUserVatTypeId = usePage().props.auth?.user?.default_vat_type_id ?? null;
+const defaultUserVatTypeId = (usePage().props as { auth?: { user: AuthUser } }).auth?.user?.default_vat_type_id ?? null;
 
-const props = defineProps({
-    modelValue: {
-        type: Array,
-        default: () => [],
-    },
-    currencySymbol: {
-        type: String,
-        default: '€',
-    },
-    vatTypes: {
-        type: Array,
-        default: () => [],
-    },
-    minRows: {
-        type: Number,
-        default: 1,
-    },
-    error: {
-        type: String,
-        default: '',
-    },
+interface Props {
+    modelValue?: InvoiceItemFormData[]
+    currencySymbol?: string
+    vatTypes?: App.Http.Resources.VatTypeResource[]
+    minRows?: number
+    error?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    modelValue: () => [],
+    currencySymbol: '€',
+    vatTypes: () => [],
+    minRows: 1,
+    error: '',
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+    'update:modelValue': [value: InvoiceItemFormData[]]
+}>();
 
 const vatTypesList = computed(() => props.vatTypes ?? []);
 
@@ -225,7 +221,7 @@ const vatTypeOptions = computed(() =>
     })),
 );
 
-function mergeItem(item) {
+function mergeItem(item: InvoiceItemFormData): InvoiceItemFormData {
     const defaults = defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value);
     const vatTypeId = item.vat_type_id;
     const resolvedVatTypeId =
@@ -240,7 +236,7 @@ function mergeItem(item) {
     };
 }
 
-const items = ref(
+const items = ref<InvoiceItemFormData[]>(
     props.modelValue?.length
         ? props.modelValue.map(mergeItem)
         : [defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value)]
@@ -257,23 +253,23 @@ watch(
     { deep: true }
 );
 
-function addItem() {
+function addItem(): void {
     items.value.push(defaultInvoiceItem(defaultUserVatTypeId, vatTypesList.value));
 }
 
-function removeItem(index) {
+function removeItem(index: number): void {
     if (items.value.length <= props.minRows) return;
     items.value.splice(index, 1);
 }
 
-function lineTotal(item) {
-    const quantity = Number.parseFloat(item.quantity) || 0;
-    const unitPrice = Number.parseFloat(item.unit_price) || 0;
+function lineTotal(item: InvoiceItemFormData): number {
+    const quantity = Number.parseFloat(String(item.quantity)) || 0;
+    const unitPrice = Number.parseFloat(String(item.unit_price)) || 0;
 
     return quantity * unitPrice;
 }
 
-function lineVatAmount(item) {
+function lineVatAmount(item: InvoiceItemFormData): number {
     const lineWoVat = lineTotal(item);
     const vatId = item.vat_type_id != null ? Number(item.vat_type_id) : null;
     if (vatId == null) return 0;
@@ -284,7 +280,7 @@ function lineVatAmount(item) {
     const code = String(vatType.code || '').toUpperCase();
     if (code === 'MIMO' || code === 'OSVO') return 0;
 
-    const rate = Number.parseFloat(vatType.rate ?? vatType.code) || 0;
+    const rate = Number.parseFloat(String(vatType.rate ?? vatType.code)) || 0;
     return lineWoVat * (rate / 100);
 }
 
@@ -296,7 +292,7 @@ const totalVat = computed(() =>
 );
 const invoiceTotal = computed(() => totalWoVat.value + totalVat.value);
 
-function formatNum(value) {
+function formatNum(value: number): string {
     return Number(value).toFixed(2).replace('.', ',');
 }
 </script>

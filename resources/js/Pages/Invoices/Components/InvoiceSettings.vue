@@ -1,27 +1,27 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import type { AuthUser } from '@/types/inertia';
 
-const props = defineProps({
-    mode: {
-        type: String,
-        default: 'profile',
-        validator: (v) => ['profile', 'invoice'].includes(v),
-    },
-    form: {
-        type: Object,
-        default: null,
-    },
-    user: {
-        type: Object,
-        default: null,
-    },
-    idPrefix: {
-        type: String,
-        default: 'invoice-settings',
-    },
+interface InvoiceSettingsForm {
+    company_logo: File | null
+    errors: Record<string, string | undefined>
+}
+
+interface Props {
+    mode?: 'profile' | 'invoice'
+    form?: InvoiceSettingsForm | null
+    user?: AuthUser | null
+    idPrefix?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    mode: 'profile',
+    form: null,
+    user: null,
+    idPrefix: 'invoice-settings',
 });
 
 const companyLogoPreviewUrl = computed(() => {
@@ -31,11 +31,11 @@ const companyLogoPreviewUrl = computed(() => {
     return props.user?.company_logo?.url ?? null;
 });
 
-function isFile(value) {
+function isFile(value: unknown): value is File {
     return typeof File !== 'undefined' && value instanceof File;
 }
 
-const id = (name) => prefixedId(props.idPrefix, name);
+const id = (name: string): string => prefixedId(props.idPrefix, name);
 </script>
 
 <template>
@@ -54,7 +54,7 @@ const id = (name) => prefixedId(props.idPrefix, name);
                 type="file"
                 accept="image/*"
                 class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
-                @input="form.company_logo = $event.target.files?.[0] ?? null"
+                @input="form!.company_logo = ($event.target as HTMLInputElement).files?.[0] ?? null"
             />
             <p v-else-if="mode === 'invoice' && !companyLogoPreviewUrl" class="text-sm text-gray-500">
                 Žiadne logo. Pridajte ho v profile v sekcii Nastavenia faktúry.

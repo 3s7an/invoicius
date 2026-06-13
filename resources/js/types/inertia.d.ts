@@ -17,6 +17,8 @@ export interface AuthUser {
     email: string
     email_verified_at: string | null
     company_name: string | null
+    company_logo: { url: string } | null
+    company_logo_id: number | null
     street: string | null
     street_num: string | null
     city: string | null

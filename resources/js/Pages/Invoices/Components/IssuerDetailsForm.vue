@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
@@ -6,24 +6,20 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 
-const props = defineProps({
-    modelValue: {
-        type: Object,
-        required: true,
-    },
-    idPrefix: {
-        type: String,
-        default: 'issuer',
-    },
-    errors: {
-        type: Object,
-        default: () => ({}),
-    },
+interface Props {
+    modelValue: App.DTOs.Forms.InvoiceIssuerData
+    idPrefix?: string
+    errors?: Record<string, string | undefined>
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    idPrefix: 'issuer',
+    errors: () => ({}),
 });
 
 const countries = computed(() => getCountriesSk());
 
-const id = (name) => prefixedId(props.idPrefix, name);
+const id = (name: string): string => prefixedId(props.idPrefix, name);
 </script>
 
 <template>

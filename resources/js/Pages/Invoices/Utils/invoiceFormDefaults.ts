@@ -1,5 +1,33 @@
 import { defaultDueYMD, formatDate, nullIfBlank, todayYMD } from '@/Pages/Invoices/Utils/helpers';
 
+export interface InvoiceItemFormData {
+    name: string
+    quantity: number | string
+    unit: string
+    unit_price: number | string
+    vat_type_id: number | string | null
+}
+
+export interface InvoiceHeaderFormData {
+    number: string
+    variable_symbol: string
+    issue_date: string
+    due_date: string
+    currency_id: number | string
+}
+
+export interface RecipientSectionData {
+    recipient_name: string | null
+    recipient_street: string | null
+    recipient_street_num: string | null
+    recipient_city: string | null
+    recipient_state: string | null
+    recipient_ico: string | null
+    recipient_dic: string | null
+    recipient_ic_dph: string | null
+    recipient_iban: string | null
+}
+
 export function defaultInvoiceHeader({ currencies }: { currencies?: App.Http.Resources.CurrencyResource[] } = {}) {
     const today = todayYMD();
 
@@ -36,7 +64,7 @@ export function defaultInvoiceItem(
     };
 }
 
-function recipientDetailsFromRecipient(recipient: App.Http.Resources.RecipientResource | null | undefined) {
+export function recipientDetailsFromRecipient(recipient: App.Http.Resources.RecipientResource | null | undefined) {
     return {
         recipient_name: ((recipient?.company_name || recipient?.name) ?? '').trim(),
         recipient_street: recipient?.street ?? '',

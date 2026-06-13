@@ -51,7 +51,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import AutoComplete from 'primevue/autocomplete';
 import { Link } from '@inertiajs/vue3';
@@ -59,39 +59,33 @@ import RecipientForm from '@/Pages/Recipients/Components/RecipientForm.vue';
 import {
     recipientDetailsFromRecipient,
     withRecipientLabel,
+    type RecipientSectionData,
 } from '../Utils/invoiceFormDefaults';
 
-const props = defineProps({
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    preselectedRecipient: {
-        type: Object,
-        default: null,
-    },
-    recipientId: {
-        type: [Number, String],
-        default: null,
-    },
-    recipient: {
-        type: Object,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    errors: {
-        type: Object,
-        default: () => ({}),
-    },
+type RecipientWithLabel = App.Http.Resources.RecipientResource & { _label: string }
+
+interface Props {
+    recipients?: App.Http.Resources.RecipientResource[]
+    preselectedRecipient?: App.Http.Resources.RecipientResource | null
+    recipientId?: number | string | null
+    recipient: RecipientSectionData
+    description: string
+    errors?: Record<string, string | undefined>
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    recipients: () => [],
+    preselectedRecipient: null,
+    recipientId: null,
+    errors: () => ({}),
 });
 
-const emit = defineEmits(['update:recipientId']);
+const emit = defineEmits<{
+    'update:recipientId': [value: number | null]
+}>();
 
-const selectedRecipient = ref(null);
-const filteredRecipients = ref([]);
+const selectedRecipient = ref<RecipientWithLabel | null>(null);
+const filteredRecipients = ref<RecipientWithLabel[]>([]);
 const recipientQuery = ref('');
 
 const recipientsWithLabel = computed(() =>
@@ -104,7 +98,7 @@ const showAddRecipientFooter = computed(
         (recipientQuery.value.length > 0 || recipientsWithLabel.value.length === 0)
 );
 
-function searchRecipients(event) {
+function searchRecipients(event: { query?: string }): void {
     recipientQuery.value = event.query ?? '';
     const query = recipientQuery.value.trim().toLowerCase();
 
@@ -117,14 +111,14 @@ function searchRecipients(event) {
         : [...recipientsWithLabel.value];
 }
 
-function applyRecipient(selected) {
+function applyRecipient(selected: RecipientWithLabel | null): void {
     if (!selected) return;
 
     Object.assign(props.recipient, recipientDetailsFromRecipient(selected));
     emit('update:recipientId', selected.id ?? null);
 }
 
-function onRecipientSelect(event) {
+function onRecipientSelect(event: { value: RecipientWithLabel }): void {
     applyRecipient(event.value);
 }
 
