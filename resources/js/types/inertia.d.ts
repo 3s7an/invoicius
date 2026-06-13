@@ -1,4 +1,9 @@
 import type { PageProps as InertiaPageProps } from '@inertiajs/core'
+import type { route as Ziggy } from 'ziggy-js'
+
+declare global {
+    const route: typeof Ziggy
+}
 
 export interface AuthUser {
     id: number
