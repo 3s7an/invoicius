@@ -23,24 +23,18 @@
     </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import InvoiceSettings from '@/Pages/Invoices/Components/InvoiceSettings.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import type { InertiaForm } from '@inertiajs/vue3';
+import type { InvoiceSettingsFormData } from '../Utils/profileFormDefaults';
+import type { AuthUser } from '@/types/inertia';
 
-defineProps({
-    form: {
-        type: Object,
-        required: true,
-    },
-    user: {
-        type: Object,
-        default: null,
-    },
-    onSubmit: {
-        type: Function,
-        required: true,
-    },
-});
+defineProps<{
+    form: InertiaForm<InvoiceSettingsFormData>
+    user: AuthUser | null
+    onSubmit: () => void
+}>();
 </script>
 
 

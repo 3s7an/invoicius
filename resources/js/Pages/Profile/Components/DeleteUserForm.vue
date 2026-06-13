@@ -48,7 +48,7 @@
     </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -59,27 +59,27 @@ import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
 
 const confirmingUserDeletion = ref(false);
-const passwordInput = ref(null);
+const passwordInput = ref<{ focus: () => void } | null>(null);
 
-const form = useForm({
+const form = useForm<{ password: string }>({
     password: '',
 });
 
-const confirmUserDeletion = () => {
+const confirmUserDeletion = (): void => {
     confirmingUserDeletion.value = true;
-    nextTick(() => passwordInput.value.focus());
+    nextTick(() => passwordInput.value?.focus());
 };
 
-const deleteUser = () => {
+const deleteUser = (): void => {
     form.delete(route('profile.destroy'), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
+        onError: () => passwordInput.value?.focus(),
         onFinish: () => form.reset(),
     });
 };
 
-const closeModal = () => {
+const closeModal = (): void => {
     confirmingUserDeletion.value = false;
     form.clearErrors();
     form.reset();

@@ -107,7 +107,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
 import AppSelect from '@/Components/AppSelect.vue';
@@ -116,24 +116,20 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk } from '@/Pages/Invoices/Utils/helpers';
+import type { InertiaForm } from '@inertiajs/vue3';
+import type { BillingDetailsFormData } from '../Utils/profileFormDefaults';
 
-const props = defineProps({
-    form: {
-        type: Object,
-        required: true,
-    },
-    idPrefix: {
-        type: String,
-        default: 'billing',
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vatTypes: {
-        type: Array,
-        default: () => [],
-    },
+interface Props {
+    form: InertiaForm<BillingDetailsFormData>
+    idPrefix?: string
+    currencies?: App.Http.Resources.CurrencyResource[]
+    vatTypes?: App.Http.Resources.VatTypeResource[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    idPrefix: 'billing',
+    currencies: () => [],
+    vatTypes: () => [],
 });
 
 const countries = computed(() => getCountriesSk());
@@ -152,7 +148,7 @@ const vatTypeOptions = computed(() =>
     })),
 );
 
-function id(name) {
+function id(name: string): string {
     return `${props.idPrefix}-${name}`;
 }
 </script>
