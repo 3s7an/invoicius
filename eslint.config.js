@@ -36,6 +36,7 @@ export default tseslint.config(
             'vue/first-attribute-linebreak': 'off',
             // Inertia useForm() returns a mutable proxy; direct mutation is intentional
             'vue/no-mutating-props': 'warn',
+            'vue/prop-name-casing': 'off',
         },
     },
 )
