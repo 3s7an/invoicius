@@ -1,18 +1,15 @@
-<script setup>
-import { router, Link } from '@inertiajs/vue3';
+<script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
 import { formatDate } from '@/utils/formatters';
 import Button from 'primevue/button';
 import { useAutomatizationActions } from '@/Pages/Automatizations/Composables/automatizationActions';
+import type { Automatization } from '../Utils/types';
 
 const { toggleActive, confirmDelete } = useAutomatizationActions();
 
-defineProps({
-    automatizations: {
-        type: Array,
-        default: () => [],
-    },
-});
-
+defineProps<{
+    automatizations: Automatization[]
+}>();
 </script>
 
 <template>

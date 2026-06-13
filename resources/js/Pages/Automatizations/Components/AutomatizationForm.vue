@@ -1,37 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { defaultAutomatizationForm } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
+import { defaultAutomatizationForm, type AutomatizationFormData } from '@/Pages/Automatizations/Utils/automatizationFormDefaults';
 import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { todayYMD, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
 import DatePicker from 'primevue/datepicker';
+import type { Automatization, AutomatizationTypeOption } from '../Utils/types';
 
-const props = defineProps({
-    mode: {
-        type: String,
-        default: 'create',
-        validator: (v) => ['create', 'edit'].includes(v),
-    },
-    automatization: {
-        type: Object,
-        default: null,
-    },
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    automatization_types: {
-        type: Array,
-        default: () => [],
-    },
+interface Props {
+    mode?: 'create' | 'edit'
+    automatization?: Automatization | null
+    recipients: App.Http.Resources.RecipientResource[]
+    automatization_types: AutomatizationTypeOption[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    mode: 'create',
+    automatization: null,
 });
 
 const isEdit = computed(() => props.mode === 'edit');
 
-const form = useForm(defaultAutomatizationForm(props.automatization));
+const form = useForm(defaultAutomatizationForm(props.automatization ?? null));
 
 watch(
     () => form.type,
@@ -57,15 +50,15 @@ watch(
 const recipientOptions = computed(() =>
     props.recipients.map((recipient) => ({
         value: recipient.id,
-        label: recipient.company_name || recipient.name,
+        label: recipient.company_name || recipient.name || '',
     })),
 );
 
 const inputClass =
     'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
 
-function submitPayload(data) {
-    const payload = { ...data };
+function submitPayload(data: AutomatizationFormData): Record<string, unknown> {
+    const payload: Record<string, unknown> = { ...data };
 
     delete payload.item_count;
 
@@ -81,11 +74,11 @@ function submitPayload(data) {
     return payload;
 }
 
-function submit() {
+function submit(): void {
     form.transform(submitPayload);
 
     if (isEdit.value) {
-        form.patch(route('automatizations.update', props.automatization.id));
+        form.patch(route('automatizations.update', props.automatization!.id));
         return;
     }
 
@@ -93,7 +86,7 @@ function submit() {
 }
 
 watch(
-    () => [form.type, Math.max(0, Number(form.item_count) || 0)],
+    () => [form.type, Math.max(0, Number(form.item_count) || 0)] as [string, number],
     ([type, count]) => {
         if (type !== AutomatizationType.InvoiceAutoGen) {
             return;
@@ -104,7 +97,6 @@ watch(
     },
     { immediate: true }
 );
-
 </script>
 
 <template>
@@ -178,7 +170,7 @@ watch(
                             iconDisplay="input"
                             fluid
                             class="mt-1"
-                            @update:modelValue="(d) => { form.date_trigger = d ? toYMD(d) : '' }"
+                            @update:model-value="(d: unknown) => { form.date_trigger = (d instanceof Date) ? toYMD(d) : '' }"
                         />
                         <p v-if="form.type === AutomatizationType.InvoiceReport" class="mt-1 text-sm text-gray-500">
                             Report je za predošlý mesiac od tohto dátumu.

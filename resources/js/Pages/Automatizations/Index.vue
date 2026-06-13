@@ -1,17 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AutomatizationList from '@/Components/AutomatizationList.vue';
 import AutomatizationCardList from '@/Pages/Automatizations/Components/AutomatizationCardList.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import type { Automatization } from './Utils/types';
 
-defineProps({
-    automatizations: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    automatizations: Automatization[]
+}>();
 </script>
 
 <template>
