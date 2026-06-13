@@ -2,15 +2,16 @@ import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { createInvoiceFormDefaults, invoicePayload } from '../Utils/invoiceFormDefaults';
 import type { AuthUser } from '@/types/inertia';
+import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource, InvoiceFormData } from '@/types';
 
 interface InvoiceFormProps {
     mode?: 'create' | 'edit'
-    invoice?: App.Http.Resources.InvoiceResource | null
-    recipients?: App.Http.Resources.RecipientResource[]
+    invoice?: InvoiceResource | null
+    recipients?: RecipientResource[]
     suggestedNumber?: string
-    preselectedRecipient?: App.Http.Resources.RecipientResource | null
-    currencies?: App.Http.Resources.CurrencyResource[]
-    vatTypes?: App.Http.Resources.VatTypeResource[]
+    preselectedRecipient?: RecipientResource | null
+    currencies?: CurrencyResource[]
+    vatTypes?: VatTypeResource[]
     defaultCurrencyId?: number | null
 }
 
@@ -33,9 +34,9 @@ function displayErrors(errors: Record<string, string>) {
 
 export function useInvoiceForm(props: InvoiceFormProps, user: AuthUser | undefined) {
     const isEdit = computed(() => props.mode === 'edit');
-    const sourceInvoice = computed(() => props.invoice ?? ({} as App.Http.Resources.InvoiceResource));
+    const sourceInvoice = computed(() => props.invoice ?? ({} as InvoiceResource));
 
-    const form = useForm<App.DTOs.Forms.InvoiceFormData>(
+    const form = useForm<InvoiceFormData>(
         createInvoiceFormDefaults({
             mode: props.mode,
             invoice: props.invoice,

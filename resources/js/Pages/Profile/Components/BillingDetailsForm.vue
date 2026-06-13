@@ -118,12 +118,13 @@ import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk } from '@/Pages/Invoices/Utils/helpers';
 import type { InertiaForm } from '@inertiajs/vue3';
 import type { BillingDetailsFormData } from '../Utils/profileFormDefaults';
+import type { CurrencyResource, VatTypeResource } from '@/types';
 
 interface Props {
     form: InertiaForm<BillingDetailsFormData>
     idPrefix?: string
-    currencies?: App.Http.Resources.CurrencyResource[]
-    vatTypes?: App.Http.Resources.VatTypeResource[]
+    currencies?: CurrencyResource[]
+    vatTypes?: VatTypeResource[]
 }
 
 const props = withDefaults(defineProps<Props>(), {

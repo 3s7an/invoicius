@@ -189,13 +189,14 @@ import { defaultInvoiceItem, type InvoiceItemFormData } from '@/Pages/Invoices/U
 import { UNITS } from '@/utils/units';
 import { usePage } from '@inertiajs/vue3';
 import type { AuthUser } from '@/types/inertia';
+import type { VatTypeResource } from '@/types';
 
 const defaultUserVatTypeId = (usePage().props as { auth?: { user: AuthUser } }).auth?.user?.default_vat_type_id ?? null;
 
 interface Props {
     modelValue?: InvoiceItemFormData[]
     currencySymbol?: string
-    vatTypes?: App.Http.Resources.VatTypeResource[]
+    vatTypes?: VatTypeResource[]
     minRows?: number
     error?: string
 }

@@ -72,15 +72,16 @@ import InvoiceSettings from './InvoiceSettings.vue';
 import IssuerDetailsForm from './IssuerDetailsForm.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
 import type { AuthUser } from '@/types/inertia';
+import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
 
 interface Props {
     mode?: 'create' | 'edit'
-    invoice?: App.Http.Resources.InvoiceResource | null
-    recipients?: App.Http.Resources.RecipientResource[]
+    invoice?: InvoiceResource | null
+    recipients?: RecipientResource[]
     suggestedNumber?: string
-    preselectedRecipient?: App.Http.Resources.RecipientResource | null
-    currencies?: App.Http.Resources.CurrencyResource[]
-    vatTypes?: App.Http.Resources.VatTypeResource[]
+    preselectedRecipient?: RecipientResource | null
+    currencies?: CurrencyResource[]
+    vatTypes?: VatTypeResource[]
     defaultCurrencyId?: number | null
 }
 

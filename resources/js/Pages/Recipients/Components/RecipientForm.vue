@@ -195,17 +195,18 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import { useRecipientForm } from '../Composables/useRecipientForm';
+import type { InvoiceRecipientData, RecipientResource } from '@/types';
 
 type FormProxy = Record<string, string | null | undefined>
 
 interface Props {
     variant?: 'page' | 'section'
     fieldsMode?: 'recipient' | 'invoice'
-    modelValue?: App.DTOs.Forms.InvoiceRecipientData | null
+    modelValue?: InvoiceRecipientData | null
     errors?: Record<string, string | undefined>
     idPrefix?: string
     mode?: 'create' | 'edit'
-    recipient?: App.Http.Resources.RecipientResource | null
+    recipient?: RecipientResource | null
     fromInvoice?: boolean
 }
 

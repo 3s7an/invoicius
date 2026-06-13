@@ -13,7 +13,7 @@
         "docker:analyse": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=512M",
         "docker:rector": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/rector process",
         "docker:rector:dry": "docker compose -f docker-compose.yml -f docker-compose.dev.yml run --rm vendor-init php vendor/bin/rector process --dry-run",
-        "types": "php artisan typescript:transform",
+        "types": "php artisan typescript:transform && php artisan typescript:exports",
         "typecheck": "vue-tsc --noEmit",
         "lint": "eslint resources/js --ext .ts,.vue",
         "lint:fix": "eslint resources/js --ext .ts,.vue --fix",

@@ -1,4 +1,5 @@
 import { nullIfBlank } from '@/Pages/Invoices/Utils/helpers';
+import type { RecipientResource } from '@/types';
 
 export interface RecipientFormData {
     name: string
@@ -21,7 +22,7 @@ export function createRecipientFormDefaults({
     fromInvoice,
 }: {
     mode?: 'create' | 'edit'
-    recipient?: App.Http.Resources.RecipientResource | null
+    recipient?: RecipientResource | null
     fromInvoice?: boolean
 }): RecipientFormData {
     const isEdit = mode === 'edit';

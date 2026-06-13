@@ -9,11 +9,12 @@ import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatization
 import { todayYMD, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
 import DatePicker from 'primevue/datepicker';
 import type { Automatization, AutomatizationTypeOption } from '../Utils/types';
+import type { RecipientResource } from '@/types';
 
 interface Props {
     mode?: 'create' | 'edit'
     automatization?: Automatization | null
-    recipients: App.Http.Resources.RecipientResource[]
+    recipients: RecipientResource[]
     automatization_types: AutomatizationTypeOption[]
 }
 

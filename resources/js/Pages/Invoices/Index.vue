@@ -69,6 +69,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import type { InvoiceResource, InvoiceStatusResource } from '@/types';
 
 interface InvoiceStats {
     total_invoiced: number
@@ -79,9 +80,9 @@ interface InvoiceStats {
 }
 
 const props = defineProps<{
-    invoices: App.Http.Resources.InvoiceResource[]
+    invoices: InvoiceResource[]
     invoice_stats: InvoiceStats
-    invoice_statuses: App.Http.Resources.InvoiceStatusResource[]
+    invoice_statuses: InvoiceStatusResource[]
 }>();
 
 const statusOptions = computed(() =>
@@ -91,13 +92,13 @@ const statusOptions = computed(() =>
     }))
 );
 
-function updateStatus(invoice: App.Http.Resources.InvoiceResource, newStatusId: unknown): void {
+function updateStatus(invoice: InvoiceResource, newStatusId: unknown): void {
     const id = newStatusId != null ? Number(newStatusId) : null;
     if (id === invoice.invoice_status_id) return;
     router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
 }
 
-function confirmDeleteInvoice(invoice: App.Http.Resources.InvoiceResource): void {
+function confirmDeleteInvoice(invoice: InvoiceResource): void {
     if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
     router.delete(route('invoices.destroy', invoice.id));
 }

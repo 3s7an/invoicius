@@ -7,9 +7,10 @@ import Tag from 'primevue/tag';
 import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatAmount, formatDate } from '@/utils/formatters';
 import { invoiceStatusSeverity } from '@/Pages/Dashboard/Utils/statusSeverity';
+import type { InvoiceResource } from '@/types';
 
 defineProps<{
-    recent_invoices: App.Http.Resources.InvoiceResource[]
+    recent_invoices: InvoiceResource[]
     currency_symbol: string
 }>();
 </script>

@@ -1,3 +1,5 @@
+import type { AutomatizationTypeValue } from '@/types'
+
 export interface AutomatizationTypeOption {
     value: string
     label: string
@@ -9,7 +11,7 @@ export interface AutomatizationTypeOption {
 
 export interface Automatization {
     id: number
-    type: App.Enums.AutomatizationType
+    type: AutomatizationTypeValue
     type_label: string
     recipient_id: number | null
     recipient_label: string | null

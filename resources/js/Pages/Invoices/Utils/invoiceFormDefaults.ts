@@ -1,4 +1,5 @@
 import { defaultDueYMD, formatDate, nullIfBlank, todayYMD } from '@/Pages/Invoices/Utils/helpers';
+import type { CurrencyResource, RecipientResource, VatTypeResource, InvoiceResource, InvoiceFormData } from '@/types';
 
 export interface InvoiceItemFormData {
     name: string
@@ -28,7 +29,7 @@ export interface RecipientSectionData {
     recipient_iban: string | null
 }
 
-export function defaultInvoiceHeader({ currencies }: { currencies?: App.Http.Resources.CurrencyResource[] } = {}) {
+export function defaultInvoiceHeader({ currencies }: { currencies?: CurrencyResource[] } = {}) {
     const today = todayYMD();
 
     return {
@@ -40,11 +41,11 @@ export function defaultInvoiceHeader({ currencies }: { currencies?: App.Http.Res
     };
 }
 
-export function recipientOptionLabel(recipient: App.Http.Resources.RecipientResource | null | undefined): string {
+export function recipientOptionLabel(recipient: RecipientResource | null | undefined): string {
     return (recipient?.company_name || recipient?.name || '').trim() || '-';
 }
 
-export function withRecipientLabel(recipient: App.Http.Resources.RecipientResource) {
+export function withRecipientLabel(recipient: RecipientResource) {
     return {
         ...recipient,
         _label: recipientOptionLabel(recipient),
@@ -53,7 +54,7 @@ export function withRecipientLabel(recipient: App.Http.Resources.RecipientResour
 
 export function defaultInvoiceItem(
     defaultVatTypeId: number | null | undefined,
-    vatTypes: App.Http.Resources.VatTypeResource[] = []
+    vatTypes: VatTypeResource[] = []
 ) {
     return {
         name: '',
@@ -64,7 +65,7 @@ export function defaultInvoiceItem(
     };
 }
 
-export function recipientDetailsFromRecipient(recipient: App.Http.Resources.RecipientResource | null | undefined) {
+export function recipientDetailsFromRecipient(recipient: RecipientResource | null | undefined) {
     return {
         recipient_name: ((recipient?.company_name || recipient?.name) ?? '').trim(),
         recipient_street: recipient?.street ?? '',
@@ -78,7 +79,7 @@ export function recipientDetailsFromRecipient(recipient: App.Http.Resources.Reci
     };
 }
 
-function recipientDetailsFromInvoice(invoice: App.Http.Resources.InvoiceResource | null | undefined) {
+function recipientDetailsFromInvoice(invoice: InvoiceResource | null | undefined) {
     return {
         recipient_name: invoice?.recipient_name ?? '',
         recipient_street: invoice?.recipient_street ?? '',
@@ -93,8 +94,8 @@ function recipientDetailsFromInvoice(invoice: App.Http.Resources.InvoiceResource
 }
 
 function invoiceItemsFromInvoice(
-    invoice: App.Http.Resources.InvoiceResource | null | undefined,
-    vatTypes: App.Http.Resources.VatTypeResource[],
+    invoice: InvoiceResource | null | undefined,
+    vatTypes: VatTypeResource[],
     defaultVatTypeId: number | null | undefined
 ) {
     if (!invoice?.items?.length) {
@@ -122,12 +123,12 @@ export function createInvoiceFormDefaults({
     user,
 }: {
     mode?: 'create' | 'edit'
-    invoice?: App.Http.Resources.InvoiceResource | null
+    invoice?: InvoiceResource | null
     suggestedNumber?: string
-    preselectedRecipient?: App.Http.Resources.RecipientResource | null
-    currencies?: App.Http.Resources.CurrencyResource[]
+    preselectedRecipient?: RecipientResource | null
+    currencies?: CurrencyResource[]
     defaultCurrencyId?: number | null
-    vatTypes?: App.Http.Resources.VatTypeResource[]
+    vatTypes?: VatTypeResource[]
     user?: import('@/types/inertia').AuthUser
 }) {
     const isEdit = mode === 'edit';
@@ -164,7 +165,7 @@ export function createInvoiceFormDefaults({
     };
 }
 
-export function invoicePayload(data: App.DTOs.Forms.InvoiceFormData) {
+export function invoicePayload(data: InvoiceFormData) {
     return {
         number: data.number,
         variable_symbol: data.variable_symbol,

@@ -5,9 +5,10 @@ import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import type { AutomatizationTypeOption } from './Utils/types';
+import type { RecipientResource } from '@/types';
 
 defineProps<{
-    recipients: App.Http.Resources.RecipientResource[]
+    recipients: RecipientResource[]
     automatization_types: AutomatizationTypeOption[]
 }>();
 </script>

@@ -7,10 +7,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { defaultInvoiceHeader, type InvoiceHeaderFormData } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
 import { prefixedId, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
+import type { CurrencyResource } from '@/types';
 
 interface Props {
     modelValue?: InvoiceHeaderFormData
-    currencies?: App.Http.Resources.CurrencyResource[]
+    currencies?: CurrencyResource[]
     idPrefix?: string
     errors?: Record<string, string | undefined>
 }

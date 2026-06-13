@@ -17,12 +17,13 @@
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceForm from './Components/InvoiceForm.vue';
+import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
 
 defineProps<{
-    invoice: App.Http.Resources.InvoiceResource
-    recipients?: App.Http.Resources.RecipientResource[]
-    currencies?: App.Http.Resources.CurrencyResource[]
-    vat_types?: App.Http.Resources.VatTypeResource[]
+    invoice: InvoiceResource
+    recipients?: RecipientResource[]
+    currencies?: CurrencyResource[]
+    vat_types?: VatTypeResource[]
     default_currency_id?: number | null
 }>();
 </script>

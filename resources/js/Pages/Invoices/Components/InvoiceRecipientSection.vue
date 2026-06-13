@@ -61,12 +61,13 @@ import {
     withRecipientLabel,
     type RecipientSectionData,
 } from '../Utils/invoiceFormDefaults';
+import type { RecipientResource } from '@/types';
 
-type RecipientWithLabel = App.Http.Resources.RecipientResource & { _label: string }
+type RecipientWithLabel = RecipientResource & { _label: string }
 
 interface Props {
-    recipients?: App.Http.Resources.RecipientResource[]
-    preselectedRecipient?: App.Http.Resources.RecipientResource | null
+    recipients?: RecipientResource[]
+    preselectedRecipient?: RecipientResource | null
     recipientId?: number | string | null
     recipient: RecipientSectionData
     description: string

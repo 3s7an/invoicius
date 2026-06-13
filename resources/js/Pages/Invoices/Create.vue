@@ -18,13 +18,14 @@
 import { Head } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceForm from './Components/InvoiceForm.vue';
+import type { RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
 
 defineProps<{
-    recipients: App.Http.Resources.RecipientResource[]
+    recipients: RecipientResource[]
     suggested_number?: string
-    preselected_recipient?: App.Http.Resources.RecipientResource | null
-    currencies: App.Http.Resources.CurrencyResource[]
-    vat_types: App.Http.Resources.VatTypeResource[]
+    preselected_recipient?: RecipientResource | null
+    currencies: CurrencyResource[]
+    vat_types: VatTypeResource[]
     default_currency_id?: number | null
 }>();
 </script>

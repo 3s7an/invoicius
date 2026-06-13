@@ -8,12 +8,13 @@ import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecen
 import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
 import type { AuthUser } from '@/types/inertia';
 import type { InvoiceStats, DashboardCounts, ActiveAutomatization } from './Utils/types';
+import type { InvoiceResource } from '@/types';
 
 defineProps<{
     invoice_stats: InvoiceStats
     currency_symbol: string
     counts: DashboardCounts
-    recent_invoices: App.Http.Resources.InvoiceResource[]
+    recent_invoices: InvoiceResource[]
     active_automatizations: ActiveAutomatization[]
 }>();
 

@@ -8,12 +8,13 @@ import ProfileInvoiceSettingsSection from './Components/ProfileInvoiceSettingsSe
 import UpdatePasswordForm from './Components/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Components/UpdateProfileInformationForm.vue';
 import { useProfileForms } from './Composables/useProfileForms';
+import type { CurrencyResource, VatTypeResource } from '@/types';
 
 defineProps<{
     mustVerifyEmail?: boolean
     status?: string
-    currencies: App.Http.Resources.CurrencyResource[]
-    vat_types: App.Http.Resources.VatTypeResource[]
+    currencies: CurrencyResource[]
+    vat_types: VatTypeResource[]
 }>();
 
 const {

@@ -2,16 +2,17 @@ import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { createRecipientFormDefaults, recipientPayload } from '../Utils/recipientFormDefaults';
 import type { RecipientFormData } from '../Utils/recipientFormDefaults';
+import type { RecipientResource } from '@/types';
 
 interface RecipientFormProps {
     mode?: 'create' | 'edit'
-    recipient?: App.Http.Resources.RecipientResource | null
+    recipient?: RecipientResource | null
     fromInvoice?: boolean
 }
 
 export function useRecipientForm(props: RecipientFormProps) {
     const isEdit = computed(() => props.mode === 'edit');
-    const sourceRecipient = computed(() => props.recipient ?? ({} as App.Http.Resources.RecipientResource));
+    const sourceRecipient = computed(() => props.recipient ?? ({} as RecipientResource));
 
     const form = useForm<RecipientFormData>(
         createRecipientFormDefaults({

@@ -10,8 +10,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import RecipientForm from './Components/RecipientForm.vue';
+import type { RecipientResource } from '@/types';
 
 defineProps<{
-    recipient: App.Http.Resources.RecipientResource
+    recipient: RecipientResource
 }>();
 </script>
