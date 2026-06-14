@@ -41,7 +41,7 @@ defineProps<{
                 >
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="text-sm font-medium text-gray-800">{{ automatization.type_label }}</p>
+                            <p class="text-sm font-medium text-gray-900">{{ automatization.type_label }}</p>
                             <p class="mt-0.5 truncate text-xs text-gray-500">
                                 {{ automatization.recipient_label || 'Pre všetkých klientov' }}
                             </p>
@@ -63,7 +63,7 @@ defineProps<{
                 >
                     <Column field="type_label" header="Typ">
                         <template #body="{ data }">
-                            <span class="text-sm font-medium text-gray-800">{{ data.type_label }}</span>
+                            <span class="text-sm font-medium text-gray-900">{{ data.type_label }}</span>
                         </template>
                     </Column>
                     <Column field="recipient_label" header="Klient">

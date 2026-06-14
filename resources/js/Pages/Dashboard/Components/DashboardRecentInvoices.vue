@@ -43,7 +43,7 @@ defineProps<{
                 >
                     <div class="flex items-start justify-between gap-3">
                         <div class="min-w-0">
-                            <p class="truncate text-sm font-medium text-gray-800">{{ invoice.number || '—' }}</p>
+                            <p class="truncate text-sm font-medium text-gray-900">{{ invoice.number || '—' }}</p>
                             <p class="mt-0.5 truncate text-xs text-gray-500">
                                 {{ invoice.recipient_name || '—' }}
                             </p>
@@ -58,7 +58,7 @@ defineProps<{
                                 :severity="invoiceStatusSeverity(invoice.invoice_status?.name)"
                                 rounded
                             />
-                            <p class="mt-1.5 text-sm font-medium tabular-nums text-gray-800">
+                            <p class="mt-1.5 text-sm font-medium tabular-nums text-gray-900">
                                 {{ formatAmount(invoice.total_price) }} {{ currency_symbol }}
                             </p>
                         </div>
@@ -75,7 +75,7 @@ defineProps<{
                     <Column field="number" header="Číslo">
                         <template #body="{ data }">
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-medium text-gray-800">{{ data.number || '—' }}</p>
+                                <p class="truncate text-sm font-medium text-gray-900">{{ data.number || '—' }}</p>
                                 <p class="text-xs text-gray-500">
                                     {{ data.created_at ? formatDate(data.created_at) : '—' }}
                                 </p>
@@ -100,7 +100,7 @@ defineProps<{
                     </Column>
                     <Column field="total_price" header="Suma" class="text-right">
                         <template #body="{ data }">
-                            <span class="font-medium tabular-nums text-gray-800">
+                            <span class="font-medium tabular-nums text-gray-900">
                                 {{ formatAmount(data.total_price) }} {{ currency_symbol }}
                             </span>
                         </template>

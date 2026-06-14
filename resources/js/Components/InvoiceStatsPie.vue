@@ -164,7 +164,7 @@ watch(
 <template>
     <div class="h-full overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div class="border-b border-gray-100 pb-4">
-            <h2 class="text-sm font-medium text-gray-800">Rozdelenie faktúr</h2>
+            <h2 class="text-sm font-medium text-gray-900">Rozdelenie faktúr</h2>
             <p class="mt-1 text-sm text-gray-600">Podiel podľa stavu</p>
         </div>
 

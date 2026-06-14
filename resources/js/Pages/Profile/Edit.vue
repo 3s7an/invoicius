@@ -33,7 +33,7 @@ const {
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             <PageHeader title="Profil" />
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-8"
                 >
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
@@ -58,13 +58,13 @@ const {
                 </form>
 
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-8"
                 >
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
                 <div
-                    class="bg-white p-4 shadow sm:rounded-lg sm:p-8"
+                    class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-8"
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>
