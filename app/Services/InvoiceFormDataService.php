@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Http\Resources\CurrencyResource;
+use App\Http\Resources\InvoiceResource;
+use App\Http\Resources\InvoiceStatusResource;
+use App\Http\Resources\RecipientResource;
+use App\Http\Resources\VatTypeResource;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -22,9 +27,13 @@ class InvoiceFormDataService
     public function forIndex(int $userId): array
     {
         return [
-            'invoices' => $this->invoiceService->getInvoices($userId),
-            'invoice_stats' => $this->invoiceService->getInvoiceStats($userId),
-            'invoice_statuses' => InvoiceStatus::orderBy('id')->get(['id', 'code', 'name']),
+            'invoices'         => InvoiceResource::collection(
+                $this->invoiceService->getInvoices($userId)
+            ),
+            'invoice_stats'    => $this->invoiceService->getInvoiceStats($userId),
+            'invoice_statuses' => InvoiceStatusResource::collection(
+                InvoiceStatus::orderBy('id')->get()
+            ),
         ];
     }
 
@@ -39,32 +48,40 @@ class InvoiceFormDataService
 
         return [
             ...$this->sharedFormReferenceData($userId),
-            'suggested_number' => $this->invoiceService->getSuggestedNumber($userId),
-            'preselected_recipient' => $preselectedRecipient,
-            'default_currency_id' => $user?->currency_id,
+            'suggested_number'      => $this->invoiceService->getSuggestedNumber($userId),
+            'preselected_recipient' => $preselectedRecipient
+                ? RecipientResource::make($preselectedRecipient)
+                : null,
+            'default_currency_id'   => $user?->currency_id,
         ];
     }
 
     public function forEdit(Invoice $invoice, int $userId): array
     {
-        $invoice->load(['items', 'recipient']);
+        $invoice->load(['items', 'invoiceStatus']);
 
         return [
             ...$this->sharedFormReferenceData($userId),
-            'invoice' => $invoice,
+            'invoice'             => InvoiceResource::make($invoice),
             'default_currency_id' => $invoice->currency_id,
         ];
     }
 
     /**
-     * @return array{recipients: \Illuminate\Support\Collection, currencies: \Illuminate\Support\Collection, vat_types: \Illuminate\Support\Collection}
+     * @return array{recipients: mixed, currencies: mixed, vat_types: mixed}
      */
     private function sharedFormReferenceData(int $userId): array
     {
         return [
-            'recipients' => $this->recipientService->listForUser($userId),
-            'currencies' => Currency::orderBy('name')->get(['id', 'name', 'symbol']),
-            'vat_types' => VatType::orderBy('code')->get(['id', 'code', 'rate']),
+            'recipients' => RecipientResource::collection(
+                $this->recipientService->listForUser($userId)
+            ),
+            'currencies' => CurrencyResource::collection(
+                Currency::orderBy('name')->get()
+            ),
+            'vat_types'  => VatTypeResource::collection(
+                VatType::orderBy('code')->get()
+            ),
         ];
     }
 }

@@ -61,7 +61,7 @@
 
 
 
-<script setup>
+<script setup lang="ts">
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -69,27 +69,27 @@ import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-const passwordInput = ref(null);
-const currentPasswordInput = ref(null);
+const passwordInput = ref<{ focus: () => void } | null>(null);
+const currentPasswordInput = ref<{ focus: () => void } | null>(null);
 
-const form = useForm({
+const form = useForm<{ current_password: string; password: string; password_confirmation: string }>({
     current_password: '',
     password: '',
     password_confirmation: '',
 });
 
-const updatePassword = () => {
+const updatePassword = (): void => {
     form.put(route('password.update'), {
         preserveScroll: true,
         onSuccess: () => form.reset(),
         onError: () => {
             if (form.errors.password) {
                 form.reset('password', 'password_confirmation');
-                passwordInput.value.focus();
+                passwordInput.value?.focus();
             }
             if (form.errors.current_password) {
                 form.reset('current_password');
-                currentPasswordInput.value.focus();
+                currentPasswordInput.value?.focus();
             }
         },
     });

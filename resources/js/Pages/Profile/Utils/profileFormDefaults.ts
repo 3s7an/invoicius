@@ -1,13 +1,34 @@
 import { nullIfBlank } from '@/Pages/Invoices/Utils/helpers';
+import type { AuthUser } from '@/types/inertia';
 
-export function createInvoiceSettingsDefaults() {
+export interface InvoiceSettingsFormData {
+    company_logo: File | null
+    _method: string
+}
+
+export interface BillingDetailsFormData {
+    street: string
+    street_num: string
+    city: string
+    zip: string
+    state: string
+    ico: string
+    dic: string
+    ic_dph: string
+    iban: string
+    currency_id: number | string
+    default_vat_type_id: number | string
+    _method: string
+}
+
+export function createInvoiceSettingsDefaults(): InvoiceSettingsFormData {
     return {
         company_logo: null,
         _method: 'patch',
     };
 }
 
-export function createBillingDetailsDefaults(user) {
+export function createBillingDetailsDefaults(user: AuthUser | null): BillingDetailsFormData {
     return {
         street: user?.street ?? '',
         street_num: user?.street_num ?? '',
@@ -24,7 +45,7 @@ export function createBillingDetailsDefaults(user) {
     };
 }
 
-export function billingDetailsPayload(data) {
+export function billingDetailsPayload(data: BillingDetailsFormData): Record<string, unknown> {
     return {
         ...data,
         street: nullIfBlank(data.street),
@@ -36,9 +57,8 @@ export function billingDetailsPayload(data) {
         dic: nullIfBlank(data.dic),
         ic_dph: nullIfBlank(data.ic_dph),
         iban: nullIfBlank(data.iban),
-        currency_id: nullIfBlank(data.currency_id),
-        default_vat_type_id: nullIfBlank(data.default_vat_type_id),
+        currency_id: nullIfBlank(String(data.currency_id)),
+        default_vat_type_id: nullIfBlank(String(data.default_vat_type_id)),
         _method: 'patch',
     };
 }
-

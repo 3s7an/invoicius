@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\InvoiceStatusCode;
 use App\Models\Invoice;
-use App\Models\InvoiceStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -22,11 +22,11 @@ class InvoiceStatsCalculator
         $totalInvoiced = (float) $invoices->sum('total_price');
 
         $paid = (float) $invoices
-            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_PAID)
+            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatusCode::Paid->value)
             ->sum('total_price');
 
         $draft = (float) $invoices
-            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatus::CODE_DRAFT)
+            ->filter(fn (Invoice $invoice): bool => $invoice->invoiceStatus?->code === InvoiceStatusCode::Draft->value)
             ->sum('total_price');
 
         $overdue = (float) $invoices
@@ -37,7 +37,7 @@ class InvoiceStatsCalculator
 
                 $statusCode = $invoice->invoiceStatus?->code;
 
-                if ($statusCode === InvoiceStatus::CODE_PAID || $statusCode === InvoiceStatus::CODE_DRAFT) {
+                if ($statusCode === InvoiceStatusCode::Paid->value || $statusCode === InvoiceStatusCode::Draft->value) {
                     return false;
                 }
 

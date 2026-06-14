@@ -6,15 +6,12 @@
     </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import RecipientForm from './Components/RecipientForm.vue';
 
-defineProps({
-    from_invoice: {
-        type: Boolean,
-        default: false,
-    },
-});
+defineProps<{
+    from_invoice?: boolean
+}>();
 </script>

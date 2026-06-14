@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Services\InvoiceFormDataService;
-use App\Services\InvoiceService;
+use App\DTOs\Forms\InvoiceFormData;
 use App\DTOs\InvoiceDTO;
 use App\Http\Requests\StoreInvoiceRequest;
+use App\Services\InvoiceFormDataService;
+use App\Services\InvoiceService;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceStatusRequest;
 use App\Models\Invoice;
@@ -56,8 +57,9 @@ class InvoiceController extends Controller
 
     public function store(StoreInvoiceRequest $request): RedirectResponse
     {
-        $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
-        $this->invoiceService->createInvoice($data);
+        $formData = InvoiceFormData::fromValidated($request->validated());
+        $dto = InvoiceDTO::fromFormData($formData, $request->user()->id);
+        $this->invoiceService->createInvoice($dto);
 
         return to_route('invoices')
             ->with('success', 'Faktúra bola vytvorená.');
@@ -76,8 +78,9 @@ class InvoiceController extends Controller
     {
         $this->authorize('update', $invoice);
 
-        $data = InvoiceDTO::fromValidated($request->validated(), $request->user()->id);
-        $this->invoiceService->updateInvoice($invoice, $data);
+        $formData = InvoiceFormData::fromValidated($request->validated());
+        $dto = InvoiceDTO::fromFormData($formData, $request->user()->id);
+        $this->invoiceService->updateInvoice($invoice, $dto);
 
         return to_route('invoices')
             ->with('success', 'Faktúra bola upravená.');

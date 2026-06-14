@@ -26,7 +26,7 @@
 
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <IssuerDetailsForm
-                    :model-value="form.issuer"
+                    v-model="form.issuer"
                     :errors="errors"
                     id-prefix="invoice-issuer"
                 />
@@ -34,9 +34,9 @@
 
             <InvoiceRecipientSection
                 v-model:recipient-id="form.recipient_id"
+                v-model:recipient="form.recipient"
                 :recipients="recipients"
                 :preselected-recipient="preselectedRecipient"
-                :recipient="form.recipient"
                 :description="recipientDescription"
                 :errors="errors"
             />
@@ -61,7 +61,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Button from 'primevue/button';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Link, usePage } from '@inertiajs/vue3';
@@ -71,44 +71,32 @@ import InvoiceRecipientSection from './InvoiceRecipientSection.vue';
 import InvoiceSettings from './InvoiceSettings.vue';
 import IssuerDetailsForm from './IssuerDetailsForm.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
+import type { AuthUser } from '@/types/inertia';
+import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
 
-const props = defineProps({
-    mode: {
-        type: String,
-        default: 'create',
-        validator: (value) => ['create', 'edit'].includes(value),
-    },
-    invoice: {
-        type: Object,
-        default: null,
-    },
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    suggestedNumber: {
-        type: String,
-        default: '',
-    },
-    preselectedRecipient: {
-        type: Object,
-        default: null,
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vatTypes: {
-        type: Array,
-        default: () => [],
-    },
-    defaultCurrencyId: {
-        type: [Number, String],
-        default: null,
-    },
+interface Props {
+    mode?: 'create' | 'edit'
+    invoice?: InvoiceResource | null
+    recipients?: RecipientResource[]
+    suggestedNumber?: string
+    preselectedRecipient?: RecipientResource | null
+    currencies?: CurrencyResource[]
+    vatTypes?: VatTypeResource[]
+    defaultCurrencyId?: number | null
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    mode: 'create',
+    invoice: null,
+    recipients: () => [],
+    suggestedNumber: '',
+    preselectedRecipient: null,
+    currencies: () => [],
+    vatTypes: () => [],
+    defaultCurrencyId: null,
 });
 
-const user = usePage().props.auth?.user;
+const user = (usePage().props as { auth?: { user: AuthUser } }).auth?.user;
 
 const {
     form,

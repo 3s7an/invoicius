@@ -1,35 +1,33 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import DatePicker from 'primevue/datepicker';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { defaultInvoiceHeader } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
+import { defaultInvoiceHeader, type InvoiceHeaderFormData } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
 import { prefixedId, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
+import type { CurrencyResource } from '@/types';
 
-const props = defineProps({
-    modelValue: {
-        type: Object,
-        default: () => ({}),
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    idPrefix: {
-        type: String,
-        default: 'invoice',
-    },
-    errors: {
-        type: Object,
-        default: () => ({}),
-    },
+interface Props {
+    modelValue?: InvoiceHeaderFormData
+    currencies?: CurrencyResource[]
+    idPrefix?: string
+    errors?: Record<string, string | undefined>
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    modelValue: () => ({} as InvoiceHeaderFormData),
+    currencies: () => [],
+    idPrefix: 'invoice',
+    errors: () => ({}),
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+    'update:modelValue': [value: InvoiceHeaderFormData]
+}>();
 
-const header = ref({
+const header = ref<InvoiceHeaderFormData>({
     ...defaultInvoiceHeader({ currencies: props.currencies }),
     ...props.modelValue,
 });
@@ -52,7 +50,7 @@ watch(
     { deep: true }
 );
 
-const id = (name) => prefixedId(props.idPrefix, name);
+const id = (name: string): string => prefixedId(props.idPrefix, name);
 
 const currencyOptions = computed(() =>
     props.currencies.map((currency) => ({
@@ -100,7 +98,7 @@ const currencyOptions = computed(() =>
                     iconDisplay="input"
                     fluid
                     class="mt-1"
-                    @update:modelValue="(d) => { header.issue_date = d ? toYMD(d) : '' }"
+                    @update:model-value="(d: unknown) => { header.issue_date = (d instanceof Date) ? toYMD(d) : '' }"
                 />
                 <InputError class="mt-2" :message="errors.issue_date" />
             </div>
@@ -113,7 +111,7 @@ const currencyOptions = computed(() =>
                     iconDisplay="input"
                     fluid
                     class="mt-1"
-                    @update:modelValue="(d) => { header.due_date = d ? toYMD(d) : '' }"
+                    @update:model-value="(d: unknown) => { header.due_date = (d instanceof Date) ? toYMD(d) : '' }"
                 />
                 <InputError class="mt-2" :message="errors.due_date" />
             </div>

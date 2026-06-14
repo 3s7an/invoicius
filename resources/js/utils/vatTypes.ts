@@ -1,9 +1,8 @@
-/**
- * Human-readable Slovak label for a VAT type row from the API.
- */
-export function formatVatTypeLabel(vatType) {
+import type { VatTypeResource } from '@/types'
+
+export function formatVatTypeLabel(vatType: VatTypeResource | null | undefined): string {
     const code = String(vatType?.code ?? '').toUpperCase();
-    const rate = Number.parseFloat(vatType?.rate);
+    const rate = Number.parseFloat(String(vatType?.rate ?? ''));
 
     if (code === 'MIMO') {
         return 'Mimo DPH';

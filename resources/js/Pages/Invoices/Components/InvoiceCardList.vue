@@ -1,35 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import AppSelect from '@/Components/AppSelect.vue';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import type { InvoiceResource, InvoiceStatusResource } from '@/types';
 
-const props = defineProps({
-    invoices: {
-        type: Array,
-        default: () => [],
-    },
-    invoice_statuses: {
-        type: Array,
-        default: () => [],
-    },
-});
+const props = defineProps<{
+    invoices: InvoiceResource[]
+    invoice_statuses: InvoiceStatusResource[]
+}>();
 
 const statusOptions = computed(() =>
-    (props.invoice_statuses || []).map((s) => ({
+    (props.invoice_statuses ?? []).map((s) => ({
         value: s.id,
         label: s.name || s.code || String(s.id),
     })),
 );
 
-function updateStatus(invoice, newStatusId) {
+function updateStatus(invoice: InvoiceResource, newStatusId: unknown): void {
     const id = newStatusId != null ? Number(newStatusId) : null;
     if (id === invoice.invoice_status_id) return;
     router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
 }
 
-function confirmDeleteInvoice(invoice) {
+function confirmDeleteInvoice(invoice: InvoiceResource): void {
     if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
     router.delete(route('invoices.destroy', invoice.id));
 }
@@ -70,7 +65,7 @@ function confirmDeleteInvoice(invoice) {
                             :model-value="invoice.invoice_status_id"
                             :options="statusOptions"
                             size="small"
-                            @update:model-value="(value) => updateStatus(invoice, value)"
+                            @update:model-value="(value: unknown) => updateStatus(invoice, value)"
                         />
                     </dd>
                 </div>

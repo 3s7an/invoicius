@@ -1,12 +1,16 @@
 import { router } from '@inertiajs/vue3';
+import type { FormDataConvertible } from '@inertiajs/core';
 import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { toDateString } from '@/utils/formatters';
+import type { Automatization } from '../Utils/types';
+
+type Payload = Record<string, FormDataConvertible>;
 
 export function useAutomatizationActions() {
-    function buildUpdatePayload(automatization, overrides = {}) {
-        const payload = {
+    function buildUpdatePayload(automatization: Automatization, overrides: Payload = {}): Payload {
+        const payload: Payload = {
             type: automatization.type,
-            date_trigger: toDateString(automatization.date_trigger),
+            date_trigger: automatization.date_trigger ? toDateString(automatization.date_trigger) : null,
             is_active: automatization.is_active,
             ...overrides,
         };
@@ -23,7 +27,7 @@ export function useAutomatizationActions() {
         return payload;
     }
 
-    function toggleActive(automatization) {
+    function toggleActive(automatization: Automatization): void {
         router.patch(
             route('automatizations.update', automatization.id),
             buildUpdatePayload(automatization, { is_active: !automatization.is_active }),
@@ -31,8 +35,8 @@ export function useAutomatizationActions() {
         );
     }
 
-    function confirmDelete(automatization) {
-        if (!confirm(`Zmazať automatizáciu „${automatization.type_label}“?`)) return;
+    function confirmDelete(automatization: Automatization): void {
+        if (!confirm(`Zmazať automatizáciu „${automatization.type_label}"?`)) return;
 
         router.delete(route('automatizations.destroy', automatization.id), {
             preserveScroll: true,

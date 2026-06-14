@@ -15,6 +15,7 @@ use App\Policies\InvoicePolicy;
 use App\Policies\RecipientPolicy;
 use App\Services\AutomatizationProcessor;
 use App\Services\AutomatizationService;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
@@ -42,6 +43,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        JsonResource::withoutWrapping();
+
         Gate::policy(Invoice::class, InvoicePolicy::class);
         Gate::policy(Recipient::class, RecipientPolicy::class);
         Gate::policy(Automatization::class, AutomatizationPolicy::class);

@@ -1,4 +1,4 @@
-export function invoiceStatusSeverity(statusName) {
+export function invoiceStatusSeverity(statusName: unknown): string {
     const name = String(statusName ?? '').toLowerCase();
 
     if (name.includes('uhrad') || name.includes('paid')) {

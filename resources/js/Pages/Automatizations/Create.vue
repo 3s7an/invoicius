@@ -1,20 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AutomatizationForm from '@/Pages/Automatizations/Components/AutomatizationForm.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import type { AutomatizationTypeOption } from './Utils/types';
+import type { RecipientResource } from '@/types';
 
-defineProps({
-    recipients: {
-        type: Array,
-        default: () => [],
-    },
-    automatization_types: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    recipients: RecipientResource[]
+    automatization_types: AutomatizationTypeOption[]
+}>();
 </script>
 
 <template>

@@ -18,8 +18,8 @@
 
             <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
                     <DataTable :value="invoices" tableStyle="min-width: 50rem">
-                    <Column field="number" header="Číslo faktúry"></Column>
-                    <Column field="recipient_name" header="Klient"></Column>
+                    <Column field="number" header="Číslo faktúry" />
+                    <Column field="recipient_name" header="Klient" />
                     <Column field="created_at" header="Vytvorené">
                         <template #body="{ data }">{{ formatDate(data.created_at) }}</template>
                     </Column>
@@ -32,7 +32,7 @@
                                 :model-value="data.invoice_status_id"
                                 :options="statusOptions"
                                 size="small"
-                                @update:model-value="(value) => updateStatus(data, value)"
+                                @update:model-value="(value: unknown) => updateStatus(data, value)"
                             />
                         </template>
                     </Column>
@@ -58,7 +58,7 @@
     </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AppSelect from '@/Components/AppSelect.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -69,21 +69,21 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import type { InvoiceResource, InvoiceStatusResource } from '@/types';
 
-const props = defineProps({
-    invoices: {
-        type: Array,
-        default: () => [],
-    },
-    invoice_stats: {
-        type: Object,
-        default: () => ({ total_invoiced: 0, paid: 0, awaiting: 0, overdue: 0, draft: 0 }),
-    },
-    invoice_statuses: {
-        type: Array,
-        default: () => [],
-    },
-});
+interface InvoiceStats {
+    total_invoiced: number
+    paid: number
+    awaiting: number
+    overdue: number
+    draft: number
+}
+
+const props = defineProps<{
+    invoices: InvoiceResource[]
+    invoice_stats: InvoiceStats
+    invoice_statuses: InvoiceStatusResource[]
+}>();
 
 const statusOptions = computed(() =>
     (props.invoice_statuses || []).map((s) => ({
@@ -92,13 +92,13 @@ const statusOptions = computed(() =>
     }))
 );
 
-function updateStatus(invoice, newStatusId) {
+function updateStatus(invoice: InvoiceResource, newStatusId: unknown): void {
     const id = newStatusId != null ? Number(newStatusId) : null;
     if (id === invoice.invoice_status_id) return;
     router.patch(route('invoices.update-status', invoice.id), { invoice_status_id: id });
 }
 
-function confirmDeleteInvoice(invoice) {
+function confirmDeleteInvoice(invoice: InvoiceResource): void {
     if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
     router.delete(route('invoices.destroy', invoice.id));
 }

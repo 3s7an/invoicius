@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import Column from 'primevue/column';
@@ -6,13 +6,11 @@ import DataTable from 'primevue/datatable';
 import Tag from 'primevue/tag';
 import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatDate } from '@/utils/formatters';
+import type { ActiveAutomatization } from '../Utils/types';
 
-defineProps({
-    active_automatizations: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    active_automatizations: ActiveAutomatization[]
+}>();
 </script>
 
 <template>

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head } from '@inertiajs/vue3';
@@ -8,23 +8,14 @@ import ProfileInvoiceSettingsSection from './Components/ProfileInvoiceSettingsSe
 import UpdatePasswordForm from './Components/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Components/UpdateProfileInformationForm.vue';
 import { useProfileForms } from './Composables/useProfileForms';
+import type { CurrencyResource, VatTypeResource } from '@/types';
 
-const props = defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vat_types: {
-        type: Array,
-        default: () => [],
-    },
-});
+defineProps<{
+    mustVerifyEmail?: boolean
+    status?: string
+    currencies: CurrencyResource[]
+    vat_types: VatTypeResource[]
+}>();
 
 const {
     user,

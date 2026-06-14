@@ -1,4 +1,5 @@
 <template>
+    <!-- eslint-disable vue/no-mutating-props -->
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Fakturačné údaje</h2>
@@ -107,7 +108,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
 import AppSelect from '@/Components/AppSelect.vue';
@@ -116,24 +117,21 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { getCountriesSk } from '@/Pages/Invoices/Utils/helpers';
+import type { InertiaForm } from '@inertiajs/vue3';
+import type { BillingDetailsFormData } from '../Utils/profileFormDefaults';
+import type { CurrencyResource, VatTypeResource } from '@/types';
 
-const props = defineProps({
-    form: {
-        type: Object,
-        required: true,
-    },
-    idPrefix: {
-        type: String,
-        default: 'billing',
-    },
-    currencies: {
-        type: Array,
-        default: () => [],
-    },
-    vatTypes: {
-        type: Array,
-        default: () => [],
-    },
+interface Props {
+    form: InertiaForm<BillingDetailsFormData>
+    idPrefix?: string
+    currencies?: CurrencyResource[]
+    vatTypes?: VatTypeResource[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    idPrefix: 'billing',
+    currencies: () => [],
+    vatTypes: () => [],
 });
 
 const countries = computed(() => getCountriesSk());
@@ -152,7 +150,7 @@ const vatTypeOptions = computed(() =>
     })),
 );
 
-function id(name) {
+function id(name: string): string {
     return `${props.idPrefix}-${name}`;
 }
 </script>

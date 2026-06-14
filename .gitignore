@@ -26,5 +26,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 
+# Auto-generated — do not edit manually, run `npm run types` instead
+/resources/js/types/index.ts
+
 # Local-only notes (never commit)
 /.local-notes

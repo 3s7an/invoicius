@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\DTOs\InvoiceDTO;
+use App\Enums\InvoiceStatusCode;
 use App\Exceptions\DuplicateInvoiceNumberException;
 use App\Models\Invoice;
 use App\Models\InvoiceStatus;
@@ -49,7 +50,7 @@ class InvoiceService
 
         try {
             return DB::transaction(function () use ($data) {
-                $draftStatus = InvoiceStatus::getByCode(InvoiceStatus::CODE_DRAFT);
+                $draftStatus = InvoiceStatus::getByCode(InvoiceStatusCode::Draft);
                 $payload = $this->buildInvoicePayload($data);
 
                 $invoice = Invoice::create([

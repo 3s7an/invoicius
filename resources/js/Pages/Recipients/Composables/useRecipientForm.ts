@@ -1,12 +1,20 @@
 import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { createRecipientFormDefaults, recipientPayload } from '../Utils/recipientFormDefaults';
+import type { RecipientFormData } from '../Utils/recipientFormDefaults';
+import type { RecipientResource } from '@/types';
 
-export function useRecipientForm(props) {
+interface RecipientFormProps {
+    mode?: 'create' | 'edit'
+    recipient?: RecipientResource | null
+    fromInvoice?: boolean
+}
+
+export function useRecipientForm(props: RecipientFormProps) {
     const isEdit = computed(() => props.mode === 'edit');
-    const sourceRecipient = computed(() => props.recipient ?? {});
+    const sourceRecipient = computed(() => props.recipient ?? ({} as RecipientResource));
 
-    const form = useForm(
+    const form = useForm<RecipientFormData>(
         createRecipientFormDefaults({
             mode: props.mode,
             recipient: props.recipient,
@@ -18,7 +26,7 @@ export function useRecipientForm(props) {
     const submitLabel = computed(() => (isEdit.value ? 'Uložiť klienta' : 'Vytvoriť klienta'));
     const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
 
-    function submit() {
+    function submit(): void {
         const request = form.transform(recipientPayload);
 
         if (isEdit.value) {
@@ -37,4 +45,3 @@ export function useRecipientForm(props) {
         submit,
     };
 }
-

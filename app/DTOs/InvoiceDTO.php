@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
+use App\DTOs\Forms\InvoiceFormData;
+use App\DTOs\Forms\InvoiceItemData;
 use App\Models\Automatization;
 use App\Models\Currency;
 use App\Models\Recipient;
@@ -69,6 +71,24 @@ final readonly class InvoiceDTO
             recipientId: $automatization->recipient_id,
             recipient: InvoiceRecipientDTO::fromModel($recipient),
             items: $items,
+        );
+    }
+
+    public static function fromFormData(InvoiceFormData $data, int $userId): self
+    {
+        return new self(
+            userId:         $userId,
+            number:         $data->number,
+            variableSymbol: $data->variable_symbol,
+            issueDate:      \Illuminate\Support\Facades\Date::parse($data->issue_date),
+            dueDate:        \Illuminate\Support\Facades\Date::parse($data->due_date),
+            currencyId:     $data->currency_id,
+            recipientId:    $data->recipient_id,
+            recipient:      InvoiceRecipientDTO::fromFormData($data->recipient),
+            items:          array_map(
+                                fn (InvoiceItemData $item) => InvoiceItemDTO::fromFormData($item),
+                                $data->items,
+                            ),
         );
     }
 

@@ -6,15 +6,13 @@
     </AuthenticatedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import RecipientForm from './Components/RecipientForm.vue';
+import type { RecipientResource } from '@/types';
 
-defineProps({
-    recipient: {
-        type: Object,
-        required: true,
-    },
-});
+defineProps<{
+    recipient: RecipientResource
+}>();
 </script>
