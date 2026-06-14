@@ -31,7 +31,6 @@ services:
       - ./vite.config.js:/var/www/html/vite.config.js
       - ./tailwind.config.js:/var/www/html/tailwind.config.js
       - ./postcss.config.js:/var/www/html/postcss.config.js
-      - ./jsconfig.json:/var/www/html/jsconfig.json
       - app_vendor:/var/www/html/vendor
       - app_storage:/var/www/html/storage/app
       - ./storage/logs:/var/www/html/storage/logs
@@ -56,7 +55,6 @@ services:
       - ./vite.config.js:/var/www/html/vite.config.js
       - ./tailwind.config.js:/var/www/html/tailwind.config.js
       - ./postcss.config.js:/var/www/html/postcss.config.js
-      - ./jsconfig.json:/var/www/html/jsconfig.json
       - ./package.json:/var/www/html/package.json
       - ./package-lock.json:/var/www/html/package-lock.json
       - ./docker/vite-dev.sh:/docker/vite-dev.sh:ro
