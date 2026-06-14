@@ -1,0 +1,98 @@
+/* ============================================================
+   Invoicius — Colors
+   Brand primary = Emerald (PrimeVue Aura `emerald` preset, the
+   nav bar bg-emerald-500). Neutrals = Tailwind gray. Invoice
+   statuses carry their own semantic palette used in pies,
+   dots and Tag pills across the product.
+   ============================================================ */
+:root {
+    /* --- Brand · Emerald --------------------------------- */
+    --emerald-50:  #ecfdf5;
+    --emerald-100: #d1fae5;
+    --emerald-200: #a7f3d0;
+    --emerald-300: #6ee7b7;
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+    --emerald-800: #065f46;
+    --emerald-900: #064e3b;
+    --emerald-950: #022c22;
+
+    --primary:           var(--emerald-500);
+    --primary-hover:     var(--emerald-600);
+    --primary-active:    var(--emerald-700);
+    --primary-soft:      var(--emerald-50);
+    --primary-contrast:  #ffffff;
+
+    /* --- Neutrals · Gray --------------------------------- */
+    --gray-50:  #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --gray-950: #030712;
+
+    /* --- Invoice status palette -------------------------- */
+    /* paid / uhradené */
+    --status-paid:        #06b6d4;  /* cyan-500  */
+    --status-paid-soft:   #ecfeff;
+    --status-paid-text:   #0e7490;
+    /* awaiting / čaká na úhradu */
+    --status-awaiting:      #f59e0b;  /* amber-500 */
+    --status-awaiting-soft: #fffbeb;
+    --status-awaiting-text: #b45309;
+    /* overdue / po splatnosti */
+    --status-overdue:      #ef4444;  /* red-500  */
+    --status-overdue-soft: #fef2f2;
+    --status-overdue-text: #b91c1c;
+    /* draft / koncept */
+    --status-draft:      #94a3b8;  /* slate-400 */
+    --status-draft-soft: #f1f5f9;
+    --status-draft-text: #475569;
+    /* sent / odoslané */
+    --status-sent:      #0ea5e9;  /* sky-500 */
+    --status-sent-soft: #f0f9ff;
+    --status-sent-text: #0369a1;
+
+    /* Generic semantic (success / paid uses green for Tag) */
+    --success:      var(--emerald-600);
+    --success-soft: var(--emerald-100);
+    --success-text: var(--emerald-700);
+    --danger:       var(--status-overdue);
+    --danger-soft:  var(--status-overdue-soft);
+    --danger-text:  var(--status-overdue-text);
+    --warn:         var(--status-awaiting);
+    --info:         var(--status-sent);
+
+    /* --- Dashboard KPI accents -------------------------- */
+    --accent-sky:    #0284c7;  --accent-sky-soft:    #f0f9ff;
+    --accent-violet: #7c3aed;  --accent-violet-soft: #f5f3ff;
+    --accent-amber:  #d97706;  --accent-amber-soft:  #fffbeb;
+    --accent-indigo: #6366f1;
+
+    /* --- Surfaces & borders ----------------------------- */
+    --surface-app:    var(--gray-100);   /* app background  */
+    --surface-card:   #ffffff;           /* cards, panels   */
+    --surface-muted:  var(--gray-50);    /* subtle fills    */
+    --surface-nav:    var(--emerald-500);/* top navigation  */
+    --border:         var(--gray-200);
+    --border-subtle:  var(--gray-100);
+    --border-strong:  var(--gray-300);
+
+    /* --- Text ------------------------------------------- */
+    --text-strong:  var(--gray-900);  /* headings, amounts */
+    --text-body:    var(--gray-700);
+    --text-muted:   var(--gray-500);  /* hints, captions   */
+    --text-faint:   var(--gray-400);
+    --text-on-primary: #ffffff;
+    --text-link:    var(--gray-600);
+
+    /* --- Focus ------------------------------------------ */
+    --focus-ring: color-mix(in srgb, var(--primary) 45%, transparent);
+}

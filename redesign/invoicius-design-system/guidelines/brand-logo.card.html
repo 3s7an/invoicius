@@ -1,0 +1,23 @@
+<!-- @dsCard group="Brand" viewport="700x190" name="Logo lock-ups" subtitle="Mark, wordmark, and the emerald nav lock-up" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--surface-card); padding: 0; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .cell { padding: 22px; display: flex; align-items: center; gap: 14px; border-right: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); min-height: 64px; }
+  .cap { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+  .onbrand { background: var(--surface-nav); }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="cell" style="flex-direction:column;align-items:flex-start;gap:8px"><img src="../assets/logo-wordmark.svg" height="32" alt="Invoicius"><span class="cap">Wordmark · primary</span></div>
+    <div class="cell" style="flex-direction:column;align-items:flex-start;gap:8px"><img src="../assets/logo-mark.svg" height="40" alt="mark"><span class="cap">Mark only</span></div>
+    <div class="cell onbrand" style="flex-direction:column;align-items:flex-start;gap:8px"><img src="../assets/logo-wordmark-white.svg" height="32" alt="Invoicius"><span class="cap" style="color:rgba(255,255,255,.7)">On emerald · nav lock-up</span></div>
+    <div class="cell onbrand" style="flex-direction:column;align-items:flex-start;gap:8px"><img src="../assets/logo-mark-white.svg" height="40" alt="mark"><span class="cap" style="color:rgba(255,255,255,.7)">Reversed mark</span></div>
+  </div>
+</body>
+</html>

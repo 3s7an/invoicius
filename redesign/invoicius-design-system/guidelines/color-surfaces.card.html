@@ -1,0 +1,36 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Surfaces & text" subtitle="App background, cards, borders, and the text ramp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--surface-app); padding: 20px; }
+  .wrap { display: flex; gap: 16px; align-items: stretch; }
+  .card { flex: 1; background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 16px; }
+  .tag { font-size: 10px; color: var(--text-faint); text-transform: uppercase; letter-spacing: var(--tracking-wide); }
+  .strong { color: var(--text-strong); font-size: 18px; font-weight: 600; }
+  .body { color: var(--text-body); font-size: 14px; margin-top: 4px; }
+  .muted { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+  .swatches { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+  .sw { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); }
+  .box { width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="tag">on white card</div>
+      <div class="strong">12 480,00 €</div>
+      <div class="body">Body text — gray-700</div>
+      <div class="muted">Muted hint — gray-500</div>
+    </div>
+    <div class="swatches">
+      <div class="sw"><span class="box" style="background:var(--surface-app)"></span>--surface-app · gray-100</div>
+      <div class="sw"><span class="box" style="background:var(--surface-card)"></span>--surface-card · #fff</div>
+      <div class="sw"><span class="box" style="background:var(--surface-muted)"></span>--surface-muted · gray-50</div>
+      <div class="sw"><span class="box" style="background:var(--border)"></span>--border · gray-200</div>
+    </div>
+  </div>
+</body>
+</html>

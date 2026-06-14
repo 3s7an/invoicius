@@ -1,0 +1,22 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Corner radius" subtitle="rounded-md inputs · rounded-xl cards · full pills" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; font-family: var(--font-sans); background: var(--surface-card); padding: 22px; display: flex; gap: 24px; align-items: flex-end; }
+  .item { text-align: center; }
+  .box { width: 84px; height: 60px; background: var(--primary-soft); border: 1px solid var(--emerald-200); }
+  .lbl { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+  .lbl b { display: block; color: var(--text-strong); font-weight: 600; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="item"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="lbl"><b>sm · 6px</b>buttons, inputs</div></div>
+  <div class="item"><div class="box" style="border-radius:var(--radius-md)"></div><div class="lbl"><b>md · 8px</b>small panels</div></div>
+  <div class="item"><div class="box" style="border-radius:var(--radius-lg)"></div><div class="lbl"><b>lg · 12px</b>cards</div></div>
+  <div class="item"><div class="box" style="border-radius:var(--radius-xl)"></div><div class="lbl"><b>xl · 16px</b>icon chips</div></div>
+  <div class="item"><div class="box" style="width:60px;border-radius:var(--radius-full)"></div><div class="lbl"><b>full</b>pills, dots</div></div>
+</body>
+</html>
