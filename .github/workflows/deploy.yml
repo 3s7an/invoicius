@@ -51,9 +51,29 @@ jobs:
       - name: Run PHPUnit
         run: composer test
 
+  frontend-test:
+    name: Frontend tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run frontend checks (typecheck + lint)
+        run: npm run test:fe
+
   build-and-deploy:
     name: Build & deploy
-    needs: test
+    needs: [test, frontend-test]
     runs-on: ubuntu-latest
     permissions:
       contents: read

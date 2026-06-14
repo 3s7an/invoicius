@@ -128,7 +128,7 @@ watch(
                             min="1"
                             max="20"
                             required
-                        />
+                        >
                         <InputError class="mt-2" :message="form.errors.item_names" />
                     </div>
 
@@ -143,7 +143,7 @@ watch(
                                     :class="inputClass"
                                     maxlength="255"
                                     required
-                                />
+                                >
                                 <InputError class="mt-2" :message="form.errors[`item_names.${index}`]" />
                             </div>
                     </div>
@@ -180,7 +180,7 @@ watch(
                     </div>
 
                     <div v-else>
-                        <input type="hidden" v-model="form.date_trigger" />
+                        <input type="hidden" v-model="form.date_trigger">
                         <p class="text-sm text-gray-600">
                             Táto automatizácia sa spúšťa denne od dnešného dňa.
                         </p>
@@ -196,10 +196,10 @@ watch(
                             max="365"
                             v-model="form.due_offset_days"
                             :class="inputClass"
-                        />
+                        >
                         <p class="mt-1 text-sm text-gray-500">
-                            - pred splatnosťou <br />
-                            +  po splatnosti <br />
+                            - pred splatnosťou <br>
+                            +  po splatnosti <br>
                             0 v deň splatnosti
                         </p>
                         <InputError class="mt-2" :message="form.errors.due_offset_days" />
@@ -211,7 +211,7 @@ watch(
                             type="checkbox"
                             v-model="form.is_active"
                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                        />
+                        >
                         <InputLabel for="auto-active" value="Aktívne" />
                     </div>
                 </div>

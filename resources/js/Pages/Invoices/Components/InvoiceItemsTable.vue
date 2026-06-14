@@ -155,7 +155,7 @@
                     type="text"
                     readonly
                     class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm tabular-nums shadow-sm"
-                />
+                >
             </div>
             <div class="flex items-center justify-between gap-4">
                 <label class="text-sm font-medium text-gray-700">DPH</label>
@@ -164,7 +164,7 @@
                     type="text"
                     readonly
                     class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm tabular-nums shadow-sm"
-                />
+                >
             </div>
             <div class="flex items-center justify-between gap-4">
                 <label class="text-sm font-medium text-gray-700">Celkom</label>
@@ -173,7 +173,7 @@
                     type="text"
                     readonly
                     class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm font-semibold tabular-nums shadow-sm"
-                />
+                >
             </div>
         </div>
     </div>

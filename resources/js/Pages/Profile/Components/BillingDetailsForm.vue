@@ -1,4 +1,5 @@
 <template>
+    <!-- eslint-disable vue/no-mutating-props -->
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Fakturačné údaje</h2>

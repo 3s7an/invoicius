@@ -83,6 +83,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
     'update:recipientId': [value: number | null]
+    'update:recipient': [value: RecipientSectionData]
 }>();
 
 const selectedRecipient = ref<RecipientWithLabel | null>(null);
@@ -115,7 +116,7 @@ function searchRecipients(event: { query?: string }): void {
 function applyRecipient(selected: RecipientWithLabel | null): void {
     if (!selected) return;
 
-    Object.assign(props.recipient, recipientDetailsFromRecipient(selected));
+    emit('update:recipient', { ...props.recipient, ...recipientDetailsFromRecipient(selected) });
     emit('update:recipientId', selected.id ?? null);
 }
 

@@ -26,7 +26,7 @@
 
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <IssuerDetailsForm
-                    :model-value="form.issuer"
+                    v-model="form.issuer"
                     :errors="errors"
                     id-prefix="invoice-issuer"
                 />
@@ -34,9 +34,9 @@
 
             <InvoiceRecipientSection
                 v-model:recipient-id="form.recipient_id"
+                v-model:recipient="form.recipient"
                 :recipients="recipients"
                 :preselected-recipient="preselectedRecipient"
-                :recipient="form.recipient"
                 :description="recipientDescription"
                 :errors="errors"
             />

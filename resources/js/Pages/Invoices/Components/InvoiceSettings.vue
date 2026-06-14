@@ -47,7 +47,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                 :src="companyLogoPreviewUrl"
                 :alt="mode === 'profile' && form?.company_logo && isFile(form.company_logo) ? 'Náhľad nového loga' : 'Logo firmy'"
                 class="h-16 w-16 rounded border border-gray-200 object-contain bg-gray-50"
-            />
+            >
             <input
                 v-if="mode === 'profile' && form"
                 :id="id('company_logo')"
@@ -55,7 +55,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                 accept="image/*"
                 class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
                 @input="form!.company_logo = ($event.target as HTMLInputElement).files?.[0] ?? null"
-            />
+            >
             <p v-else-if="mode === 'invoice' && !companyLogoPreviewUrl" class="text-sm text-gray-500">
                 Žiadne logo. Pridajte ho v profile v sekcii Nastavenia faktúry.
             </p>

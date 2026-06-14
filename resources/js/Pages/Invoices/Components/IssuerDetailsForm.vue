@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -17,6 +17,13 @@ const props = withDefaults(defineProps<Props>(), {
     idPrefix: 'issuer',
     errors: () => ({}),
 });
+
+const emit = defineEmits<{ 'update:modelValue': [value: InvoiceIssuerData] }>();
+
+const local = reactive({ ...props.modelValue });
+
+watch(() => props.modelValue, (val) => Object.assign(local, val), { deep: true });
+watch(local, (val) => emit('update:modelValue', { ...val }), { deep: true });
 
 const countries = computed(() => getCountriesSk());
 
@@ -42,7 +49,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('name')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.name"
+                        v-model="local.name"
                         autocomplete="name"
                     />
                     <InputError class="mt-2" :message="errors.issuer_name" />
@@ -53,7 +60,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('ico')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.ico"
+                        v-model="local.ico"
                         autocomplete="off"
                     />
                 </div>
@@ -63,7 +70,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('dic')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.dic"
+                        v-model="local.dic"
                         autocomplete="off"
                     />
                 </div>
@@ -73,7 +80,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('ic_dph')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.ic_dph"
+                        v-model="local.ic_dph"
                         autocomplete="off"
                     />
                 </div>
@@ -83,7 +90,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('street')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.street"
+                        v-model="local.street"
                         autocomplete="street-address"
                     />
                 </div>
@@ -93,7 +100,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('street_num')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.street_num"
+                        v-model="local.street_num"
                         autocomplete="off"
                     />
                 </div>
@@ -103,7 +110,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('city')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.city"
+                        v-model="local.city"
                         autocomplete="address-level2"
                     />
                 </div>
@@ -113,7 +120,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                         :id="id('zip')"
                         type="text"
                         class="mt-1 block w-full"
-                        v-model="modelValue.zip"
+                        v-model="local.zip"
                         autocomplete="postal-code"
                     />
                 </div>
@@ -121,7 +128,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     <InputLabel :for="id('state')" value="Krajina" />
                     <AppSelect
                         :inputId="id('state')"
-                        v-model="modelValue.state"
+                        v-model="local.state"
                         :options="countries"
                         option-label="name"
                         option-value="code"
