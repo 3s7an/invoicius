@@ -31,7 +31,7 @@
                 <template v-if="showAddRecipientFooter" #footer>
                     <Link
                         :href="route('recipients.create') + '?from_invoice=1'"
-                        class="block px-3 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 hover:text-indigo-800"
+                        class="block px-3 py-2 text-center text-sm font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-800"
                     >
                         + Pridať nového klienta
                     </Link>

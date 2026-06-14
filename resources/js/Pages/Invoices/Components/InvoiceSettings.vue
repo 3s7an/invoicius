@@ -53,7 +53,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                 :id="id('company_logo')"
                 type="file"
                 accept="image/*"
-                class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+                class="block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-emerald-700 hover:file:bg-emerald-100"
                 @input="form!.company_logo = ($event.target as HTMLInputElement).files?.[0] ?? null"
             >
             <p v-else-if="mode === 'invoice' && !companyLogoPreviewUrl" class="text-sm text-gray-500">

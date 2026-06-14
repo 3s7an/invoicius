@@ -56,7 +56,7 @@ const recipientOptions = computed(() =>
 );
 
 const inputClass =
-    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500';
+    'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500';
 
 function submitPayload(data: AutomatizationFormData): Record<string, unknown> {
     const payload: Record<string, unknown> = { ...data };
@@ -210,7 +210,7 @@ watch(
                             id="auto-active"
                             type="checkbox"
                             v-model="form.is_active"
-                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                            class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
                         >
                         <InputLabel for="auto-active" value="Aktívne" />
                     </div>
@@ -222,7 +222,7 @@ watch(
             <button
                 type="submit"
                 :disabled="form.processing"
-                class="w-full min-w-[200px] rounded-lg bg-gray-800 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-gray-700 focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 active:bg-gray-900 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                class="w-full min-w-[200px] rounded-lg bg-emerald-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
                 {{ form.processing ? 'Ukladám...' : (isEdit ? 'Uložiť' : 'Vytvoriť automatizáciu') }}
             </button>
