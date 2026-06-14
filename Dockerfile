@@ -29,7 +29,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY --from=vendor /app/vendor ./vendor
-COPY vite.config.js tailwind.config.js postcss.config.js jsconfig.json ./
+COPY vite.config.js tailwind.config.js postcss.config.js tsconfig.json ./
 COPY resources ./resources
 COPY public ./public
 
