@@ -1,4 +1,4 @@
-<script setup lang=”ts”>
+<script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import type { RecipientResource } from '@/types';
@@ -12,7 +12,7 @@ function displayName(recipient: RecipientResource): string {
 }
 
 function confirmDeleteRecipient(recipient: RecipientResource): void {
-    if (!confirm(`Zmazať „${displayName(recipient)}”?`)) return;
+    if (!confirm(`Zmazať „${displayName(recipient)}"?`)) return;
     router.delete(route('recipients.destroy', recipient.id));
 }
 </script>

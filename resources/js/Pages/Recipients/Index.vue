@@ -1,4 +1,4 @@
-<script setup lang=”ts”>
+<script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import RecipientCardList from '@/Pages/Recipients/Components/RecipientCardList.vue';
@@ -17,7 +17,7 @@ function displayName(recipient: RecipientResource): string {
 }
 
 function confirmDeleteRecipient(recipient: RecipientResource): void {
-    if (!confirm(`Zmazať „${displayName(recipient)}”?`)) return;
+    if (!confirm(`Zmazať „${displayName(recipient)}"?`)) return;
     router.delete(route('recipients.destroy', recipient.id));
 }
 </script>
