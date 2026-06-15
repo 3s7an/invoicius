@@ -7,14 +7,13 @@ import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
 import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecentInvoices.vue';
 import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
 import type { AuthUser } from '@/types/inertia';
-import type { InvoiceStats, DashboardCounts, ActiveAutomatization } from './Utils/types';
-import type { InvoiceResource } from '@/types';
+import type { InvoiceStats, DashboardCounts, ActiveAutomatization, DashboardRecentInvoice } from './Utils/types';
 
 defineProps<{
     invoice_stats: InvoiceStats
     currency_symbol: string
     counts: DashboardCounts
-    recent_invoices: InvoiceResource[]
+    recent_invoices: DashboardRecentInvoice[]
     active_automatizations: ActiveAutomatization[]
 }>();
 

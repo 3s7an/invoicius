@@ -2,10 +2,10 @@
 import { Link } from '@inertiajs/vue3';
 import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatAmount, formatDate } from '@/utils/formatters';
-import type { InvoiceResource } from '@/types';
+import type { DashboardRecentInvoice } from '@/Pages/Dashboard/Utils/types';
 
 defineProps<{
-    recent_invoices: InvoiceResource[]
+    recent_invoices: DashboardRecentInvoice[]
     currency_symbol: string
 }>();
 

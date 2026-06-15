@@ -33,7 +33,7 @@ class DashboardService
      *   number:string|null,
      *   recipient_name:string|null,
      *   total_price:float,
-     *   status_name:string|null,
+     *   invoice_status:array{id:int,code:string,name:string}|null,
      *   created_at:string|null
      * }>
      */
@@ -58,7 +58,11 @@ class DashboardService
             'number' => $i->number,
             'recipient_name' => $i->recipient_name,
             'total_price' => (float) $i->total_price,
-            'status_name' => $i->invoiceStatus?->name,
+            'invoice_status' => $i->invoiceStatus !== null ? [
+                'id' => $i->invoiceStatus->id,
+                'code' => $i->invoiceStatus->code,
+                'name' => $i->invoiceStatus->name,
+            ] : null,
             'created_at' => $i->created_at?->toDateString(),
         ])->values()->all();
     }
