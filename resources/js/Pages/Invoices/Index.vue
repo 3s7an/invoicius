@@ -15,46 +15,45 @@
                 @edit="openEdit"
             />
 
-            <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
-                <DataTable :value="invoices" tableStyle="min-width: 50rem">
-                    <Column field="number" header="Číslo faktúry" />
-                    <Column field="recipient_name" header="Klient" />
-                    <Column field="created_at" header="Vytvorené">
-                        <template #body="{ data }">{{ formatDate(data.created_at) }}</template>
-                    </Column>
-                    <Column field="total_price" header="Suma">
-                        <template #body="{ data }">{{ formatAmount(data.total_price) }} €</template>
-                    </Column>
-                    <Column field="invoice_status_id" header="Stav">
-                        <template #body="{ data }">
-                            <AppSelect
-                                :model-value="data.invoice_status_id"
-                                :options="statusOptions"
-                                size="small"
-                                @update:model-value="(value: unknown) => updateStatus(data, value)"
-                            />
-                        </template>
-                    </Column>
-                    <Column header="Akcie">
-                        <template #body="{ data }">
-                            <a :href="route('invoices.pdf', data.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Stiahnuť PDF">
-                                <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
-                            </a>
-                            <Button
-                                icon="pi pi-pencil"
-                                class="p-button-text p-button-sm"
-                                title="Upraviť"
-                                @click="openEdit(data)"
-                            />
-                            <Button
-                                icon="pi pi-trash"
-                                class="p-button-text p-button-sm p-button-danger"
-                                title="Zmazať"
-                                @click="confirmDeleteInvoice(data)"
-                            />
-                        </template>
-                    </Column>
-                </DataTable>
+            <div class="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm overflow-x-auto">
+                <table class="w-full border-collapse text-sm" style="min-width:660px">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th v-for="h in ['Číslo faktúry','Klient','Vytvorené','Suma','Stav','']" :key="h"
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500 whitespace-nowrap"
+                                :class="h === 'Suma' ? 'text-right' : ''"
+>
+                                {{ h }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="invoice in invoices" :key="invoice.id" class="border-b border-gray-100 last:border-0 hover:bg-gray-50/50 transition-colors">
+                            <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">{{ invoice.number }}</td>
+                            <td class="px-4 py-3 text-gray-700">{{ invoice.recipient_name || '—' }}</td>
+                            <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ invoice.created_at ? formatDate(invoice.created_at) : '—' }}</td>
+                            <td class="px-4 py-3 text-right font-semibold tabular-nums text-gray-900 whitespace-nowrap">{{ formatAmount(invoice.total_price) }} €</td>
+                            <td class="px-4 py-3" style="width:180px">
+                                <AppSelect
+                                    :model-value="invoice.invoice_status_id"
+                                    :options="statusOptions"
+                                    size="small"
+                                    @update:model-value="(value: unknown) => updateStatus(invoice, value)"
+                                />
+                            </td>
+                            <td class="px-4 py-3 text-right whitespace-nowrap">
+                                <a :href="route('invoices.pdf', invoice.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Stiahnuť PDF">
+                                    <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
+                                </a>
+                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" @click="openEdit(invoice)" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" title="Zmazať" @click="confirmDeleteInvoice(invoice)" />
+                            </td>
+                        </tr>
+                        <tr v-if="invoices.length === 0">
+                            <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">Zatiaľ nemáte žiadne faktúry.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -80,8 +79,6 @@ import PageHeader from '@/Components/PageHeader.vue';
 import InvoiceCardList from '@/Pages/Invoices/Components/InvoiceCardList.vue';
 import InvoiceDrawer from '@/Pages/Invoices/Components/InvoiceDrawer.vue';
 import { Head, router } from '@inertiajs/vue3';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
 import type { InvoiceResource, InvoiceStatusResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
