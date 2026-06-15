@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import Card from 'primevue/card';
 import InvoiceStatsPie from '@/Components/InvoiceStatsPie.vue';
 import type { InvoiceStats, DashboardCounts } from '../Utils/types';
 
-interface StatCard {
+interface StatCardDef {
     key: string
     label: string
     hint: string
@@ -18,7 +17,7 @@ defineProps<{
     counts: DashboardCounts
 }>();
 
-const statCards: StatCard[] = [
+const statCards: StatCardDef[] = [
     {
         key: 'invoices',
         label: 'Faktúry',
@@ -37,8 +36,8 @@ const statCards: StatCard[] = [
     },
     {
         key: 'automatizations',
-        label: 'Automatizácie',
-        hint: 'aktívne',
+        label: 'Aktívne automatizácie',
+        hint: 'bežia automaticky',
         icon: 'pi pi-bolt',
         iconClass: 'text-amber-600 bg-amber-50',
         value: (counts) => counts.automatizations_active,
@@ -47,31 +46,29 @@ const statCards: StatCard[] = [
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-4">
         <div class="grid gap-4 sm:grid-cols-3">
-            <Card
+            <div
                 v-for="card in statCards"
                 :key="card.key"
-                class="shadow-sm"
+                class="overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
             >
-                <template #content>
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm font-medium text-gray-700">{{ card.label }}</p>
-                            <p class="mt-2 text-2xl font-semibold tabular-nums text-gray-900">
-                                {{ card.value(counts) }}
-                            </p>
-                            <p class="mt-1 text-xs text-gray-500">{{ card.hint }}</p>
-                        </div>
-                        <span
-                            class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-                            :class="card.iconClass"
-                        >
-                            <i :class="[card.icon, 'text-lg']" aria-hidden="true" />
-                        </span>
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="text-[13px] font-medium text-gray-500">{{ card.label }}</p>
+                        <p class="mt-2 text-[28px] font-bold tabular-nums text-gray-900 leading-none">
+                            {{ card.value(counts) }}
+                        </p>
+                        <p class="mt-1.5 text-xs text-gray-500">{{ card.hint }}</p>
                     </div>
-                </template>
-            </Card>
+                    <span
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                        :class="card.iconClass"
+                    >
+                        <i :class="[card.icon, 'text-lg']" aria-hidden="true" />
+                    </span>
+                </div>
+            </div>
         </div>
 
         <InvoiceStatsPie

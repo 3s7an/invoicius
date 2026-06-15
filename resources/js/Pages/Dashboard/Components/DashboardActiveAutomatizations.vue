@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
-import Tag from 'primevue/tag';
 import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatDate } from '@/utils/formatters';
 import type { ActiveAutomatization } from '../Utils/types';
@@ -16,75 +12,46 @@ defineProps<{
 <template>
     <DashboardPanel title="Aktívne automatizácie">
         <template #actions>
-            <Link :href="route('automatizations.index')">
-                <Button label="Spravovať" icon="pi pi-cog" link size="small" />
+            <Link
+                :href="route('automatizations.index')"
+                class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
+            >
+                Spravovať
+                <i class="pi pi-cog text-xs" aria-hidden="true" />
             </Link>
         </template>
 
         <div
             v-if="active_automatizations.length === 0"
-            class="flex flex-col items-center justify-center px-5 py-10 text-center sm:px-6"
+            class="flex flex-col items-center justify-center px-5 py-10 text-center"
         >
             <i class="pi pi-bolt mb-3 text-3xl text-gray-300" aria-hidden="true" />
-            <p class="text-sm text-gray-600">Zatiaľ nemáš žiadne aktívne automatizácie.</p>
-            <Link :href="route('automatizations.create')" class="mt-4">
-                <Button label="Nová automatizácia" icon="pi pi-plus" size="small" />
-            </Link>
+            <p class="text-sm text-gray-500">Zatiaľ nemáš žiadne aktívne automatizácie.</p>
         </div>
 
-        <template v-else>
-            <ul class="divide-y divide-gray-200 px-5 sm:px-6 md:hidden">
-                <li
+        <table v-else style="width:100%; border-collapse:collapse; font-size:14px;">
+            <tbody>
+                <tr
                     v-for="automatization in active_automatizations"
                     :key="automatization.id"
-                    class="py-3 first:pt-4 last:pb-4"
+                    style="border-bottom:1px solid var(--border-subtle);"
                 >
-                    <div class="flex items-start justify-between gap-3">
-                        <div class="min-w-0">
-                            <p class="text-sm font-medium text-gray-900">{{ automatization.type_label }}</p>
-                            <p class="mt-0.5 truncate text-xs text-gray-500">
-                                {{ automatization.recipient_label || 'Pre všetkých klientov' }}
-                            </p>
-                            <p class="mt-1 text-xs text-gray-500">
-                                Ďalšie:
-                                {{ automatization.date_trigger ? formatDate(automatization.date_trigger) : '—' }}
-                            </p>
+                    <td style="padding:12px 20px;">
+                        <div style="font-weight:500; color:var(--text-strong);">{{ automatization.type_label }}</div>
+                        <div style="font-size:12px; color:var(--text-muted);">
+                            {{ automatization.recipient_label || 'Pre všetkých klientov' }}
                         </div>
-                        <Tag value="Aktívne" severity="success" rounded class="shrink-0" />
-                    </div>
-                </li>
-            </ul>
-
-            <div class="hidden overflow-hidden md:block">
-                <DataTable
-                    :value="active_automatizations"
-                    size="small"
-                    class="text-sm"
-                >
-                    <Column field="type_label" header="Typ">
-                        <template #body="{ data }">
-                            <span class="text-sm font-medium text-gray-900">{{ data.type_label }}</span>
-                        </template>
-                    </Column>
-                    <Column field="recipient_label" header="Klient">
-                        <template #body="{ data }">
-                            <span class="block truncate text-gray-600">
-                                {{ data.recipient_label || 'Pre všetkých klientov' }}
-                            </span>
-                        </template>
-                    </Column>
-                    <Column field="date_trigger" header="Ďalšie spustenie">
-                        <template #body="{ data }">
-                            {{ data.date_trigger ? formatDate(data.date_trigger) : '—' }}
-                        </template>
-                    </Column>
-                    <Column header="Stav">
-                        <template #body>
-                            <Tag value="Aktívne" severity="success" rounded />
-                        </template>
-                    </Column>
-                </DataTable>
-            </div>
-        </template>
+                    </td>
+                    <td style="padding:12px 8px; color:var(--text-muted); font-size:13px; white-space:nowrap;">
+                        Ďalšie: {{ automatization.date_trigger ? formatDate(automatization.date_trigger) : '—' }}
+                    </td>
+                    <td style="padding:12px 20px; text-align:right;">
+                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                            Aktívne
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </DashboardPanel>
 </template>
