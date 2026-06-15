@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\RecipientResource;
 use App\Services\RecipientService;
 use App\Http\Requests\StoreRecipientRequest;
 use App\Http\Requests\UpdateRecipientRequest;
@@ -52,12 +53,13 @@ class RecipientController extends Controller
             ->with('success', 'Odberateľ bol vytvorený.');
     }
 
-    public function edit(Recipient $recipient): Response
+    public function edit(Request $request, Recipient $recipient): Response
     {
         $this->authorize('update', $recipient);
 
-        return Inertia::render('Recipients/Edit', [
-            'recipient' => $recipient,
+        return Inertia::render('Recipients/Index', [
+            'recipients'        => $this->recipientService->listForUser($request->user()->id),
+            'editing_recipient' => RecipientResource::make($recipient),
         ]);
     }
 

@@ -5,19 +5,18 @@
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             <PageHeader title="Faktúry">
                 <template #actions>
-                    <Link :href="route('invoices.create')">
-                        <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" />
-                    </Link>
+                    <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" @click="openCreate" />
                 </template>
             </PageHeader>
             <InvoiceCardList
                 class="lg:hidden"
                 :invoices="invoices"
                 :invoice_statuses="invoice_statuses"
+                @edit="openEdit"
             />
 
             <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
-                    <DataTable :value="invoices" tableStyle="min-width: 50rem">
+                <DataTable :value="invoices" tableStyle="min-width: 50rem">
                     <Column field="number" header="Číslo faktúry" />
                     <Column field="recipient_name" header="Klient" />
                     <Column field="created_at" header="Vytvorené">
@@ -41,9 +40,12 @@
                             <a :href="route('invoices.pdf', data.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Stiahnuť PDF">
                                 <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
                             </a>
-                            <Link :href="route('invoices.edit', data.id)">
-                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
-                            </Link>
+                            <Button
+                                icon="pi pi-pencil"
+                                class="p-button-text p-button-sm"
+                                title="Upraviť"
+                                @click="openEdit(data)"
+                            />
                             <Button
                                 icon="pi pi-trash"
                                 class="p-button-text p-button-sm p-button-danger"
@@ -53,23 +55,36 @@
                         </template>
                     </Column>
                 </DataTable>
-                </div>
+            </div>
         </div>
     </AuthenticatedLayout>
+
+    <InvoiceDrawer
+        :key="editingInvoice?.id ?? 'create'"
+        :show="showDrawer"
+        :invoice="editingInvoice"
+        :recipients="recipients"
+        :suggested-number="suggested_number"
+        :currencies="currencies"
+        :vat-types="vat_types"
+        :default-currency-id="default_currency_id"
+        @close="showDrawer = false"
+    />
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import AppSelect from '@/Components/AppSelect.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import InvoiceCardList from '@/Pages/Invoices/Components/InvoiceCardList.vue';
-import { computed } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import InvoiceDrawer from '@/Pages/Invoices/Components/InvoiceDrawer.vue';
+import { Head, router } from '@inertiajs/vue3';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
-import type { InvoiceResource, InvoiceStatusResource } from '@/types';
+import type { InvoiceResource, InvoiceStatusResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
 
 interface InvoiceStats {
     total_invoiced: number
@@ -83,7 +98,26 @@ const props = defineProps<{
     invoices: InvoiceResource[]
     invoice_stats: InvoiceStats
     invoice_statuses: InvoiceStatusResource[]
+    recipients: RecipientResource[]
+    currencies: CurrencyResource[]
+    vat_types: VatTypeResource[]
+    suggested_number: string
+    default_currency_id?: number | null
+    editing_invoice?: InvoiceResource | null
 }>();
+
+const showDrawer = ref(!!props.editing_invoice);
+const editingInvoice = ref<InvoiceResource | null>(props.editing_invoice ?? null);
+
+function openCreate() {
+    editingInvoice.value = null;
+    showDrawer.value = true;
+}
+
+function openEdit(invoice: InvoiceResource) {
+    editingInvoice.value = invoice;
+    showDrawer.value = true;
+}
 
 const statusOptions = computed(() =>
     (props.invoice_statuses || []).map((s) => ({

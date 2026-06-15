@@ -1,14 +1,12 @@
 <template>
-    <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-        <h3 class="text-lg font-medium text-gray-900">Klient</h3>
-        <p class="mt-1 text-sm text-gray-600">
-            {{ description }}
-        </p>
+    <div :class="card ? 'overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50' : ''">
+        <template v-if="card">
+            <h3 class="text-lg font-medium text-gray-900">Klient</h3>
+            <p class="mt-1 text-sm text-gray-600">{{ description }}</p>
+        </template>
 
-        <div class="mt-6">
-            <label for="invoice-recipient-search" class="block text-sm font-medium text-gray-700">
-                Vyberte klienta alebo vytvorte nového
-            </label>
+        <div :class="card ? 'mt-6' : ''">
+            <InputLabel for="invoice-recipient-search" value="Vyberte klienta" />
             <AutoComplete
                 id="invoice-recipient-search"
                 v-model="selectedRecipient"
@@ -39,7 +37,7 @@
             </AutoComplete>
         </div>
 
-        <div class="mt-6 border-t border-gray-200 pt-6">
+        <div :class="card ? 'mt-6 border-t border-gray-200 pt-6' : 'mt-4'">
             <RecipientForm
                 variant="section"
                 fields-mode="invoice"
@@ -55,6 +53,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import AutoComplete from 'primevue/autocomplete';
 import { Link } from '@inertiajs/vue3';
+import InputLabel from '@/Components/InputLabel.vue';
 import RecipientForm from '@/Pages/Recipients/Components/RecipientForm.vue';
 import {
     recipientDetailsFromRecipient,
@@ -72,6 +71,7 @@ interface Props {
     recipient: RecipientSectionData
     description: string
     errors?: Record<string, string | undefined>
+    card?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -79,6 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
     preselectedRecipient: null,
     recipientId: null,
     errors: () => ({}),
+    card: true,
 });
 
 const emit = defineEmits<{

@@ -98,7 +98,7 @@ class RecipientControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('recipients.edit', $recipient));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('Recipients/Edit'));
+        $response->assertInertia(fn ($page) => $page->component('Recipients/Index'));
     }
 
     public function test_user_can_update_recipient(): void

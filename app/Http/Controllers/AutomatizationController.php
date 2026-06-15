@@ -26,10 +26,14 @@ class AutomatizationController extends Controller
 
     public function index(Request $request): Response
     {
-        $automatizations = $this->automatizationService->listForUser($request->user()->id);
+        $userId = $request->user()->id;
+        $automatizations = $this->automatizationService->listForUser($userId);
+        $recipients = $this->recipientService->listForUser($userId);
 
         return Inertia::render('Automatizations/Index', [
-            'automatizations' => $automatizations,
+            'automatizations'      => $automatizations,
+            'recipients'           => $recipients,
+            'automatization_types' => AutomatizationType::optionsForFrontend(),
         ]);
     }
 
@@ -47,14 +51,15 @@ class AutomatizationController extends Controller
     {
         $this->authorize('update', $automatization);
 
-        $recipients = $this->recipientService->listForUser($request->user()->id);
-
+        $userId = $request->user()->id;
+        $recipients = $this->recipientService->listForUser($userId);
         $automatization->loadMissing(['recipient']);
 
-        return Inertia::render('Automatizations/Edit', [
-            'automatization' => $automatization,
-            'recipients' => $recipients,
-            'automatization_types' => AutomatizationType::optionsForFrontend(),
+        return Inertia::render('Automatizations/Index', [
+            'automatizations'        => $this->automatizationService->listForUser($userId),
+            'recipients'             => $recipients,
+            'automatization_types'   => AutomatizationType::optionsForFrontend(),
+            'editing_automatization' => $automatization,
         ]);
     }
 

@@ -14,7 +14,6 @@ use App\Http\Requests\UpdateInvoiceStatusRequest;
 use App\Models\Invoice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Services\InvoicePdfService;
@@ -30,13 +29,9 @@ class InvoiceController extends Controller
 
     public function index(Request $request): Response
     {
-        $data = $this->invoiceFormDataService->forIndex($request->user()->id);
+        $data = $this->invoiceFormDataService->forIndexWithFormDeps($request->user()->id);
 
-        return Inertia::render('Invoices/Index', [
-            'invoices' => $data['invoices'],
-            'invoice_stats' => $data['invoice_stats'],
-            'invoice_statuses' => $data['invoice_statuses'],
-        ]);
+        return Inertia::render('Invoices/Index', $data);
     }
 
     public function create(Request $request): Response
@@ -69,9 +64,15 @@ class InvoiceController extends Controller
     {
         $this->authorize('view', $invoice);
 
-        $data = $this->invoiceFormDataService->forEdit($invoice, $request->user()->id);
+        $userId = $request->user()->id;
+        $editData = $this->invoiceFormDataService->forEdit($invoice, $userId);
+        $indexData = $this->invoiceFormDataService->forIndexWithFormDeps($userId);
 
-        return Inertia::render('Invoices/Edit', $data);
+        return Inertia::render('Invoices/Index', [
+            ...$indexData,
+            'editing_invoice'     => $editData['invoice'],
+            'default_currency_id' => $editData['default_currency_id'],
+        ]);
     }
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice): RedirectResponse

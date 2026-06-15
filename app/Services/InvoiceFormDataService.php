@@ -37,6 +37,18 @@ class InvoiceFormDataService
         ];
     }
 
+    public function forIndexWithFormDeps(int $userId): array
+    {
+        $user = User::find($userId);
+
+        return [
+            ...$this->forIndex($userId),
+            ...$this->sharedFormReferenceData($userId),
+            'suggested_number'    => $this->invoiceService->getSuggestedNumber($userId),
+            'default_currency_id' => $user?->currency_id,
+        ];
+    }
+
     public function forCreate(int $userId, ?int $createdRecipientId): array
     {
         $user = User::find($userId);

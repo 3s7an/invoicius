@@ -20,21 +20,27 @@ const emit = defineEmits(['close']);
 const dialog = ref();
 const showSlot = ref(props.show);
 
+function openDialog() {
+    document.body.style.overflow = 'hidden';
+    showSlot.value = true;
+    dialog.value?.showModal();
+}
+
+function closeDialog() {
+    document.body.style.overflow = '';
+    setTimeout(() => {
+        dialog.value?.close();
+        showSlot.value = false;
+    }, 200);
+}
+
 watch(
     () => props.show,
-    () => {
-        if (props.show) {
-            document.body.style.overflow = 'hidden';
-            showSlot.value = true;
-
-            dialog.value?.showModal();
+    (show) => {
+        if (show) {
+            openDialog();
         } else {
-            document.body.style.overflow = '';
-
-            setTimeout(() => {
-                dialog.value?.close();
-                showSlot.value = false;
-            }, 200);
+            closeDialog();
         }
     },
 );
@@ -55,7 +61,12 @@ const closeOnEscape = (e) => {
     }
 };
 
-onMounted(() => document.addEventListener('keydown', closeOnEscape));
+onMounted(() => {
+    document.addEventListener('keydown', closeOnEscape);
+    if (props.show) {
+        openDialog();
+    }
+});
 
 onUnmounted(() => {
     document.removeEventListener('keydown', closeOnEscape);

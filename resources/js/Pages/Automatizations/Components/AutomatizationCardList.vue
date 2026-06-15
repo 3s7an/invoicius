@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import { formatDate } from '@/utils/formatters';
 import Button from 'primevue/button';
 import { useAutomatizationActions } from '@/Pages/Automatizations/Composables/automatizationActions';
@@ -10,6 +9,8 @@ const { toggleActive, confirmDelete } = useAutomatizationActions();
 defineProps<{
     automatizations: Automatization[]
 }>();
+
+const emit = defineEmits<{ edit: [Automatization] }>();
 </script>
 
 <template>
@@ -45,9 +46,12 @@ defineProps<{
                     :title="automatization.is_active ? 'Deaktivovať' : 'Aktivovať'"
                     @click="toggleActive(automatization)"
                 />
-                <Link :href="route('automatizations.edit', automatization.id)">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
-                </Link>
+                <Button
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-sm"
+                    title="Upraviť"
+                    @click="emit('edit', automatization)"
+                />
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"

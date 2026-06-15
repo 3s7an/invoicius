@@ -89,7 +89,7 @@ class InvoiceControllerTest extends TestCase
         $response = $this->actingAs($this->user)->get(route('invoices.edit', $invoice));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page->component('Invoices/Edit'));
+        $response->assertInertia(fn ($page) => $page->component('Invoices/Index'));
     }
 
     public function test_user_can_update_invoice(): void

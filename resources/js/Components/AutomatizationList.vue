@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import { formatDate } from '@/utils/formatters';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -12,6 +11,8 @@ const { toggleActive, confirmDelete } = useAutomatizationActions();
 defineProps<{
     automatizations: Automatization[]
 }>();
+
+const emit = defineEmits<{ edit: [Automatization] }>();
 </script>
 
 <template>
@@ -42,13 +43,12 @@ defineProps<{
                     :title="data.is_active ? 'Deaktivovať' : 'Aktivovať'"
                     @click="toggleActive(data)"
                 />
-                <Link :href="route('automatizations.edit', data.id)">
-                    <Button
-                        icon="pi pi-pencil"
-                        class="p-button-text p-button-sm"
-                        title="Upraviť"
-                    />
-                </Link>
+                <Button
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-sm"
+                    title="Upraviť"
+                    @click="emit('edit', data)"
+                />
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"

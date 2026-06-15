@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
 import type { RecipientResource } from '@/types';
 
 defineProps<{
     recipients: RecipientResource[]
 }>();
+
+const emit = defineEmits<{ edit: [RecipientResource] }>();
 
 function displayName(recipient: RecipientResource): string {
     return recipient.company_name || recipient.name || '—';
@@ -46,9 +48,12 @@ function confirmDeleteRecipient(recipient: RecipientResource): void {
             </dl>
 
             <div class="mt-4 flex items-center justify-end gap-1 border-t border-gray-100 pt-3">
-                <Link :href="route('recipients.edit', recipient.id)">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
-                </Link>
+                <Button
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-sm"
+                    title="Upraviť"
+                    @click="emit('edit', recipient)"
+                />
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"

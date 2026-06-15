@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Link, router } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import AppSelect from '@/Components/AppSelect.vue';
 import Button from 'primevue/button';
 import { formatAmount, formatDate } from '@/utils/formatters';
@@ -10,6 +10,8 @@ const props = defineProps<{
     invoices: InvoiceResource[]
     invoice_statuses: InvoiceStatusResource[]
 }>();
+
+const emit = defineEmits<{ edit: [InvoiceResource] }>();
 
 const statusOptions = computed(() =>
     (props.invoice_statuses ?? []).map((s) => ({
@@ -81,9 +83,12 @@ function confirmDeleteInvoice(invoice: InvoiceResource): void {
                 >
                     <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
                 </a>
-                <Link :href="route('invoices.edit', invoice.id)">
-                    <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" />
-                </Link>
+                <Button
+                    icon="pi pi-pencil"
+                    class="p-button-text p-button-sm"
+                    title="Upraviť"
+                    @click="emit('edit', invoice)"
+                />
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"

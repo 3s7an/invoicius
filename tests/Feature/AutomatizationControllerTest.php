@@ -124,8 +124,8 @@ class AutomatizationControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
-            ->component('Automatizations/Edit')
-            ->has('automatization')
+            ->component('Automatizations/Index')
+            ->has('editing_automatization')
             ->has('recipients')
             ->has('automatization_types'));
     }

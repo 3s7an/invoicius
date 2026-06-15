@@ -1,15 +1,34 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AutomatizationList from '@/Components/AutomatizationList.vue';
 import AutomatizationCardList from '@/Pages/Automatizations/Components/AutomatizationCardList.vue';
+import AutomatizationFormModal from '@/Pages/Automatizations/Components/AutomatizationFormModal.vue';
 import PageHeader from '@/Components/PageHeader.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import Button from 'primevue/button';
-import type { Automatization } from './Utils/types';
+import type { Automatization, AutomatizationTypeOption } from './Utils/types';
+import type { RecipientResource } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     automatizations: Automatization[]
+    recipients: RecipientResource[]
+    automatization_types: AutomatizationTypeOption[]
+    editing_automatization?: Automatization | null
 }>();
+
+const showModal = ref(!!props.editing_automatization);
+const editingAutomatization = ref<Automatization | null>(props.editing_automatization ?? null);
+
+function openCreate() {
+    editingAutomatization.value = null;
+    showModal.value = true;
+}
+
+function openEdit(automatization: Automatization) {
+    editingAutomatization.value = automatization;
+    showModal.value = true;
+}
 </script>
 
 <template>
@@ -19,20 +38,23 @@ defineProps<{
         <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
             <PageHeader title="Automatizácie">
                 <template #actions>
-                    <Link :href="route('automatizations.create')">
-                        <Button
-                            label="Nová automatizácia"
-                            icon="pi pi-plus"
-                            class="p-button-raised p-button-sm"
-                        />
-                    </Link>
+                    <Button
+                        label="Nová automatizácia"
+                        icon="pi pi-plus"
+                        class="p-button-raised p-button-sm"
+                        @click="openCreate"
+                    />
                 </template>
             </PageHeader>
 
             <div v-if="automatizations.length">
-                <AutomatizationCardList class="lg:hidden" :automatizations="automatizations" />
+                <AutomatizationCardList
+                    class="lg:hidden"
+                    :automatizations="automatizations"
+                    @edit="openEdit"
+                />
                 <div class="hidden overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm lg:block">
-                    <AutomatizationList :automatizations="automatizations" />
+                    <AutomatizationList :automatizations="automatizations" @edit="openEdit" />
                 </div>
             </div>
             <div v-else class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -42,4 +64,13 @@ defineProps<{
             </div>
         </div>
     </AuthenticatedLayout>
+
+    <AutomatizationFormModal
+        :key="editingAutomatization?.id ?? 'create'"
+        :show="showModal"
+        :automatization="editingAutomatization"
+        :recipients="recipients"
+        :automatization-types="automatization_types"
+        @close="showModal = false"
+    />
 </template>

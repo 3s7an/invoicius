@@ -23,7 +23,7 @@ function firstErrorMatching(errors: Record<string, string>, prefixes: string[]):
     return key ? errors[key] : undefined;
 }
 
-function displayErrors(errors: Record<string, string>) {
+function displayErrors(errors: Record<string, string>): Record<string, string | undefined> {
     return {
         ...errors,
         issuer_name: errors['issuer.name'] ?? errors.issuer_name,
