@@ -30,7 +30,7 @@ const {
     <Head title="Profil" />
 
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6">
             <PageHeader title="Profil" />
                 <div
                     class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-8"

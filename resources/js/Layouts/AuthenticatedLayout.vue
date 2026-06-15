@@ -194,7 +194,7 @@ watch(() => page.url, () => {
             >
                 <div
                     v-if="showFlash && (flash.success || flash.error)"
-                    class="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8"
+                    class=""
                 >
                     <div
                         class="flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium shadow-sm"
@@ -206,7 +206,7 @@ watch(() => page.url, () => {
                 </div>
             </Transition>
 
-            <main class="flex-1 py-8 pt-[calc(3.5rem+2rem)] md:pt-8">
+            <main class="flex-1 px-4 pb-6 pt-[72px] md:p-8">
                 <slot />
             </main>
         </div>

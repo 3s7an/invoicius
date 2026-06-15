@@ -35,7 +35,7 @@ function openEdit(automatization: Automatization) {
     <Head title="Automatizácie" />
 
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6">
             <PageHeader title="Automatizácie">
                 <template #actions>
                     <Button

@@ -17,7 +17,7 @@ defineProps<{
 <template>
     <Head title="Upraviť automatizáciu" />
     <AuthenticatedLayout>
-        <div class="mx-auto max-w-7xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-8">
             <PageHeader title="Upraviť automatizáciu">
                 <template #actions>
                     <Link :href="route('automatizations.index')">
