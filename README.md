@@ -4,6 +4,19 @@ Fakturačná webová aplikácia – správa faktúr a klientov, export PDF, auto
 
 **Web:** [invoicius.online](https://invoicius.online)
 
+## Screenshots
+
+<table>
+  <tr>
+    <td><img src="readme-photos/invoicius1.png" alt="Dashboard" /></td>
+    <td><img src="readme-photos/invoicius2.png" alt="Faktúry" /></td>
+  </tr>
+  <tr>
+    <td><img src="readme-photos/invoicius3.png" alt="Klienti" /></td>
+    <td><img src="readme-photos/invoicius4.png" alt="Automatizácie" /></td>
+  </tr>
+</table>
+
 ## Stack
 
 | Vrstva | Technológie |
