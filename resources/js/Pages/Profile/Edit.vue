@@ -42,11 +42,13 @@ const {
                     />
                 </div>
 
+                <!-- TODO: re-enable when ready
                 <ProfileInvoiceSettingsSection
                     :form="invoiceSettingsForm"
                     :user="user"
                     :on-submit="submitInvoiceSettings"
                 />
+                -->
 
                 <form @submit.prevent="submitBillingDetails">
                     <BillingDetailsForm

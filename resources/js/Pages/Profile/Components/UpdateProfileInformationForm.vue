@@ -8,28 +8,34 @@
         <form @submit.prevent="form.patch(route('profile.update'))" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="name" value="Meno" />
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+                <div class="relative mt-1">
+                    <i class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                    <TextInput
+                        id="name"
+                        type="text"
+                        class="block w-full pl-9"
+                        v-model="form.name"
+                        required
+                        autofocus
+                        autocomplete="name"
+                    />
+                </div>
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
             <div>
                 <InputLabel for="email" value="E-mail" />
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+                <div class="relative mt-1">
+                    <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="block w-full pl-9"
+                        v-model="form.email"
+                        required
+                        autocomplete="username"
+                    />
+                </div>
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 

@@ -8,39 +8,48 @@
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
             <div>
                 <InputLabel for="current_password" value="Aktuálne heslo" />
-                <TextInput
-                    id="current_password"
-                    ref="currentPasswordInput"
-                    v-model="form.current_password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                />
+                <div class="relative mt-1">
+                    <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                    <TextInput
+                        id="current_password"
+                        ref="currentPasswordInput"
+                        v-model="form.current_password"
+                        type="password"
+                        class="block w-full pl-9"
+                        autocomplete="current-password"
+                    />
+                </div>
                 <InputError :message="form.errors.current_password" class="mt-2" />
             </div>
 
             <div>
                 <InputLabel for="password" value="Nové heslo" />
-                <TextInput
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                    <TextInput
+                        id="password"
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        class="block w-full pl-9"
+                        autocomplete="new-password"
+                    />
+                </div>
                 <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
             <div>
                 <InputLabel for="password_confirmation" value="Potvrdenie hesla" />
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
+                <div class="relative mt-1">
+                    <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                    <TextInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="block w-full pl-9"
+                        autocomplete="new-password"
+                    />
+                </div>
                 <InputError :message="form.errors.password_confirmation" class="mt-2" />
             </div>
 

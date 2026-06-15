@@ -53,7 +53,10 @@
                 </div>
                 <div class="sm:col-span-2">
                     <InputLabel :for="id('iban')" value="IBAN" />
-                    <TextInput :id="id('iban')" type="text" class="mt-1 block w-full" v-model="form.iban" autocomplete="off" />
+                    <div class="relative mt-1">
+                        <i class="pi pi-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
+                        <TextInput :id="id('iban')" type="text" class="block w-full pl-9" v-model="form.iban" autocomplete="off" />
+                    </div>
                     <InputError class="mt-2" :message="form.errors.iban" />
                 </div>
                 <div>
