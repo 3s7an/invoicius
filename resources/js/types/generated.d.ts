@@ -98,6 +98,7 @@ declare namespace App {
                 id: number;
                 name: string | null;
                 company_name: string | null;
+                email: string | null;
                 street: string | null;
                 street_num: string | null;
                 city: string | null;
@@ -107,6 +108,8 @@ declare namespace App {
                 dic: string | null;
                 ic_dph: string | null;
                 iban: string | null;
+                invoice_count: number;
+                total_invoiced: number;
             };
             export type VatTypeResource = {
                 id: number;

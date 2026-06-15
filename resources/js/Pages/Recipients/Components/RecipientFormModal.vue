@@ -88,6 +88,21 @@ function submitModal() {
                     <InputError class="mt-1" :message="form.errors.company_name || form.errors.name" />
                 </div>
 
+                <div>
+                    <InputLabel for="modal-email" value="Email" />
+                    <div class="relative mt-1">
+                        <i class="pi pi-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" aria-hidden="true" />
+                        <TextInput
+                            id="modal-email"
+                            v-model="form.email"
+                            type="email"
+                            class="block w-full pl-9"
+                            placeholder="fakturacia@firma.sk"
+                        />
+                    </div>
+                    <InputError class="mt-1" :message="form.errors.email" />
+                </div>
+
                 <div class="grid grid-cols-2 gap-3.5">
                     <div>
                         <InputLabel for="modal-ico" value="IČO" />

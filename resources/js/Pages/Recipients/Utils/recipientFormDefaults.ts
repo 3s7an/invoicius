@@ -4,6 +4,7 @@ import type { RecipientResource } from '@/types';
 export interface RecipientFormData {
     name: string
     company_name: string
+    email: string
     street: string
     street_num: string
     city: string
@@ -31,6 +32,7 @@ export function createRecipientFormDefaults({
     return {
         name: isEdit ? (source?.name ?? '') : '',
         company_name: isEdit ? (source?.company_name ?? '') : '',
+        email: isEdit ? (source?.email ?? '') : '',
         street: isEdit ? (source?.street ?? '') : '',
         street_num: isEdit ? (source?.street_num ?? '') : '',
         city: isEdit ? (source?.city ?? '') : '',
@@ -48,6 +50,7 @@ export function recipientPayload(data: RecipientFormData) {
     return {
         name: nullIfBlank(data.name),
         company_name: nullIfBlank(data.company_name),
+        email: nullIfBlank(data.email),
         street: nullIfBlank(data.street),
         street_num: nullIfBlank(data.street_num),
         city: nullIfBlank(data.city),

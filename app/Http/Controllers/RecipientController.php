@@ -26,7 +26,7 @@ class RecipientController extends Controller
         $recipients = $this->recipientService->listForUser($request->user()->id);
 
         return Inertia::render('Recipients/Index', [
-            'recipients' => $recipients,
+            'recipients' => RecipientResource::collection($recipients),
         ]);
     }
 
@@ -58,7 +58,7 @@ class RecipientController extends Controller
         $this->authorize('update', $recipient);
 
         return Inertia::render('Recipients/Index', [
-            'recipients'        => $this->recipientService->listForUser($request->user()->id),
+            'recipients'        => RecipientResource::collection($this->recipientService->listForUser($request->user()->id)),
             'editing_recipient' => RecipientResource::make($recipient),
         ]);
     }

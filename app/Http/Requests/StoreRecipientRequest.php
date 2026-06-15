@@ -27,6 +27,7 @@ class StoreRecipientRequest extends FormRequest
             'dic' => ['nullable', 'string', 'max:50'],
             'ic_dph' => ['nullable', 'string', 'max:50'],
             'iban' => ['nullable', 'string', 'max:34'],
+            'email' => ['nullable', 'email', 'max:255'],
         ];
     }
 }

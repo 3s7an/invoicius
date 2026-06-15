@@ -21,7 +21,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $city
  * @property string|null $zip
  * @property string|null $state
+ * @property string|null $ico
+ * @property string|null $dic
+ * @property string|null $ic_dph
+ * @property string|null $iban
+ * @property string|null $email
  * @property-read User|null $user
+ * @property int|null $invoices_count
+ * @property float|null $invoices_sum_total_price
  */
 class Recipient extends Model
 {
@@ -47,6 +54,7 @@ class Recipient extends Model
         'dic',
         'ic_dph',
         'iban',
+        'email',
     ];
 
     /** @return BelongsTo<User, $this> */

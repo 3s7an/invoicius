@@ -13,6 +13,8 @@ class RecipientService
     public function listForUser(int $userId): Collection
     {
         return Recipient::forUser($userId)
+            ->withCount('invoices')
+            ->withSum('invoices', 'total_price')
             ->orderBy('company_name')
             ->orderBy('name')
             ->get();
