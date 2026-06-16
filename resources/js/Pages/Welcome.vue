@@ -249,8 +249,8 @@ function goTo(index: number) {
     transition: background var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
 }
 .nav.scrolled {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 .nav :deep(svg) { color: var(--primary); }
