@@ -9,12 +9,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipientController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     if (Auth::check()) {
         return to_route('dashboard');
     }
-    return to_route('login');
+    return Inertia::render('Welcome');
 })->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
