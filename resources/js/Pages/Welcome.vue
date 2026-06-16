@@ -249,7 +249,7 @@ function goTo(index: number) {
     transition: background var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
 }
 .nav.scrolled {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
