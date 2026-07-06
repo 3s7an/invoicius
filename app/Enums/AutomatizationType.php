@@ -36,7 +36,7 @@ enum AutomatizationType: string
         return match ($this) {
             self::InvoiceAutoGen => 'Faktúra sa vytvorí automaticky v zvolený deň.',
             self::InvoiceReport => 'Zhrnutie fakturácie za uplynulý mesiac zasielané e-mailom.',
-            self::InvoiceDueReminder => 'Upozornenie klientovi pred termínom splatnosti faktúry.',
+            self::InvoiceDueReminder => 'Upozornenie klienta na splatnosť faktúry.',
             self::InvoiceStatusAutoUpdate => 'Faktúry po splatnosti so stavom „Odoslaná“ sa automaticky označia ako „Po splatnosti“.',
         };
     }
