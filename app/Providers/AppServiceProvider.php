@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Automatizations\Handlers\InvoiceAutoGenerationHandler;
 use App\Automatizations\Handlers\InvoiceDueReminderHandler;
 use App\Automatizations\Handlers\InvoiceReportHandler;
+use App\Automatizations\Handlers\InvoiceStatusAutoUpdateHandler;
 use App\Models\Automatization;
 use App\Models\Invoice;
 use App\Models\Recipient;
@@ -33,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
             $processor->registerHandler($app->make(InvoiceAutoGenerationHandler::class));
             $processor->registerHandler($app->make(InvoiceReportHandler::class));
             $processor->registerHandler($app->make(InvoiceDueReminderHandler::class));
+            $processor->registerHandler($app->make(InvoiceStatusAutoUpdateHandler::class));
 
             return $processor;
         });

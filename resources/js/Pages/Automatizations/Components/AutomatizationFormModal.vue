@@ -32,26 +32,9 @@ const form = useForm<AutomatizationFormData>(defaultAutomatizationForm(props.aut
 const heading = computed(() => (isEdit.value ? 'Upraviť automatizáciu' : 'Nová automatizácia'));
 const submitLabel = computed(() => (isEdit.value ? 'Uložiť' : 'Vytvoriť automatizáciu'));
 
-const typeCards = [
-    {
-        value: AutomatizationType.InvoiceAutoGen,
-        icon: 'pi-file',
-        label: 'Automatické generovanie faktúr',
-        description: 'Faktúra sa vytvorí automaticky v zvolený deň.',
-    },
-    {
-        value: AutomatizationType.InvoiceReport,
-        icon: 'pi-chart-bar',
-        label: 'Mesačný report',
-        description: 'Zhrnutie fakturácie za uplynulý mesiac zasielané e-mailom.',
-    },
-    {
-        value: AutomatizationType.InvoiceDueReminder,
-        icon: 'pi-bell',
-        label: 'Pripomienka splatnosti',
-        description: 'Upozornenie klientovi pred termínom splatnosti faktúry.',
-    },
-];
+const isDailySchedule = computed(
+    () => props.automatizationTypes.find((option: AutomatizationTypeOption) => option.value === form.type)?.uses_daily_schedule ?? false,
+);
 
 const recipientOptions = computed(() =>
     props.recipients.map((r) => ({
@@ -99,7 +82,8 @@ watch(
         }
         if (type !== AutomatizationType.InvoiceDueReminder) {
             form.due_offset_days = '';
-        } else {
+        }
+        if (isDailySchedule.value) {
             form.date_trigger = todayYMD();
         }
         if (type !== AutomatizationType.InvoiceAutoGen) {
@@ -151,7 +135,7 @@ watch(
 
             <div v-if="!isEdit" class="flex flex-col gap-2.5">
                 <label
-                    v-for="card in typeCards"
+                    v-for="card in automatizationTypes"
                     :key="card.value"
                     class="flex cursor-pointer items-start gap-3.5 rounded-md border-2 p-3 transition"
                     :class="form.type === card.value
@@ -233,7 +217,7 @@ watch(
                     <InputError class="mt-1" :message="form.errors.recipient_id" />
                 </div>
 
-                <div v-if="form.type !== AutomatizationType.InvoiceDueReminder">
+                <div v-if="!isDailySchedule">
                     <InputLabel for="modal-auto-trigger" value="Dátum prvého spustenia" />
                     <DatePicker
                         inputId="modal-auto-trigger"

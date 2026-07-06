@@ -9,6 +9,7 @@ enum AutomatizationType: string
     case InvoiceAutoGen = 'invoice_auto_gen';
     case InvoiceReport = 'invoice_report';
     case InvoiceDueReminder = 'invoice_due_reminder';
+    case InvoiceStatusAutoUpdate = 'invoice_status_auto_update';
 
     public function label(): string
     {
@@ -16,6 +17,27 @@ enum AutomatizationType: string
             self::InvoiceAutoGen => 'Automatické generovanie faktúr',
             self::InvoiceReport => 'Mesačný report faktúr',
             self::InvoiceDueReminder => 'Upozornenie na splatnosť',
+            self::InvoiceStatusAutoUpdate => 'Automatická zmena stavu faktúry',
+        };
+    }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::InvoiceAutoGen => 'pi-file',
+            self::InvoiceReport => 'pi-chart-bar',
+            self::InvoiceDueReminder => 'pi-bell',
+            self::InvoiceStatusAutoUpdate => 'pi-sync',
+        };
+    }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::InvoiceAutoGen => 'Faktúra sa vytvorí automaticky v zvolený deň.',
+            self::InvoiceReport => 'Zhrnutie fakturácie za uplynulý mesiac zasielané e-mailom.',
+            self::InvoiceDueReminder => 'Upozornenie klientovi pred termínom splatnosti faktúry.',
+            self::InvoiceStatusAutoUpdate => 'Faktúry po splatnosti so stavom „Odoslaná“ sa automaticky označia ako „Po splatnosti“.',
         };
     }
 
@@ -36,7 +58,7 @@ enum AutomatizationType: string
 
     public function usesDailySchedule(): bool
     {
-        return $this === self::InvoiceDueReminder;
+        return $this === self::InvoiceDueReminder || $this === self::InvoiceStatusAutoUpdate;
     }
 
     /**
@@ -51,6 +73,8 @@ enum AutomatizationType: string
      * @return list<array{
      *   value: string,
      *   label: string,
+     *   icon: string,
+     *   description: string,
      *   requires_recipient: bool,
      *   requires_due_offset_days: bool,
      *   requires_item_names: bool,
@@ -63,6 +87,8 @@ enum AutomatizationType: string
             fn (self $type): array => [
                 'value' => $type->value,
                 'label' => $type->label(),
+                'icon' => $type->icon(),
+                'description' => $type->description(),
                 'requires_recipient' => $type->requiresRecipient(),
                 'requires_due_offset_days' => $type->requiresDueOffsetDays(),
                 'requires_item_names' => $type->requiresItemNames(),

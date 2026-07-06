@@ -26,6 +26,10 @@ const props = withDefaults(defineProps<Props>(), {
 const isEdit = computed(() => props.mode === 'edit');
 
 const form = useForm(defaultAutomatizationForm(props.automatization ?? null));
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+const isDailySchedule = computed(
+    () => props.automatization_types.find((option) => option.value === form.type)?.uses_daily_schedule ?? false,
+);
 
 watch(
     () => form.type,
@@ -35,7 +39,8 @@ watch(
         }
         if (type !== AutomatizationType.InvoiceDueReminder) {
             form.due_offset_days = '';
-        } else {
+        }
+        if (isDailySchedule.value) {
             form.date_trigger = todayYMD();
         }
         if (type !== AutomatizationType.InvoiceAutoGen) {
@@ -162,7 +167,7 @@ watch(
                         <InputError class="mt-2" :message="form.errors.recipient_id" />
                     </div>
 
-                    <div v-if="form.type !== AutomatizationType.InvoiceDueReminder">
+                    <div v-if="!isDailySchedule">
                         <InputLabel for="auto-trigger" value="Dátum prvého spustenia" />
                         <DatePicker
                             inputId="auto-trigger"

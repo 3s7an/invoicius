@@ -2,4 +2,5 @@ export const AutomatizationType = Object.freeze({
     InvoiceAutoGen: 'invoice_auto_gen',
     InvoiceReport: 'invoice_report',
     InvoiceDueReminder: 'invoice_due_reminder',
+    InvoiceStatusAutoUpdate: 'invoice_status_auto_update',
 } as const);

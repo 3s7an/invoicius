@@ -47,7 +47,8 @@ declare namespace App {
         export type AutomatizationType =
             | "invoice_auto_gen"
             | "invoice_report"
-            | "invoice_due_reminder";
+            | "invoice_due_reminder"
+            | "invoice_status_auto_update";
         export type InvoiceStatusCode = "draft" | "sent" | "paid" | "overdue";
     }
     namespace Http {

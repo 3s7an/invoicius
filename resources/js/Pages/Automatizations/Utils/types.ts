@@ -3,6 +3,8 @@ import type { AutomatizationTypeValue } from '@/types'
 export interface AutomatizationTypeOption {
     value: string
     label: string
+    icon: string
+    description: string
     requires_recipient: boolean
     requires_due_offset_days: boolean
     requires_item_names: boolean
