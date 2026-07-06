@@ -31,3 +31,6 @@ Thumbs.db
 
 # Local-only notes (never commit)
 /.local-notes
+
+# Contains MCP server auth tokens
+/.mcp.json
