@@ -126,7 +126,7 @@ function goTo(index: number) {
                         <div class="trust-label">{{ t('welcome.trust.invoiceReady') }}</div>
                     </div>
                     <div class="trust-item">
-                        <div class="trust-num">100<span>%</span></div>
+                        <div class="trust-num">SK<span>/EN</span></div>
                         <div class="trust-label">{{ t('welcome.trust.localization') }}</div>
                     </div>
                     <div class="trust-item">
@@ -206,7 +206,7 @@ function goTo(index: number) {
                         <div class="cta-tile-label">{{ t('welcome.cta.tileInvoiceReady') }}</div>
                     </div>
                     <div class="cta-tile">
-                        <div class="cta-tile-num">100<span>%</span></div>
+                        <div class="cta-tile-num">SK<span>/EN</span></div>
                         <div class="cta-tile-label">{{ t('welcome.cta.tileLocalization') }}</div>
                     </div>
                     <div class="cta-tile">
