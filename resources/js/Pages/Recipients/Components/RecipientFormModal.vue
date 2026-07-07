@@ -85,7 +85,6 @@ function submitModal() {
                             v-model="form.company_name"
                             type="text"
                             class="block w-full pl-9"
-                            :placeholder="t('recipients.modal.companyNamePlaceholder')"
                         />
                     </div>
                     <InputError class="mt-1" :message="form.errors.company_name || form.errors.name" />
@@ -100,7 +99,6 @@ function submitModal() {
                             v-model="form.email"
                             type="email"
                             class="block w-full pl-9"
-                            :placeholder="t('recipients.modal.emailPlaceholder')"
                         />
                     </div>
                     <InputError class="mt-1" :message="form.errors.email" />
@@ -109,19 +107,19 @@ function submitModal() {
                 <div class="grid grid-cols-2 gap-3.5">
                     <div>
                         <InputLabel for="modal-ico" :value="t('recipients.details.ico')" />
-                        <TextInput id="modal-ico" v-model="form.ico" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.icoPlaceholder')" />
+                        <TextInput id="modal-ico" v-model="form.ico" type="text" class="mt-1 block w-full" />
                         <InputError class="mt-1" :message="form.errors.ico" />
                     </div>
                     <div>
                         <InputLabel for="modal-dic" :value="t('recipients.details.dic')" />
-                        <TextInput id="modal-dic" v-model="form.dic" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.dicPlaceholder')" />
+                        <TextInput id="modal-dic" v-model="form.dic" type="text" class="mt-1 block w-full" />
                         <InputError class="mt-1" :message="form.errors.dic" />
                     </div>
                 </div>
 
                 <div>
                     <InputLabel for="modal-ic_dph" :value="t('recipients.details.icDph')" />
-                    <TextInput id="modal-ic_dph" v-model="form.ic_dph" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.icDphPlaceholder')" />
+                    <TextInput id="modal-ic_dph" v-model="form.ic_dph" type="text" class="mt-1 block w-full" />
                     <p class="mt-1 text-xs text-gray-500">{{ t('recipients.modal.icDphHint') }}</p>
                     <InputError class="mt-1" :message="form.errors.ic_dph" />
                 </div>
@@ -150,14 +148,13 @@ function submitModal() {
                                 v-model="form.street"
                                 type="text"
                                 class="block w-full pl-9"
-                                :placeholder="t('recipients.modal.streetPlaceholder')"
                             />
                         </div>
                         <InputError class="mt-1" :message="form.errors.street" />
                     </div>
                     <div>
                         <InputLabel for="modal-street_num" :value="t('recipients.details.streetNum')" />
-                        <TextInput id="modal-street_num" v-model="form.street_num" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.streetNumPlaceholder')" />
+                        <TextInput id="modal-street_num" v-model="form.street_num" type="text" class="mt-1 block w-full" />
                         <InputError class="mt-1" :message="form.errors.street_num" />
                     </div>
                 </div>
@@ -165,12 +162,12 @@ function submitModal() {
                 <div class="grid grid-cols-[2fr_1fr] gap-3.5">
                     <div>
                         <InputLabel for="modal-city" :value="t('recipients.details.city')" />
-                        <TextInput id="modal-city" v-model="form.city" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.cityPlaceholder')" />
+                        <TextInput id="modal-city" v-model="form.city" type="text" class="mt-1 block w-full" />
                         <InputError class="mt-1" :message="form.errors.city" />
                     </div>
                     <div>
                         <InputLabel for="modal-zip" :value="t('recipients.details.zip')" />
-                        <TextInput id="modal-zip" v-model="form.zip" type="text" class="mt-1 block w-full" :placeholder="t('recipients.modal.zipPlaceholder')" />
+                        <TextInput id="modal-zip" v-model="form.zip" type="text" class="mt-1 block w-full" />
                         <InputError class="mt-1" :message="form.errors.zip" />
                     </div>
                 </div>
