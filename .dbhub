@@ -1,0 +1,2 @@
+mysql://invoicer:invoicer@127.0.0.1:3307/invoicer
+readonly
