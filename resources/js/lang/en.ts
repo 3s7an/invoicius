@@ -285,7 +285,7 @@ export default {
             companyName: 'Company name',
             companyNamePlaceholder: 'e.g. Aurora Inc.',
             email: 'Email',
-            emailPlaceholder: 'billing@company.com',
+            emailPlaceholder: 'billing\\@company.com',
             icoPlaceholder: '12345678',
             dicPlaceholder: '2012345678',
             icDphPlaceholder: 'SK2012345678',

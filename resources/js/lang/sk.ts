@@ -285,7 +285,7 @@ export default {
             companyName: 'Názov firmy',
             companyNamePlaceholder: 'napr. Aurora s.r.o.',
             email: 'Email',
-            emailPlaceholder: 'fakturacia@firma.sk',
+            emailPlaceholder: 'fakturacia\\@firma.sk',
             icoPlaceholder: '12 345 678',
             dicPlaceholder: '2012345678',
             icDphPlaceholder: 'SK2012345678',
