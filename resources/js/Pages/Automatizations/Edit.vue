@@ -4,8 +4,11 @@ import AutomatizationForm from '@/Pages/Automatizations/Components/Automatizatio
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import type { Automatization, AutomatizationTypeOption } from './Utils/types';
 import type { RecipientResource } from '@/types';
+
+const { t } = useI18n();
 
 defineProps<{
     automatization: Automatization
@@ -15,14 +18,14 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Upraviť automatizáciu" />
+    <Head :title="t('automatizations.form.editTitle')" />
     <AuthenticatedLayout>
         <div class="space-y-8">
-            <PageHeader title="Upraviť automatizáciu">
+            <PageHeader :title="t('automatizations.form.editTitle')">
                 <template #actions>
                     <Link :href="route('automatizations.index')">
                         <Button
-                            label="Späť na automatizácie"
+                            :label="t('automatizations.backToAutomatizations')"
                             icon="pi pi-arrow-left"
                             class="p-button-raised p-button-sm"
                         />
@@ -39,4 +42,3 @@ defineProps<{
         </div>
     </AuthenticatedLayout>
 </template>
-

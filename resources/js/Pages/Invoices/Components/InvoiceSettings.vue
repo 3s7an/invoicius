@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import InputError from '@/Components/InputError.vue';
 import { prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import type { AuthUser } from '@/types/inertia';
+
+const { t } = useI18n();
 
 interface InvoiceSettingsForm {
     company_logo: File | null
@@ -60,7 +63,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     <img
                         v-if="companyLogoPreviewUrl"
                         :src="companyLogoPreviewUrl"
-                        alt="Logo firmy"
+                        :alt="t('invoices.settings.companyLogoAlt')"
                         style="width:100%; height:100%; object-fit:contain;"
                     >
                     <i v-else class="pi pi-image" style="font-size:28px; color:var(--text-faint);" aria-hidden="true" />
@@ -76,10 +79,10 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
 
             <div>
                 <p style="margin:0; font-size:14px; font-weight:500; color:var(--text-strong);">
-                    {{ hasLogo ? 'Logo nahraté' : 'Žiadne logo' }}
+                    {{ hasLogo ? t('invoices.settings.logoUploaded') : t('invoices.settings.noLogo') }}
                 </p>
                 <p style="margin:4px 0 8px; font-size:13px; color:var(--text-muted);">
-                    Kliknite na plochu a vyberte súbor.
+                    {{ t('invoices.settings.uploadHint') }}
                 </p>
                 <button
                     v-if="hasLogo && form?.company_logo"
@@ -87,7 +90,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     style="background:none; border:none; cursor:pointer; font-size:13px; color:var(--danger); padding:0;"
                     @click="clearLogo"
                 >
-                    Odstrániť logo
+                    {{ t('invoices.settings.removeLogo') }}
                 </button>
             </div>
         </div>
@@ -100,11 +103,11 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
             <img
                 v-if="companyLogoPreviewUrl"
                 :src="companyLogoPreviewUrl"
-                alt="Logo firmy"
+                :alt="t('invoices.settings.companyLogoAlt')"
                 class="h-16 w-16 rounded border border-gray-200 object-contain bg-gray-50"
             >
             <p v-else class="text-sm text-gray-500">
-                Žiadne logo. Pridajte ho v profile v sekcii Nastavenia faktúry.
+                {{ t('invoices.settings.noLogoInvoiceHint') }}
             </p>
         </div>
     </div>

@@ -1,13 +1,13 @@
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Zmena hesla</h2>
-            <p class="mt-1 text-sm text-gray-600">Používajte dlhé, náhodné heslo pre väčšiu bezpečnosť.</p>
+            <h2 class="text-lg font-medium text-gray-900">{{ t('profile.password.title') }}</h2>
+            <p class="mt-1 text-sm text-gray-600">{{ t('profile.password.description') }}</p>
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="current_password" value="Aktuálne heslo" />
+                <InputLabel for="current_password" :value="t('profile.password.current')" />
                 <div class="relative mt-1">
                     <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
                     <TextInput
@@ -23,7 +23,7 @@
             </div>
 
             <div>
-                <InputLabel for="password" value="Nové heslo" />
+                <InputLabel for="password" :value="t('profile.password.new')" />
                 <div class="relative mt-1">
                     <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
                     <TextInput
@@ -39,7 +39,7 @@
             </div>
 
             <div>
-                <InputLabel for="password_confirmation" value="Potvrdenie hesla" />
+                <InputLabel for="password_confirmation" :value="t('common.passwordConfirmation')" />
                 <div class="relative mt-1">
                     <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true" />
                     <TextInput
@@ -54,14 +54,14 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Uložiť</PrimaryButton>
+                <PrimaryButton :disabled="form.processing">{{ t('common.save') }}</PrimaryButton>
                 <Transition
                     enter-active-class="transition ease-in-out"
                     enter-from-class="opacity-0"
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Uložené.</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">{{ t('common.saved') }}</p>
                 </Transition>
             </div>
         </form>
@@ -77,6 +77,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const passwordInput = ref<{ focus: () => void } | null>(null);
 const currentPasswordInput = ref<{ focus: () => void } | null>(null);

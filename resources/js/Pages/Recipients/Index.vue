@@ -5,8 +5,11 @@ import RecipientCardList from '@/Pages/Recipients/Components/RecipientCardList.v
 import RecipientFormModal from '@/Pages/Recipients/Components/RecipientFormModal.vue';
 import { Head, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import { formatAmount } from '@/utils/formatters';
 import type { RecipientResource } from '@/types';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     recipients: RecipientResource[]
@@ -50,23 +53,23 @@ function initials(recipient: RecipientResource): string {
 }
 
 function confirmDeleteRecipient(recipient: RecipientResource): void {
-    if (!confirm(`Zmazať „${displayName(recipient)}"?`)) return;
+    if (!confirm(t('recipients.table.deleteConfirm', { name: displayName(recipient) }))) return;
     router.delete(route('recipients.destroy', recipient.id));
 }
 </script>
 
 <template>
-    <Head title="Klienti" />
+    <Head :title="t('recipients.pageTitle')" />
 
     <AuthenticatedLayout>
         <div class="space-y-6">
             <!-- Header -->
             <div class="flex items-start justify-between gap-3">
                 <div>
-                    <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Klienti</h1>
-                    <p class="mt-1 text-sm text-gray-500">{{ recipients.length }} klientov celkom</p>
+                    <h1 class="text-3xl font-semibold tracking-tight text-gray-900">{{ t('recipients.pageTitle') }}</h1>
+                    <p class="mt-1 text-sm text-gray-500">{{ t('recipients.totalCount', { count: recipients.length }) }}</p>
                 </div>
-                <Button label="Nový klient" icon="pi pi-plus" class="p-button-raised p-button-sm shrink-0" @click="openCreate" />
+                <Button :label="t('recipients.newClient')" icon="pi pi-plus" class="p-button-raised p-button-sm shrink-0" @click="openCreate" />
             </div>
 
             <!-- Search -->
@@ -75,7 +78,7 @@ function confirmDeleteRecipient(recipient: RecipientResource): void {
                 <input
                     v-model="search"
                     type="text"
-                    placeholder="Vyhľadať klienta..."
+                    :placeholder="t('recipients.searchPlaceholder')"
                     class="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
             </div>
@@ -88,11 +91,11 @@ function confirmDeleteRecipient(recipient: RecipientResource): void {
                 <table class="w-full border-collapse text-sm" style="min-width:680px">
                     <thead>
                         <tr class="border-b border-gray-200">
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">KLIENT</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">IČO</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">MESTO</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">FAKTÚRY</th>
-                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">FAKTUROVANÉ</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">{{ t('recipients.table.client') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">{{ t('recipients.table.ico') }}</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">{{ t('recipients.table.city') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">{{ t('recipients.table.invoices') }}</th>
+                            <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.05em] text-gray-500">{{ t('recipients.table.invoiced') }}</th>
                             <th class="px-4 py-3" />
                         </tr>
                     </thead>
@@ -121,13 +124,13 @@ function confirmDeleteRecipient(recipient: RecipientResource): void {
                                 {{ formatAmount(recipient.total_invoiced) }} €
                             </td>
                             <td class="px-4 py-3 text-right whitespace-nowrap">
-                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" @click="openEdit(recipient)" />
-                                <Button icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" title="Zmazať" @click="confirmDeleteRecipient(recipient)" />
+                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" :title="t('common.edit')" @click="openEdit(recipient)" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" :title="t('common.delete')" @click="confirmDeleteRecipient(recipient)" />
                             </td>
                         </tr>
                         <tr v-if="filtered.length === 0">
                             <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">
-                                {{ search ? 'Žiadny klient nezodpovedá vyhľadávaniu.' : 'Zatiaľ nemáte žiadnych klientov.' }}
+                                {{ search ? t('recipients.table.noResults') : t('recipients.table.empty') }}
                             </td>
                         </tr>
                     </tbody>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n';
 import { formatDate } from '@/utils/formatters';
 import Button from 'primevue/button';
 import { useAutomatizationActions } from '@/Pages/Automatizations/Composables/automatizationActions';
 import type { Automatization } from '../Utils/types';
 
+const { t } = useI18n();
 const { toggleActive, confirmDelete } = useAutomatizationActions();
 
 defineProps<{
@@ -28,13 +30,13 @@ const emit = defineEmits<{ edit: [Automatization] }>();
                         ? 'bg-green-100 text-green-700'
                         : 'bg-gray-100 text-gray-500'"
                 >
-                    {{ automatization.is_active ? 'Aktívne' : 'Neaktívne' }}
+                    {{ automatization.is_active ? t('automatizations.list.active') : t('automatizations.list.inactive') }}
                 </span>
             </div>
 
             <dl class="mt-3 text-sm">
                 <div class="flex justify-between gap-4">
-                    <dt class="text-gray-500">Nasledujúce spustenie</dt>
+                    <dt class="text-gray-500">{{ t('automatizations.list.nextRun') }}</dt>
                     <dd class="font-medium text-gray-900">{{ formatDate(automatization.date_trigger) }}</dd>
                 </div>
             </dl>
@@ -43,19 +45,19 @@ const emit = defineEmits<{ edit: [Automatization] }>();
                 <Button
                     :icon="automatization.is_active ? 'pi pi-pause' : 'pi pi-play'"
                     class="p-button-text p-button-sm"
-                    :title="automatization.is_active ? 'Deaktivovať' : 'Aktivovať'"
+                    :title="automatization.is_active ? t('automatizations.list.deactivate') : t('automatizations.list.activate')"
                     @click="toggleActive(automatization)"
                 />
                 <Button
                     icon="pi pi-pencil"
                     class="p-button-text p-button-sm"
-                    title="Upraviť"
+                    :title="t('common.edit')"
                     @click="emit('edit', automatization)"
                 />
                 <Button
                     icon="pi pi-trash"
                     class="p-button-text p-button-sm p-button-danger"
-                    title="Zmazať"
+                    :title="t('common.delete')"
                     @click="confirmDelete(automatization)"
                 />
             </div>

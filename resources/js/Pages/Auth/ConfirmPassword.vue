@@ -5,6 +5,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const form = useForm<{ password: string }>({ password: '' });
 
@@ -17,15 +20,15 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Potvrdenie hesla" />
+        <Head :title="t('auth.confirmPassword.title')" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Ide o zabezpečenú časť aplikácie. Pred pokračovaním prosím zadajte heslo.
+            {{ t('auth.confirmPassword.description') }}
         </div>
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="password" value="Heslo" />
+                <InputLabel for="password" :value="t('common.password')" />
                 <TextInput
                     id="password"
                     type="password"
@@ -44,7 +47,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Potvrdiť
+                    {{ t('auth.confirmPassword.submit') }}
                 </PrimaryButton>
             </div>
         </form>

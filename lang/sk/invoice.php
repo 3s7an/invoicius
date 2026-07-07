@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Faktúra',
+    'issue_date' => 'Dátum vystavenia',
+    'due_date' => 'Dátum splatnosti',
+    'variable_symbol' => 'Variabilný symbol',
+    'issuer' => 'Dodávateľ',
+    'recipient' => 'Odberateľ',
+    'company_reg_no' => 'IČO',
+    'tax_id' => 'DIČ',
+    'vat_id' => 'IČ DPH',
+    'description' => 'Popis',
+    'quantity' => 'Množstvo',
+    'unit_price' => 'Jedn. cena',
+    'total' => 'Celkom',
+    'subtotal_excl_vat' => 'Medzisúčet bez DPH',
+    'vat' => 'DPH',
+    'total_due' => 'Na úhradu',
+    'payment' => 'Platba',
+    'amount' => 'Suma',
+    'qr_payment_note' => 'QR platba (Pay by Square, SEPA)',
+    'units' => [
+        'pcs' => 'ks',
+        'hrs' => 'hod',
+        'days' => 'dni',
+        'kg' => 'kg',
+        'm' => 'm',
+        'm²' => 'm²',
+    ],
+];

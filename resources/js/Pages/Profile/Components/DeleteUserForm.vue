@@ -1,46 +1,44 @@
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Zmazať účet</h2>
+            <h2 class="text-lg font-medium text-gray-900">{{ t('profile.deleteAccount.title') }}</h2>
             <p class="mt-1 text-sm text-gray-600">
-                Po zmazaní účtu sa natrvalo odstránia všetky súvisiace údaje. Pred zmazaním si prosím stiahnite údaje,
-                ktoré chcete zachovať.
+                {{ t('profile.deleteAccount.description') }}
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Zmazať účet</DangerButton>
+        <DangerButton @click="confirmUserDeletion">{{ t('profile.deleteAccount.button') }}</DangerButton>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
-                <h2 class="text-lg font-medium text-gray-900">Naozaj chcete zmazať účet?</h2>
+                <h2 class="text-lg font-medium text-gray-900">{{ t('profile.deleteAccount.confirmTitle') }}</h2>
                 <p class="mt-1 text-sm text-gray-600">
-                    Po zmazaní účtu sa natrvalo odstránia všetky údaje. Zadajte heslo na potvrdenie trvalého zmazania
-                    účtu.
+                    {{ t('profile.deleteAccount.confirmDescription') }}
                 </p>
 
                 <div class="mt-6">
-                    <InputLabel for="password" value="Heslo" class="sr-only" />
+                    <InputLabel for="password" :value="t('common.password')" class="sr-only" />
                     <TextInput
                         id="password"
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
                         class="mt-1 block w-3/4"
-                        placeholder="Heslo"
+                        :placeholder="t('profile.deleteAccount.passwordPlaceholder')"
                         @keyup.enter="deleteUser"
                     />
                     <InputError :message="form.errors.password" class="mt-2" />
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="closeModal">Zrušiť</SecondaryButton>
+                    <SecondaryButton @click="closeModal">{{ t('common.cancel') }}</SecondaryButton>
                     <DangerButton
                         class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
-                        Zmazať účet
+                        {{ t('profile.deleteAccount.button') }}
                     </DangerButton>
                 </div>
             </div>
@@ -57,6 +55,9 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref<{ focus: () => void } | null>(null);

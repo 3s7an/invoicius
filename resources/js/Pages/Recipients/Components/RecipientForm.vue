@@ -3,7 +3,7 @@
         <PageHeader :title="heading">
             <template #actions>
                 <Link :href="route('recipients.index')">
-                    <Button label="Späť na klientov" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                    <Button :label="t('recipients.backToRecipients')" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
                 </Link>
             </template>
         </PageHeader>
@@ -12,47 +12,47 @@
             <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
                 <section>
                     <header>
-                        <h2 class="text-lg font-medium text-gray-900">Údaje o klientovi</h2>
-                        <p class="mt-1 text-sm text-gray-600">Názov, adresa a identifikátory klienta.</p>
+                        <h2 class="text-lg font-medium text-gray-900">{{ t('recipients.details.sectionTitle') }}</h2>
+                        <p class="mt-1 text-sm text-gray-600">{{ t('recipients.details.sectionDescription') }}</p>
                     </header>
 
                     <div class="mt-6 space-y-6">
                         <div class="grid gap-6 sm:grid-cols-2">
                             <div class="sm:col-span-2">
-                                <InputLabel :for="id('name')" value="Názov / obchodné meno" />
+                                <InputLabel :for="id('name')" :value="t('recipients.details.name')" />
                                 <TextInput :id="id('name')" type="text" class="mt-1 block w-full" v-model="name" />
                                 <InputError class="mt-2" :message="err('name')" />
                             </div>
 
                             <div>
-                                <InputLabel :for="id('street')" value="Ulica" />
+                                <InputLabel :for="id('street')" :value="t('recipients.details.street')" />
                                 <TextInput :id="id('street')" type="text" class="mt-1 block w-full" v-model="street" />
                                 <InputError class="mt-2" :message="err('street')" />
                             </div>
 
                             <div>
-                                <InputLabel :for="id('street_num')" value="Číslo ulice" />
+                                <InputLabel :for="id('street_num')" :value="t('recipients.details.streetNum')" />
                                 <TextInput :id="id('street_num')" type="text" class="mt-1 block w-full" v-model="streetNum" />
                                 <InputError class="mt-2" :message="err('street_num')" />
                             </div>
 
                             <div>
-                                <InputLabel :for="id('city')" value="Mesto" />
+                                <InputLabel :for="id('city')" :value="t('recipients.details.city')" />
                                 <TextInput :id="id('city')" type="text" class="mt-1 block w-full" v-model="city" />
                                 <InputError class="mt-2" :message="err('city')" />
                             </div>
 
                             <div v-if="!isInvoice">
-                                <InputLabel :for="id('zip')" value="PSČ" />
+                                <InputLabel :for="id('zip')" :value="t('recipients.details.zip')" />
                                 <TextInput :id="id('zip')" type="text" class="mt-1 block w-full" v-model="zip" />
                                 <InputError class="mt-2" :message="err('zip')" />
                             </div>
 
                             <div :class="!isInvoice ? 'sm:col-span-2' : ''">
-                                <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Krajina'" />
+                                <InputLabel :for="id('state')" :value="isInvoice ? t('recipients.details.stateOrZip') : t('recipients.details.country')" />
                                 <TextInput
                                     v-if="isInvoice"
-                                    :id="id('state')" 
+                                    :id="id('state')"
                                     type="text"
                                     class="mt-1 block w-full"
                                     v-model="state"
@@ -64,7 +64,7 @@
                                     :options="countries"
                                     option-label="name"
                                     option-value="code"
-                                    placeholder="Vyberte krajinu"
+                                    :placeholder="t('recipients.details.selectCountry')"
                                     show-clear
                                     filter
                                     class="mt-1"
@@ -73,25 +73,25 @@
                             </div>
 
                             <div>
-                                <InputLabel :for="id('ico')" value="IČO" />
+                                <InputLabel :for="id('ico')" :value="t('recipients.details.ico')" />
                                 <TextInput :id="id('ico')" type="text" class="mt-1 block w-full" v-model="ico" />
                                 <InputError class="mt-2" :message="err('ico')" />
                             </div>
 
                             <div>
-                                <InputLabel :for="id('dic')" value="DIČ" />
+                                <InputLabel :for="id('dic')" :value="t('recipients.details.dic')" />
                                 <TextInput :id="id('dic')" type="text" class="mt-1 block w-full" v-model="dic" />
                                 <InputError class="mt-2" :message="err('dic')" />
                             </div>
 
                             <div :class="isInvoice ? 'sm:col-span-2' : ''">
-                                <InputLabel :for="id('ic_dph')" value="IČ DPH" />
+                                <InputLabel :for="id('ic_dph')" :value="t('recipients.details.icDph')" />
                                 <TextInput :id="id('ic_dph')" type="text" class="mt-1 block w-full" v-model="icDph" />
                                 <InputError class="mt-2" :message="err('ic_dph')" />
                             </div>
 
                             <div :class="isInvoice ? 'sm:col-span-2' : ''">
-                                <InputLabel :for="id('iban')" value="IBAN" />
+                                <InputLabel :for="id('iban')" :value="t('recipients.details.iban')" />
                                 <TextInput :id="id('iban')" type="text" class="mt-1 block w-full" v-model="iban" />
                                 <InputError class="mt-2" :message="err('iban')" />
                             </div>
@@ -114,33 +114,33 @@
 
     <section v-else class="grid gap-6 sm:grid-cols-2">
         <div class="sm:col-span-2">
-            <InputLabel :for="id('name')" value="Názov / obchodné meno" />
+            <InputLabel :for="id('name')" :value="t('recipients.details.name')" />
             <TextInput :id="id('name')" type="text" class="mt-1 block w-full" v-model="name" />
             <InputError class="mt-2" :message="err('name')" />
         </div>
 
         <div>
-            <InputLabel :for="id('street')" value="Ulica" />
+            <InputLabel :for="id('street')" :value="t('recipients.details.street')" />
             <TextInput :id="id('street')" type="text" class="mt-1 block w-full" v-model="street" />
         </div>
 
         <div>
-            <InputLabel :for="id('street_num')" value="Číslo ulice" />
+            <InputLabel :for="id('street_num')" :value="t('recipients.details.streetNum')" />
             <TextInput :id="id('street_num')" type="text" class="mt-1 block w-full" v-model="streetNum" />
         </div>
 
         <div>
-            <InputLabel :for="id('city')" value="Mesto" />
+            <InputLabel :for="id('city')" :value="t('recipients.details.city')" />
             <TextInput :id="id('city')" type="text" class="mt-1 block w-full" v-model="city" />
         </div>
 
         <div v-if="!isInvoice">
-            <InputLabel :for="id('zip')" value="PSČ" />
+            <InputLabel :for="id('zip')" :value="t('recipients.details.zip')" />
             <TextInput :id="id('zip')" type="text" class="mt-1 block w-full" v-model="zip" />
         </div>
 
         <div :class="!isInvoice ? 'sm:col-span-2' : ''">
-            <InputLabel :for="id('state')" :value="isInvoice ? 'Štát / PSČ' : 'Krajina'" />
+            <InputLabel :for="id('state')" :value="isInvoice ? t('recipients.details.stateOrZip') : t('recipients.details.country')" />
             <TextInput
                 v-if="isInvoice"
                 :id="id('state')"
@@ -155,7 +155,7 @@
                 :options="countries"
                 option-label="name"
                 option-value="code"
-                placeholder="Vyberte krajinu"
+                :placeholder="t('recipients.details.selectCountry')"
                 show-clear
                 filter
                 class="mt-1"
@@ -163,22 +163,22 @@
         </div>
 
         <div>
-            <InputLabel :for="id('ico')" value="IČO" />
+            <InputLabel :for="id('ico')" :value="t('recipients.details.ico')" />
             <TextInput :id="id('ico')" type="text" class="mt-1 block w-full" v-model="ico" />
         </div>
 
         <div>
-            <InputLabel :for="id('dic')" value="DIČ" />
+            <InputLabel :for="id('dic')" :value="t('recipients.details.dic')" />
             <TextInput :id="id('dic')" type="text" class="mt-1 block w-full" v-model="dic" />
         </div>
 
         <div :class="isInvoice ? 'sm:col-span-2' : ''">
-            <InputLabel :for="id('ic_dph')" value="IČ DPH" />
+            <InputLabel :for="id('ic_dph')" :value="t('recipients.details.icDph')" />
             <TextInput :id="id('ic_dph')" type="text" class="mt-1 block w-full" v-model="icDph" />
         </div>
 
         <div :class="isInvoice ? 'sm:col-span-2' : ''">
-            <InputLabel :for="id('iban')" value="IBAN" />
+            <InputLabel :for="id('iban')" :value="t('recipients.details.iban')" />
             <TextInput :id="id('iban')" type="text" class="mt-1 block w-full" v-model="iban" />
         </div>
     </section>
@@ -189,13 +189,16 @@ import { computed } from 'vue';
 import Button from 'primevue/button';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import { getCountries, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import { useRecipientForm } from '../Composables/useRecipientForm';
 import type { InvoiceRecipientData, RecipientResource } from '@/types';
+
+const { t, locale } = useI18n();
 
 type FormProxy = Record<string, string | null | undefined>
 
@@ -246,7 +249,7 @@ function id(name: string): string {
 
 const isInvoice = computed(() => props.fieldsMode === 'invoice');
 
-const countries = computed(() => getCountriesSk());
+const countries = computed(() => getCountries(locale.value));
 
 function proxy(getKey: () => string, setKey: () => string) {
     return computed<string>({

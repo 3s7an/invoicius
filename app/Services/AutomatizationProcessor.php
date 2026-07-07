@@ -55,7 +55,7 @@ class AutomatizationProcessor
                         ->first();
 
                     if ($locked === null) {
-                        return AutomatizationResultDTO::failure('Automatizácia už bola spracovaná.');
+                        return AutomatizationResultDTO::failure(__('messages.automatization_already_processed'));
                     }
 
                     $result = $this->runHandler($handler, $locked);
@@ -151,7 +151,7 @@ class AutomatizationProcessor
         $this->appendFailureResult(
             $results,
             $automatization,
-            'Automatizácia nemá priradeného používateľa.',
+            __('messages.automatization_missing_user'),
         );
 
         return false;
@@ -169,7 +169,7 @@ class AutomatizationProcessor
         $this->appendFailureResult(
             $results,
             $automatization,
-            'Automatizácia nemá priradeného odberateľa.',
+            __('messages.automatization_missing_recipient'),
         );
 
         return false;

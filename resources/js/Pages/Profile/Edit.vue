@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import DeleteUserForm from './Components/DeleteUserForm.vue';
 import BillingDetailsForm from './Components/BillingDetailsForm.vue';
 import ProfileInvoiceSettingsSection from './Components/ProfileInvoiceSettingsSection.vue';
@@ -9,6 +10,8 @@ import UpdatePasswordForm from './Components/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Components/UpdateProfileInformationForm.vue';
 import { useProfileForms } from './Composables/useProfileForms';
 import type { CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 defineProps<{
     mustVerifyEmail?: boolean
@@ -27,11 +30,11 @@ const {
 </script>
 
 <template>
-    <Head title="Profil" />
+    <Head :title="t('profile.pageTitle')" />
 
     <AuthenticatedLayout>
         <div class="space-y-6">
-            <PageHeader title="Profil" />
+            <PageHeader :title="t('profile.pageTitle')" />
                 <div
                     class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-8"
                 >

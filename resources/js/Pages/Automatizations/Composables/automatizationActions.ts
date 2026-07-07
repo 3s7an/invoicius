@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/vue3';
 import type { FormDataConvertible } from '@inertiajs/core';
+import { i18n } from '@/i18n';
 import { AutomatizationType } from '@/Pages/Automatizations/Utils/automatizationTypes';
 import { toDateString } from '@/utils/formatters';
 import type { Automatization } from '../Utils/types';
@@ -36,7 +37,7 @@ export function useAutomatizationActions() {
     }
 
     function confirmDelete(automatization: Automatization): void {
-        if (!confirm(`Zmazať automatizáciu „${automatization.type_label}"?`)) return;
+        if (!confirm(i18n.global.t('automatizations.deleteConfirm', { label: automatization.type_label }))) return;
 
         router.delete(route('automatizations.destroy', automatization.id), {
             preserveScroll: true,

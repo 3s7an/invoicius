@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, reactive, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { getCountriesSk, prefixedId } from '@/Pages/Invoices/Utils/helpers';
+import { getCountries, prefixedId } from '@/Pages/Invoices/Utils/helpers';
 import type { InvoiceIssuerData } from '@/types';
 
 interface Props {
@@ -20,12 +21,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{ 'update:modelValue': [value: InvoiceIssuerData] }>();
 
+const { t, locale } = useI18n();
+
 const local = reactive({ ...props.modelValue });
 
 watch(() => props.modelValue, (val) => Object.assign(local, val), { deep: true });
 watch(local, (val) => emit('update:modelValue', { ...val }), { deep: true });
 
-const countries = computed(() => getCountriesSk());
+const countries = computed(() => getCountries(locale.value));
 
 const id = (name: string): string => prefixedId(props.idPrefix, name);
 </script>
@@ -34,17 +37,17 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
     <section>
         <header>
             <h2 class="text-lg font-medium text-gray-900">
-                Fakturačné údaje
+                {{ t('invoices.issuer.title') }}
             </h2>
             <p class="mt-1 text-sm text-gray-600">
-                Adresa vystaviteľa na faktúre.
+                {{ t('invoices.issuer.description') }}
             </p>
         </header>
 
         <div class="mt-6 space-y-6">
             <div class="grid gap-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('name')" value="Názov / firma" />
+                    <InputLabel :for="id('name')" :value="t('invoices.issuer.name')" />
                     <TextInput
                         :id="id('name')"
                         type="text"
@@ -55,7 +58,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     <InputError class="mt-2" :message="errors.issuer_name" />
                 </div>
                 <div>
-                    <InputLabel :for="id('ico')" value="IČO" />
+                    <InputLabel :for="id('ico')" :value="t('invoices.issuer.companyRegNo')" />
                     <TextInput
                         :id="id('ico')"
                         type="text"
@@ -65,7 +68,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('dic')" value="DIČ" />
+                    <InputLabel :for="id('dic')" :value="t('invoices.issuer.taxId')" />
                     <TextInput
                         :id="id('dic')"
                         type="text"
@@ -75,7 +78,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('ic_dph')" value="IČ DPH" />
+                    <InputLabel :for="id('ic_dph')" :value="t('invoices.issuer.vatId')" />
                     <TextInput
                         :id="id('ic_dph')"
                         type="text"
@@ -85,7 +88,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('street')" value="Ulica" />
+                    <InputLabel :for="id('street')" :value="t('invoices.issuer.street')" />
                     <TextInput
                         :id="id('street')"
                         type="text"
@@ -95,7 +98,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('street_num')" value="Číslo" />
+                    <InputLabel :for="id('street_num')" :value="t('invoices.issuer.streetNum')" />
                     <TextInput
                         :id="id('street_num')"
                         type="text"
@@ -105,7 +108,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('city')" value="Mesto" />
+                    <InputLabel :for="id('city')" :value="t('invoices.issuer.city')" />
                     <TextInput
                         :id="id('city')"
                         type="text"
@@ -115,7 +118,7 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div>
-                    <InputLabel :for="id('zip')" value="PSČ" />
+                    <InputLabel :for="id('zip')" :value="t('invoices.issuer.zip')" />
                     <TextInput
                         :id="id('zip')"
                         type="text"
@@ -125,14 +128,14 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
                     />
                 </div>
                 <div class="sm:col-span-2">
-                    <InputLabel :for="id('state')" value="Krajina" />
+                    <InputLabel :for="id('state')" :value="t('invoices.issuer.country')" />
                     <AppSelect
                         :inputId="id('state')"
                         v-model="local.state"
                         :options="countries"
                         option-label="name"
                         option-value="code"
-                        placeholder="Vyberte krajinu"
+                        :placeholder="t('invoices.issuer.selectCountry')"
                         show-clear
                         filter
                         class="mt-1"

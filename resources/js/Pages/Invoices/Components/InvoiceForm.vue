@@ -1,9 +1,9 @@
-﻿<template>
+<template>
     <div class="space-y-8">
         <PageHeader :title="heading">
             <template #actions>
                 <Link :href="route('invoices')">
-                    <Button label="Späť na faktúry" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
+                    <Button :label="t('invoices.backToInvoices')" icon="pi pi-arrow-left" class="p-button-raised p-button-sm" />
                 </Link>
             </template>
         </PageHeader>
@@ -65,6 +65,7 @@
 import Button from 'primevue/button';
 import PageHeader from '@/Components/PageHeader.vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import InvoiceHeaderForm from './InvoiceHeaderForm.vue';
 import InvoiceItemsTable from './InvoiceItemsTable.vue';
 import InvoiceRecipientSection from './InvoiceRecipientSection.vue';
@@ -73,6 +74,8 @@ import IssuerDetailsForm from './IssuerDetailsForm.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
 import type { AuthUser } from '@/types/inertia';
 import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 interface Props {
     mode?: 'create' | 'edit'

@@ -1,11 +1,11 @@
 <template>
-    <Head title="Faktúry" />
+    <Head :title="t('invoices.pageTitle')" />
 
     <AuthenticatedLayout>
         <div class="space-y-6">
-            <PageHeader title="Faktúry">
+            <PageHeader :title="t('invoices.pageTitle')">
                 <template #actions>
-                    <Button label="Nová faktúra" icon="pi pi-plus" class="p-button-raised p-button-sm" @click="openCreate" />
+                    <Button :label="t('invoices.newInvoice')" icon="pi pi-plus" class="p-button-raised p-button-sm" @click="openCreate" />
                 </template>
             </PageHeader>
             <InvoiceCardList
@@ -19,9 +19,9 @@
                 <table class="w-full border-collapse text-sm" style="min-width:660px">
                     <thead>
                         <tr class="border-b border-gray-200">
-                            <th v-for="h in ['Číslo faktúry','Klient','Vytvorené','Suma','Stav','']" :key="h"
+                            <th v-for="h in headers" :key="h"
                                 class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.05em] text-gray-500 whitespace-nowrap"
-                                :class="h === 'Suma' ? 'text-right' : ''"
+                                :class="h === t('invoices.table.amount') ? 'text-right' : ''"
 >
                                 {{ h }}
                             </th>
@@ -42,15 +42,15 @@
                                 />
                             </td>
                             <td class="px-4 py-3 text-right whitespace-nowrap">
-                                <a :href="route('invoices.pdf', invoice.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" title="Stiahnuť PDF">
+                                <a :href="route('invoices.pdf', invoice.id)" target="_blank" rel="noopener noreferrer" class="inline-flex" :title="t('invoices.table.downloadPdf')">
                                     <Button icon="pi pi-file-pdf" class="p-button-text p-button-sm" />
                                 </a>
-                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" title="Upraviť" @click="openEdit(invoice)" />
-                                <Button icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" title="Zmazať" @click="confirmDeleteInvoice(invoice)" />
+                                <Button icon="pi pi-pencil" class="p-button-text p-button-sm" :title="t('common.edit')" @click="openEdit(invoice)" />
+                                <Button icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" :title="t('common.delete')" @click="confirmDeleteInvoice(invoice)" />
                             </td>
                         </tr>
                         <tr v-if="invoices.length === 0">
-                            <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">Zatiaľ nemáte žiadne faktúry.</td>
+                            <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">{{ t('invoices.table.empty') }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -80,8 +80,12 @@ import InvoiceCardList from '@/Pages/Invoices/Components/InvoiceCardList.vue';
 import InvoiceDrawer from '@/Pages/Invoices/Components/InvoiceDrawer.vue';
 import { Head, router } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import { invoiceStatusLabel } from '@/Pages/Invoices/Utils/helpers';
 import type { InvoiceResource, InvoiceStatusResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 interface InvoiceStats {
     total_invoiced: number
@@ -106,6 +110,15 @@ const props = defineProps<{
 const showDrawer = ref(!!props.editing_invoice);
 const editingInvoice = ref<InvoiceResource | null>(props.editing_invoice ?? null);
 
+const headers = computed(() => [
+    t('invoices.table.number'),
+    t('invoices.table.client'),
+    t('invoices.table.created'),
+    t('invoices.table.amount'),
+    t('invoices.table.status'),
+    '',
+]);
+
 function openCreate() {
     editingInvoice.value = null;
     showDrawer.value = true;
@@ -119,7 +132,7 @@ function openEdit(invoice: InvoiceResource) {
 const statusOptions = computed(() =>
     (props.invoice_statuses || []).map((s) => ({
         value: s.id,
-        label: s.name || s.code || String(s.id),
+        label: invoiceStatusLabel(s.code, s.name),
     }))
 );
 
@@ -130,7 +143,7 @@ function updateStatus(invoice: InvoiceResource, newStatusId: unknown): void {
 }
 
 function confirmDeleteInvoice(invoice: InvoiceResource): void {
-    if (!confirm(`Zmazať faktúru ${invoice.number}?`)) return;
+    if (!confirm(t('invoices.table.deleteConfirm', { number: invoice.number }))) return;
     router.delete(route('invoices.destroy', invoice.id));
 }
 </script>

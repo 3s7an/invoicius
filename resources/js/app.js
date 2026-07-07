@@ -10,6 +10,10 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
 import { sk } from 'primelocale/js/sk.js';
+import { en } from 'primelocale/js/en.js';
+import { i18n } from './i18n';
+
+const PRIME_LOCALES = { sk, en };
 
 const InvoiciusPreset = definePreset(Aura, {
     semantic: {
@@ -39,11 +43,16 @@ createInertiaApp({
             import.meta.glob('./Pages/**/*.vue'),
         ),
     setup({ el, App, props, plugin }) {
+        const initialLocale = props.initialPage.props.locale ?? 'sk';
+        i18n.global.locale.value = initialLocale;
+        document.documentElement.lang = initialLocale;
+
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(i18n)
             .use(PrimeVue, {
-                locale: sk,
+                locale: PRIME_LOCALES[initialLocale] ?? sk,
                 theme: {
                     preset: InvoiciusPreset,
                     options: {

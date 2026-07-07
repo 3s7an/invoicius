@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ])
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
@@ -28,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 if ($e instanceof \Illuminate\Database\UniqueConstraintViolationException) {
                     return back()
                         ->withInput()
-                        ->with('error', 'Faktúra s týmto číslom už existuje. Skúste to znova.');
+                        ->with('error', __('messages.invoice_number_taken'));
                 }
                 if ($e instanceof \App\Exceptions\DuplicateInvoiceNumberException) {
                     return back()

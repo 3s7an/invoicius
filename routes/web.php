@@ -5,11 +5,14 @@ declare(strict_types=1);
 use App\Http\Controllers\AutomatizationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecipientController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::post('/locale/{locale}', [LocaleController::class, 'update'])->name('locale.update');
 
 Route::get('/', function () {
     if (Auth::check()) {

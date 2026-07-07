@@ -1,5 +1,6 @@
 import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import { createInvoiceFormDefaults, invoicePayload } from '../Utils/invoiceFormDefaults';
 import type { AuthUser } from '@/types/inertia';
 import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource, InvoiceFormData } from '@/types';
@@ -33,6 +34,7 @@ function displayErrors(errors: Record<string, string>): Record<string, string | 
 }
 
 export function useInvoiceForm(props: InvoiceFormProps, user: AuthUser | undefined) {
+    const { t } = useI18n();
     const isEdit = computed(() => props.mode === 'edit');
     const sourceInvoice = computed(() => props.invoice ?? ({} as InvoiceResource));
 
@@ -79,18 +81,18 @@ export function useInvoiceForm(props: InvoiceFormProps, user: AuthUser | undefin
 
     const heading = computed(() =>
         isEdit.value
-            ? `Upraviť faktúru ${sourceInvoice.value?.number ?? ''}`
-            : 'Nová faktúra'
+            ? t('invoices.form.editInvoice', { number: sourceInvoice.value?.number ?? '' })
+            : t('invoices.form.newInvoice')
     );
 
     const recipientDescription = computed(() =>
         isEdit.value
-            ? 'Vyhľadajte a vyberte klienta alebo upravte údaje nižšie.'
-            : 'Vyhľadajte a vyberte klienta alebo pridajte nového.'
+            ? t('invoices.recipient.descriptionEdit')
+            : t('invoices.recipient.descriptionCreate')
     );
 
-    const submitLabel = computed(() => (isEdit.value ? 'Uložiť faktúru' : 'Vytvoriť faktúru'));
-    const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
+    const submitLabel = computed(() => (isEdit.value ? t('invoices.form.saveInvoice') : t('invoices.form.createInvoice')));
+    const processingLabel = computed(() => (isEdit.value ? t('common.saving') : t('common.creating')));
     const errors = computed(() => displayErrors(form.errors));
 
     function submit(): void {

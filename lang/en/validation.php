@@ -195,6 +195,32 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'number' => 'invoice number',
+        'variable_symbol' => 'variable symbol',
+        'issue_date' => 'issue date',
+        'due_date' => 'due date',
+        'currency_id' => 'currency',
+        'issuer.name' => 'issuer name',
+        'recipient.recipient_name' => 'recipient',
+        'items' => 'items',
+        'items.*.name' => 'item name',
+        'items.*.quantity' => 'quantity',
+        'items.*.unit_price' => 'unit price',
+        'recipient_id' => 'recipient',
+        'type' => 'type',
+        'date_trigger' => 'trigger date',
+        'name' => 'name',
+        'email' => 'email',
+        'password' => 'password',
+        'password_confirmation' => 'password confirmation',
+        'current_password' => 'current password',
+        'street' => 'street',
+        'street_num' => 'street number',
+        'city' => 'city',
+        'zip' => 'zip code',
+        'state' => 'state',
+        'company_name' => 'company name',
+    ],
 
 ];

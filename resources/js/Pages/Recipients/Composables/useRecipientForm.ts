@@ -1,5 +1,6 @@
 import { computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import { createRecipientFormDefaults, recipientPayload } from '../Utils/recipientFormDefaults';
 import type { RecipientFormData } from '../Utils/recipientFormDefaults';
 import type { RecipientResource } from '@/types';
@@ -11,6 +12,7 @@ interface RecipientFormProps {
 }
 
 export function useRecipientForm(props: RecipientFormProps) {
+    const { t } = useI18n();
     const isEdit = computed(() => props.mode === 'edit');
     const sourceRecipient = computed(() => props.recipient ?? ({} as RecipientResource));
 
@@ -22,9 +24,9 @@ export function useRecipientForm(props: RecipientFormProps) {
         })
     );
 
-    const heading = computed(() => (isEdit.value ? 'Upraviť klienta' : 'Nový klient'));
-    const submitLabel = computed(() => (isEdit.value ? 'Uložiť klienta' : 'Vytvoriť klienta'));
-    const processingLabel = computed(() => (isEdit.value ? 'Ukladám...' : 'Vytváram...'));
+    const heading = computed(() => (isEdit.value ? t('recipients.modal.editTitle') : t('recipients.modal.newTitle')));
+    const submitLabel = computed(() => (isEdit.value ? t('recipients.form.saveClient') : t('recipients.form.createClient')));
+    const processingLabel = computed(() => (isEdit.value ? t('common.saving') : t('common.creating')));
 
     function submit(): void {
         const request = form.transform(recipientPayload);

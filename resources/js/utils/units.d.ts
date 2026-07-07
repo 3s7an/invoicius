@@ -1,1 +1,1 @@
-export declare const UNITS: { value: string; label: string }[];
+export declare function getUnitOptions(): { value: string; label: string }[];

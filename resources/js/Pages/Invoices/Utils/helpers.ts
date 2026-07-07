@@ -1,5 +1,6 @@
 import { FALLBACK_COUNTRY_LIST } from '@/utils/countries';
 import { toDateString } from '@/utils/formatters';
+import { i18n } from '@/i18n';
 
 export function prefixedId(prefix: string | undefined, name: string): string {
     if (!prefix) return name;
@@ -25,18 +26,32 @@ export function nullIfBlank(value: string | number | null | undefined): string |
     return value === '' || value == null ? null : value;
 }
 
-export function getCountriesSk(): { code: string; name: string }[] {
+export function getCountries(locale: string = 'sk'): { code: string; name: string }[] {
     try {
         if (typeof Intl.supportedValuesOf !== 'function') return FALLBACK_COUNTRY_LIST;
         // 'region' is a valid non-standard key supported by modern engines but absent from TS typings
         const codes = (Intl.supportedValuesOf as (key: string) => string[])('region').filter(
             (c) => c.length === 2 && c !== 'FX'
         );
-        const displayNames = new Intl.DisplayNames(['sk'], { type: 'region' });
+        const displayNames = new Intl.DisplayNames([locale], { type: 'region' });
         return codes
             .map((code) => ({ code, name: displayNames.of(code) ?? code }))
             .sort((a, b) => a.name.localeCompare(b.name));
     } catch {
         return FALLBACK_COUNTRY_LIST;
     }
+}
+
+export function invoiceStatusLabel(code: string | null | undefined, fallback?: string | null): string {
+    if (!code) return fallback ?? '—';
+
+    const key = `invoiceStatus.${code}`;
+    return i18n.global.te(key) ? i18n.global.t(key) : (fallback ?? code);
+}
+
+export function currencyName(symbol: string | null | undefined, fallback?: string | null): string {
+    if (!symbol) return fallback ?? '';
+
+    const key = `currency.${symbol}`;
+    return i18n.global.te(key) ? i18n.global.t(key) : (fallback ?? symbol);
 }

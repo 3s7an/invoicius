@@ -1,3 +1,4 @@
+import { i18n } from '@/i18n'
 import type { VatTypeResource } from '@/types'
 
 export function formatVatTypeLabel(vatType: VatTypeResource | null | undefined): string {
@@ -5,10 +6,10 @@ export function formatVatTypeLabel(vatType: VatTypeResource | null | undefined):
     const rate = Number.parseFloat(String(vatType?.rate ?? ''));
 
     if (code === 'MIMO') {
-        return 'Mimo DPH';
+        return i18n.global.t('vatType.mimo');
     }
     if (code === 'OSVO') {
-        return 'Oslobodené od DPH';
+        return i18n.global.t('vatType.osvo');
     }
     if (!Number.isNaN(rate) && code !== '') {
         return `${code} %`;

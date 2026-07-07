@@ -121,17 +121,17 @@ class PaymentQrService
     {
         $name = trim((string) ($issuer->company_name ?: $issuer->name));
 
-        return $name !== '' ? $name : 'Príjemca platby';
+        return $name !== '' ? $name : __('messages.payment_recipient_fallback');
     }
 
     private function buildPaymentNote(Invoice $invoice): string
     {
         $parts = array_filter([
-            $invoice->number ? 'Faktúra '.$invoice->number : null,
+            $invoice->number ? __('messages.payment_invoice_prefix', ['number' => $invoice->number]) : null,
             $invoice->varsym ? 'VS '.$invoice->varsym : null,
         ]);
 
-        return implode(', ', $parts) ?: 'Úhrada faktúry';
+        return implode(', ', $parts) ?: __('messages.payment_reference_fallback');
     }
 
     private function resolveCurrencyCode(Invoice $invoice): string

@@ -5,6 +5,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps<{ status?: string }>();
 
@@ -17,11 +20,10 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Zabudnuté heslo" />
+        <Head :title="t('auth.forgotPassword.title')" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Zabudli ste heslo? Žiadny problém. Zadajte svoju e-mailovú adresu
-            a pošleme vám odkaz na obnovenie hesla.
+            {{ t('auth.forgotPassword.description') }}
         </div>
 
         <div
@@ -33,7 +35,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="E-mail" />
+                <InputLabel for="email" :value="t('common.email')" />
 
                 <TextInput
                     id="email"
@@ -53,7 +55,7 @@ const submit = () => {
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Poslať odkaz na obnovenie hesla
+                    {{ t('auth.forgotPassword.submit') }}
                 </PrimaryButton>
             </div>
         </form>

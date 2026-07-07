@@ -3,6 +3,9 @@ import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{ status?: string }>();
 
@@ -19,19 +22,17 @@ const verificationLinkSent = computed(
 
 <template>
     <GuestLayout>
-        <Head title="Overenie e-mailu" />
+        <Head :title="t('auth.verifyEmail.title')" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Ďakujeme za registráciu! Pred začatím prosím overte svoju e-mailovú
-            adresu kliknutím na odkaz v e-maile, ktorý sme vám práve poslali. Ak ste
-            e-mail nedostali, radi vám pošleme ďalší.
+            {{ t('auth.verifyEmail.description') }}
         </div>
 
         <div
             class="mb-4 text-sm font-medium text-green-600"
             v-if="verificationLinkSent"
         >
-            Nový overovací odkaz bol odoslaný na e-mailovú adresu zadanú pri registrácii.
+            {{ t('auth.verifyEmail.linkSent') }}
         </div>
 
         <form @submit.prevent="submit">
@@ -40,7 +41,7 @@ const verificationLinkSent = computed(
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Znova poslať overovací e-mail
+                    {{ t('auth.verifyEmail.submit') }}
                 </PrimaryButton>
 
                 <Link
@@ -49,7 +50,7 @@ const verificationLinkSent = computed(
                     as="button"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                 >
-                    Odhlásiť sa
+                    {{ t('nav.logout') }}
                 </Link>
             </div>
         </form>
