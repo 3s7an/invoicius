@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Head, usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import DashboardHero from '@/Pages/Dashboard/Components/DashboardHero.vue';
@@ -8,6 +9,8 @@ import DashboardRecentInvoices from '@/Pages/Dashboard/Components/DashboardRecen
 import DashboardActiveAutomatizations from '@/Pages/Dashboard/Components/DashboardActiveAutomatizations.vue';
 import type { AuthUser } from '@/types/inertia';
 import type { InvoiceStats, DashboardCounts, ActiveAutomatization, DashboardRecentInvoice } from './Utils/types';
+
+const { t } = useI18n();
 
 defineProps<{
     invoice_stats: InvoiceStats
@@ -24,13 +27,13 @@ const userName = computed(() => {
 </script>
 
 <template>
-    <Head title="Prehľad" />
+    <Head :title="t('dashboard.title')" />
 
     <AuthenticatedLayout>
         <div class="space-y-6">
-            <PageHeader title="Prehľad">
+            <PageHeader :title="t('dashboard.title')">
                 <template v-if="userName" #subtitle>
-                    Vitaj späť, {{ userName }}.
+                    {{ t('dashboard.welcomeBack', { name: userName }) }}
                 </template>
             </PageHeader>
 

@@ -1,5 +1,5 @@
 <template>
-    <Head title="Nová faktúra" />
+    <Head :title="t('invoices.form.newInvoice')" />
 
     <AuthenticatedLayout>
         <InvoiceForm
@@ -16,9 +16,12 @@
 
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceForm from './Components/InvoiceForm.vue';
 import type { RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 defineProps<{
     recipients: RecipientResource[]

@@ -7,8 +7,11 @@ import AutomatizationFormModal from '@/Pages/Automatizations/Components/Automati
 import PageHeader from '@/Components/PageHeader.vue';
 import { Head } from '@inertiajs/vue3';
 import Button from 'primevue/button';
+import { useI18n } from 'vue-i18n';
 import type { Automatization, AutomatizationTypeOption } from './Utils/types';
 import type { RecipientResource } from '@/types';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     automatizations: Automatization[]
@@ -32,14 +35,14 @@ function openEdit(automatization: Automatization) {
 </script>
 
 <template>
-    <Head title="Automatizácie" />
+    <Head :title="t('automatizations.pageTitle')" />
 
     <AuthenticatedLayout>
         <div class="space-y-6">
-            <PageHeader title="Automatizácie">
+            <PageHeader :title="t('automatizations.pageTitle')">
                 <template #actions>
                     <Button
-                        label="Nová automatizácia"
+                        :label="t('automatizations.newAutomatization')"
                         icon="pi pi-plus"
                         class="p-button-raised p-button-sm"
                         @click="openCreate"
@@ -59,7 +62,7 @@ function openEdit(automatization: Automatization) {
             </div>
             <div v-else class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
                 <p class="app-muted">
-                    Zatiaľ nemáte žiadne automatizácie. Vytvorte jednu na automatické generovanie faktúr alebo mesačný report.
+                    {{ t('automatizations.emptyState') }}
                 </p>
             </div>
         </div>

@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'title' => 'Invoice',
+    'issue_date' => 'Issue date',
+    'due_date' => 'Due date',
+    'variable_symbol' => 'Variable symbol',
+    'issuer' => 'Issuer',
+    'recipient' => 'Recipient',
+    'company_reg_no' => 'Company Reg. No.',
+    'tax_id' => 'Tax ID',
+    'vat_id' => 'VAT ID',
+    'description' => 'Description',
+    'quantity' => 'Quantity',
+    'unit_price' => 'Unit price',
+    'total' => 'Total',
+    'subtotal_excl_vat' => 'Subtotal excl. VAT',
+    'vat' => 'VAT',
+    'total_due' => 'Total due',
+    'payment' => 'Payment',
+    'amount' => 'Amount',
+    'qr_payment_note' => 'QR payment (Pay by Square, SEPA)',
+    'units' => [
+        'pcs' => 'pcs',
+        'hrs' => 'hrs',
+        'days' => 'days',
+        'kg' => 'kg',
+        'm' => 'm',
+        'm²' => 'm²',
+    ],
+];

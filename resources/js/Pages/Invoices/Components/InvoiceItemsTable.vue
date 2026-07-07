@@ -3,9 +3,9 @@
     <div v-if="card" class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h3 class="text-lg font-medium text-gray-900">Položky faktúry</h3>
+                <h3 class="text-lg font-medium text-gray-900">{{ t('invoices.items.title') }}</h3>
                 <p class="mt-1 text-sm text-gray-600">
-                    Pridajte jednu alebo viac položiek s názvom, množstvom, jednotkou a cenou.
+                    {{ t('invoices.items.description') }}
                 </p>
                 <InputError v-if="error" class="mt-2" :message="error" />
             </div>
@@ -14,7 +14,7 @@
                 @click="addItem"
                 class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:bg-emerald-800"
             >
-                Pridať položku
+                {{ t('invoices.items.addItem') }}
             </button>
         </div>
 
@@ -22,15 +22,15 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-6">Názov</th>
-                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">Množstvo</th>
-                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Jednotka</th>
-                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">Jednotková cena</th>
-                        <th v-if="vatTypesList.length" scope="col" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">Typ DPH</th>
-                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">Suma bez DPH</th>
-                        <th v-if="vatTypesList.length" scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">DPH</th>
-                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">Celkom</th>
-                        <th scope="col" class="relative py-3 pl-3 pr-4 sm:pr-6"><span class="sr-only">Odstrániť</span></th>
+                        <th scope="col" class="py-3 pl-4 pr-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 sm:pl-6">{{ t('invoices.items.name') }}</th>
+                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.quantity') }}</th>
+                        <th scope="col" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.unit') }}</th>
+                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.unitPrice') }}</th>
+                        <th v-if="vatTypesList.length" scope="col" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.vatType') }}</th>
+                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.amountExclVat') }}</th>
+                        <th v-if="vatTypesList.length" scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.vat') }}</th>
+                        <th scope="col" class="px-3 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500">{{ t('invoices.items.total') }}</th>
+                        <th scope="col" class="relative py-3 pl-3 pr-4 sm:pr-6"><span class="sr-only">{{ t('invoices.items.remove') }}</span></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -42,7 +42,7 @@
                             <TextInput v-model="item.quantity" type="number" min="0" step="any" class="block w-full text-right" />
                         </td>
                         <td class="whitespace-nowrap px-3 py-3">
-                            <AppSelect v-model="item.unit" :options="UNITS" size="small" />
+                            <AppSelect v-model="item.unit" :options="unitOptions" size="small" />
                         </td>
                         <td class="whitespace-nowrap px-3 py-3">
                             <TextInput v-model="item.unit_price" type="number" min="0" step="0.01" class="block w-full text-right" />
@@ -65,7 +65,7 @@
                                 @click="removeItem(index)"
                                 :disabled="items.length <= minRows"
                                 class="text-gray-400 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-50"
-                                title="Odstrániť riadok"
+                                :title="t('invoices.items.removeRow')"
                             >
                                 ×
                             </button>
@@ -77,15 +77,15 @@
 
         <div class="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-6 sm:max-w-xs sm:ml-auto">
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">Medzisúčet (bez DPH)</label>
+                <label class="text-sm font-medium text-gray-700">{{ t('invoices.items.subtotal') }}</label>
                 <input :value="fmt(totalWoVat)" type="text" readonly class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm tabular-nums shadow-sm">
             </div>
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">DPH</label>
+                <label class="text-sm font-medium text-gray-700">{{ t('invoices.items.vat') }}</label>
                 <input :value="fmt(totalVat)" type="text" readonly class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm tabular-nums shadow-sm">
             </div>
             <div class="flex items-center justify-between gap-4">
-                <label class="text-sm font-medium text-gray-700">Celkom</label>
+                <label class="text-sm font-medium text-gray-700">{{ t('invoices.items.total') }}</label>
                 <input :value="fmt(invoiceTotal)" type="text" readonly class="w-32 rounded-md border-gray-300 bg-gray-100 py-2 text-right text-sm font-semibold tabular-nums shadow-sm">
             </div>
         </div>
@@ -99,12 +99,12 @@
         <div class="hidden sm:block">
             <!-- Column headers -->
             <div class="grid mb-2" :style="gridTemplateColumns" style="gap:8px">
-                <span class="flat-th">Popis položky</span>
-                <span class="flat-th">Mn.</span>
-                <span class="flat-th">Jednotka</span>
-                <span class="flat-th text-right">Cena / j.</span>
-                <span v-if="vatTypesList.length" class="flat-th text-right">DPH</span>
-                <span class="flat-th text-right">Spolu</span>
+                <span class="flat-th">{{ t('invoices.items.flatDescription') }}</span>
+                <span class="flat-th">{{ t('invoices.items.qtyShort') }}</span>
+                <span class="flat-th">{{ t('invoices.items.unitShort') }}</span>
+                <span class="flat-th text-right">{{ t('invoices.items.pricePerUnit') }}</span>
+                <span v-if="vatTypesList.length" class="flat-th text-right">{{ t('invoices.items.vat') }}</span>
+                <span class="flat-th text-right">{{ t('invoices.items.totalShort') }}</span>
                 <span />
             </div>
 
@@ -116,11 +116,11 @@
                 :style="gridTemplateColumns"
                 style="gap:8px; margin-bottom:10px; align-items:start"
             >
-                <TextInput v-model="item.name" type="text" placeholder="Popis položky" class="block w-full" />
+                <TextInput v-model="item.name" type="text" :placeholder="t('invoices.items.flatDescription')" class="block w-full" />
                 <TextInput v-model="item.quantity" type="number" min="0" step="any" class="block w-full" />
                 <div class="relative">
                     <select v-model="item.unit" class="flat-select">
-                        <option v-for="opt in UNITS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                        <option v-for="opt in unitOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                     </select>
                     <i class="pi pi-chevron-down flat-select-chevron" aria-hidden="true" />
                 </div>
@@ -145,7 +145,7 @@
                         type="button"
                         @click="removeItem(index)"
                         class="flex h-8 w-8 items-center justify-center rounded text-gray-400 transition hover:bg-red-50 hover:text-red-500"
-                        title="Odstrániť"
+                        :title="t('invoices.items.remove')"
                     >
                         <i class="pi pi-trash text-[13px]" aria-hidden="true" />
                     </button>
@@ -163,7 +163,7 @@
             >
                 <!-- Name + trash -->
                 <div class="flex items-center gap-2">
-                    <TextInput v-model="item.name" type="text" placeholder="Popis položky" class="block flex-1" />
+                    <TextInput v-model="item.name" type="text" :placeholder="t('invoices.items.flatDescription')" class="block flex-1" />
                     <button
                         v-if="items.length > minRows"
                         type="button"
@@ -180,24 +180,24 @@
                     :class="vatTypesList.length ? 'grid-cols-4' : 'grid-cols-3'"
                 >
                     <div>
-                        <span class="flat-th">Mn.</span>
+                        <span class="flat-th">{{ t('invoices.items.qtyShort') }}</span>
                         <TextInput v-model="item.quantity" type="number" min="0" step="any" class="block w-full" />
                     </div>
                     <div>
-                        <span class="flat-th">Jedn.</span>
+                        <span class="flat-th">{{ t('invoices.items.unitShortMobile') }}</span>
                         <div class="relative">
                             <select v-model="item.unit" class="flat-select">
-                                <option v-for="opt in UNITS" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                                <option v-for="opt in unitOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                             </select>
                             <i class="pi pi-chevron-down flat-select-chevron" aria-hidden="true" />
                         </div>
                     </div>
                     <div>
-                        <span class="flat-th">Cena / j.</span>
+                        <span class="flat-th">{{ t('invoices.items.pricePerUnit') }}</span>
                         <TextInput v-model="item.unit_price" type="number" min="0" step="0.01" class="block w-full" />
                     </div>
                     <div v-if="vatTypesList.length">
-                        <span class="flat-th">DPH</span>
+                        <span class="flat-th">{{ t('invoices.items.vat') }}</span>
                         <div class="relative">
                             <select
                                 :value="item.vat_type_id ?? ''"
@@ -226,14 +226,14 @@
             class="mt-2 flex items-center gap-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700"
         >
             <i class="pi pi-plus text-[11px]" aria-hidden="true" />
-            Pridať položku
+            {{ t('invoices.items.addItem') }}
         </button>
 
         <!-- Totals -->
         <div class="mt-6 flex justify-end border-t border-gray-200 pt-[18px]">
             <div class="w-full sm:min-w-[300px] sm:w-auto">
                 <div
-                    v-for="[label, value] in [['Základ DPH:', totalWoVat], ['DPH:', totalVat]]"
+                    v-for="[label, value] in [[t('invoices.items.vatBase'), totalWoVat], [t('invoices.items.vatLabel'), totalVat]]"
                     :key="label"
                     class="flex justify-between gap-6 mb-2 text-sm text-gray-500"
                 >
@@ -241,7 +241,7 @@
                     <span class="tabular-nums">{{ fmt(value as number) }} {{ currencySymbol }}</span>
                 </div>
                 <div class="flex justify-between gap-6 pt-2.5 text-base font-bold text-gray-900" style="border-top:2px solid var(--border-strong)">
-                    <span>Celkom:</span>
+                    <span>{{ t('invoices.items.total') }}:</span>
                     <span class="tabular-nums">{{ fmt(invoiceTotal) }} {{ currencySymbol }}</span>
                 </div>
             </div>
@@ -251,15 +251,18 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import InputError from '@/Components/InputError.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { formatVatTypeLabel } from '@/utils/vatTypes';
 import AppSelect from '@/Components/AppSelect.vue';
 import { defaultInvoiceItem, type InvoiceItemFormData } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
-import { UNITS } from '@/utils/units';
+import { getUnitOptions } from '@/utils/units';
 import { usePage } from '@inertiajs/vue3';
 import type { AuthUser } from '@/types/inertia';
 import type { VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 const defaultUserVatTypeId = (usePage().props as { auth?: { user: AuthUser } }).auth?.user?.default_vat_type_id ?? null;
 
@@ -293,6 +296,8 @@ const vatTypeOptions = computed(() =>
         label: formatVatTypeLabel(vatType),
     })),
 );
+
+const unitOptions = computed(() => getUnitOptions());
 
 const gridTemplateColumns = computed(() =>
     vatTypesList.value.length

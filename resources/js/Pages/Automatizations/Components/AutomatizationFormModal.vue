@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import Modal from '@/Components/Modal.vue';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
@@ -25,12 +26,14 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), { automatization: null });
 const emit = defineEmits<{ close: [] }>();
 
+const { t } = useI18n();
+
 const isEdit = computed(() => props.automatization != null);
 
 const form = useForm<AutomatizationFormData>(defaultAutomatizationForm(props.automatization ?? null));
 
-const heading = computed(() => (isEdit.value ? 'Upraviť automatizáciu' : 'Nová automatizácia'));
-const submitLabel = computed(() => (isEdit.value ? 'Uložiť' : 'Vytvoriť automatizáciu'));
+const heading = computed(() => (isEdit.value ? t('automatizations.form.editTitle') : t('automatizations.form.newTitle')));
+const submitLabel = computed(() => (isEdit.value ? t('automatizations.form.saveAutomatization') : t('automatizations.form.createAutomatization')));
 
 const isDailySchedule = computed(
     () => props.automatizationTypes.find((option: AutomatizationTypeOption) => option.value === form.type)?.uses_daily_schedule ?? false,
@@ -113,7 +116,7 @@ watch(
         <div class="flex shrink-0 items-start gap-3 border-b border-gray-200 px-6 py-4">
             <div class="flex-1">
                 <h2 class="text-xl font-semibold text-gray-900">{{ heading }}</h2>
-                <p class="mt-0.5 text-[13px] text-gray-500">Nastavte automatické akcie pre vaše faktúry.</p>
+                <p class="mt-0.5 text-[13px] text-gray-500">{{ t('automatizations.form.modalDescription') }}</p>
             </div>
             <button
                 type="button"
@@ -121,7 +124,7 @@ watch(
                 @click="emit('close')"
             >
                 <i class="pi pi-times text-xl" aria-hidden="true" />
-                <span class="sr-only">Zatvoriť</span>
+                <span class="sr-only">{{ t('common.close') }}</span>
             </button>
         </div>
 
@@ -129,7 +132,7 @@ watch(
         <form class="overflow-y-auto px-6 pb-5 pt-1" @submit.prevent="submitModal">
             <!-- ── Typ automatizácie ── -->
             <div class="flex items-center gap-2.5 mb-3.5 mt-[22px]">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">Typ automatizácie</span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">{{ t('automatizations.form.typeSection') }}</span>
                 <span class="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -166,18 +169,18 @@ watch(
             </div>
 
             <div v-else class="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-700">
-                Typ: <span class="font-medium">{{ automatization?.type_label }}</span>
+                {{ t('automatizations.form.typeLabel') }} <span class="font-medium">{{ automatization?.type_label }}</span>
             </div>
 
             <!-- ── Nastavenia ── -->
             <div class="flex items-center gap-2.5 mb-3.5 mt-[22px]">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">Nastavenia</span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">{{ t('automatizations.form.settingsSection') }}</span>
                 <span class="flex-1 h-px bg-gray-200" />
             </div>
 
             <div class="flex flex-col gap-3.5">
                 <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
-                    <InputLabel for="modal-auto-item_count" value="Počet položiek vo faktúre" />
+                    <InputLabel for="modal-auto-item_count" :value="t('automatizations.form.itemCount')" />
                     <TextInput
                         id="modal-auto-item_count"
                         v-model="form.item_count"
@@ -190,7 +193,7 @@ watch(
                 </div>
 
                 <div v-if="form.type === AutomatizationType.InvoiceAutoGen && form.item_count > 0">
-                    <InputLabel value="Názov položiek" />
+                    <InputLabel :value="t('automatizations.form.itemNames')" />
                     <div v-for="(_, index) in form.item_names" :key="index" class="mt-1.5">
                         <TextInput
                             :id="`modal-auto-item_name-${index}`"
@@ -204,12 +207,12 @@ watch(
                 </div>
 
                 <div v-if="form.type === AutomatizationType.InvoiceAutoGen">
-                    <InputLabel for="modal-auto-recipient" value="Klient" />
+                    <InputLabel for="modal-auto-recipient" :value="t('automatizations.form.client')" />
                     <AppSelect
                         inputId="modal-auto-recipient"
                         v-model="form.recipient_id"
                         :options="recipientOptions"
-                        placeholder="Vyberte klienta"
+                        :placeholder="t('automatizations.form.selectClient')"
                         show-clear
                         filter
                         class="mt-1"
@@ -218,7 +221,7 @@ watch(
                 </div>
 
                 <div v-if="!isDailySchedule">
-                    <InputLabel for="modal-auto-trigger" value="Dátum prvého spustenia" />
+                    <InputLabel for="modal-auto-trigger" :value="t('automatizations.form.firstRunDate')" />
                     <DatePicker
                         inputId="modal-auto-trigger"
                         :modelValue="ymdToDate(form.date_trigger)"
@@ -229,7 +232,7 @@ watch(
                         @update:model-value="(d: unknown) => { form.date_trigger = (d instanceof Date) ? toYMD(d) : '' }"
                     />
                     <p v-if="form.type === AutomatizationType.InvoiceReport" class="mt-1 text-xs text-gray-500">
-                        Report je za predošlý mesiac od tohto dátumu.
+                        {{ t('automatizations.form.reportHint') }}
                     </p>
                     <InputError class="mt-1" :message="form.errors.date_trigger" />
                 </div>
@@ -237,12 +240,12 @@ watch(
                 <div v-else>
                     <input type="hidden" v-model="form.date_trigger">
                     <p class="text-sm text-gray-600">
-                        Táto automatizácia sa spúšťa denne od dnešného dňa.
+                        {{ t('automatizations.form.dailyHint') }}
                     </p>
                 </div>
 
                 <div v-if="form.type === AutomatizationType.InvoiceDueReminder">
-                    <InputLabel for="modal-auto-offset" value="Koľko dní pred/po splatnosti" />
+                    <InputLabel for="modal-auto-offset" :value="t('automatizations.form.dueOffsetDays')" />
                     <TextInput
                         id="modal-auto-offset"
                         v-model="form.due_offset_days"
@@ -253,7 +256,7 @@ watch(
                         class="mt-1 block w-full"
                     />
                     <p class="mt-1 text-xs text-gray-500">
-                        - pred splatnosťou &nbsp;|&nbsp; + po splatnosti &nbsp;|&nbsp; 0 v deň splatnosti
+                        {{ t('automatizations.form.dueOffsetHintBefore') }} &nbsp;|&nbsp; {{ t('automatizations.form.dueOffsetHintAfter') }} &nbsp;|&nbsp; {{ t('automatizations.form.dueOffsetHintOnDate') }}
                     </p>
                     <InputError class="mt-1" :message="form.errors.due_offset_days" />
                 </div>
@@ -265,16 +268,16 @@ watch(
                         v-model="form.is_active"
                         class="rounded border-gray-300 text-emerald-600 shadow-sm focus:ring-emerald-500"
                     >
-                    <InputLabel for="modal-auto-active" value="Aktívne" class="mb-0" />
+                    <InputLabel for="modal-auto-active" :value="t('automatizations.form.active')" class="mb-0" />
                 </div>
             </div>
         </form>
 
         <!-- Footer -->
         <div class="flex shrink-0 items-center justify-end gap-2 border-t border-gray-200 bg-gray-50 px-6 py-3.5">
-            <SecondaryButton type="button" @click="emit('close')">Zrušiť</SecondaryButton>
+            <SecondaryButton type="button" @click="emit('close')">{{ t('common.cancel') }}</SecondaryButton>
             <PrimaryButton type="button" :disabled="form.processing" @click="submitModal">
-                {{ form.processing ? 'Ukladám...' : submitLabel }}
+                {{ form.processing ? t('common.saving') : submitLabel }}
             </PrimaryButton>
         </div>
     </Modal>

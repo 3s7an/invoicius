@@ -57,7 +57,7 @@ class InvoiceController extends Controller
         $this->invoiceService->createInvoice($dto);
 
         return to_route('invoices')
-            ->with('success', 'Faktúra bola vytvorená.');
+            ->with('success', __('messages.invoice_created'));
     }
 
     public function edit(Request $request, Invoice $invoice): Response
@@ -84,7 +84,7 @@ class InvoiceController extends Controller
         $this->invoiceService->updateInvoice($invoice, $dto);
 
         return to_route('invoices')
-            ->with('success', 'Faktúra bola upravená.');
+            ->with('success', __('messages.invoice_updated'));
     }
 
     public function updateStatus(UpdateInvoiceStatusRequest $request, Invoice $invoice): RedirectResponse
@@ -94,7 +94,7 @@ class InvoiceController extends Controller
         $this->invoiceService->updateStatus($invoice, (int) $request->validated('invoice_status_id'));
 
         return back()
-            ->with('success', 'Stav faktúry bol aktualizovaný.');
+            ->with('success', __('messages.invoice_status_updated'));
     }
 
     public function destroy(Invoice $invoice): RedirectResponse
@@ -103,7 +103,7 @@ class InvoiceController extends Controller
         $this->invoiceService->delete($invoice);
 
         return to_route('invoices')
-            ->with('success', 'Faktúra bola zmazaná.');
+            ->with('success', __('messages.invoice_deleted'));
     }
 
     /**

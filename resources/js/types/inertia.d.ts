@@ -32,9 +32,12 @@ export interface AuthUser {
     default_vat_type_id: number | null
 }
 
+export type AppLocale = 'sk' | 'en'
+
 declare module '@inertiajs/vue3' {
     interface PageProps extends InertiaPageProps {
         auth: { user: AuthUser }
         flash: { success?: string; error?: string }
+        locale: AppLocale
     }
 }

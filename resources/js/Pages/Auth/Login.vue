@@ -6,6 +6,9 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 defineProps<{
     canResetPassword?: boolean
@@ -27,7 +30,7 @@ const submit = () => {
 
 <template>
     <GuestLayout>
-        <Head title="Prihlásenie" />
+        <Head :title="t('auth.login.title')" />
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
@@ -35,7 +38,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="E-mail" />
+                <InputLabel for="email" :value="t('common.email')" />
 
                 <TextInput
                     id="email"
@@ -51,7 +54,7 @@ const submit = () => {
             </div>
 
             <div class="mt-4">
-                <InputLabel for="password" value="Heslo" />
+                <InputLabel for="password" :value="t('common.password')" />
 
                 <TextInput
                     id="password"
@@ -68,7 +71,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Zapamätať si ma</span>
+                    <span class="ms-2 text-sm text-gray-600">{{ t('auth.login.rememberMe') }}</span>
                 </label>
             </div>
 
@@ -77,7 +80,7 @@ const submit = () => {
                     :href="route('register')"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                 >
-                    Nemáte účet?
+                    {{ t('auth.login.noAccount') }}
                 </Link>
 
                 <div class="flex items-center">
@@ -86,7 +89,7 @@ const submit = () => {
                         :href="route('password.request')"
                         class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
                     >
-                        Zabudli ste heslo?
+                        {{ t('auth.login.forgotPassword') }}
                     </Link>
 
                     <PrimaryButton
@@ -94,7 +97,7 @@ const submit = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        Prihlásiť sa
+                        {{ t('auth.login.submit') }}
                     </PrimaryButton>
                 </div>
             </div>

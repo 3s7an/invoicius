@@ -1,5 +1,9 @@
 <script setup>
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { formatAmount } from '@/utils/formatters';
+
+const { t } = useI18n();
 
 defineProps({
     stats: {
@@ -17,12 +21,12 @@ defineProps({
     },
 });
 
-const cards = [
-    { key: 'total_invoiced', label: 'Vyfakturované', dotClass: 'bg-indigo-500' },
-    { key: 'paid', label: 'Uhradené', dotClass: 'bg-cyan-500' },
-    { key: 'awaiting', label: 'Čaká na úhradu', dotClass: 'bg-amber-500' },
-    { key: 'overdue', label: 'Po splatnosti', dotClass: 'bg-red-500' },
-];
+const cards = computed(() => [
+    { key: 'total_invoiced', label: t('dashboard.overview.totalInvoiced'), dotClass: 'bg-indigo-500' },
+    { key: 'paid', label: t('dashboard.overview.paid'), dotClass: 'bg-cyan-500' },
+    { key: 'awaiting', label: t('dashboard.overview.awaiting'), dotClass: 'bg-amber-500' },
+    { key: 'overdue', label: t('dashboard.overview.overdue'), dotClass: 'bg-red-500' },
+]);
 </script>
 
 <template>

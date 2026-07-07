@@ -41,14 +41,7 @@ class InvoicePdfService
             'logoDataUrl' => $logoDataUrl,
             'paymentIban' => $paymentIban,
             'paymentQrDataUrl' => $paymentQrDataUrl,
-            'unitLabels' => [
-                'pcs' => 'ks',
-                'hrs' => 'hod',
-                'days' => 'dni',
-                'kg' => 'kg',
-                'm' => 'm',
-                'm²' => 'm²',
-            ],
+            'unitLabels' => __('invoice.units'),
         ])
             ->name('invoice-' . preg_replace('/[^a-z0-9-]/i', '-', $invoice->number) . '.pdf')
             ->download();

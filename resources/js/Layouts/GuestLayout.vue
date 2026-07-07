@@ -1,12 +1,13 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
 </script>
 
 <template>
     <div
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
     >
-        <header class="flex items-center gap-2">
+        <header class="flex w-full max-w-md items-center justify-between px-6 sm:px-0">
             <Link :href="route('login')" class="flex items-center gap-2 no-underline">
                 <svg
                     class="h-10 w-10 shrink-0 fill-current text-emerald-500"
@@ -20,6 +21,7 @@ import { Link } from '@inertiajs/vue3';
                 </svg>
                 <span class="text-xl font-semibold tracking-tight text-emerald-700">Invoicius</span>
             </Link>
+            <LanguageSwitcher />
         </header>
 
         <div

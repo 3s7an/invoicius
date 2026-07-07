@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import DatePicker from 'primevue/datepicker';
 import AppDrawer from '@/Components/AppDrawer.vue';
 import AppSelect from '@/Components/AppSelect.vue';
@@ -13,9 +14,11 @@ import InvoiceItemsTable from './InvoiceItemsTable.vue';
 import InvoiceRecipientSection from './InvoiceRecipientSection.vue';
 import { useInvoiceForm } from '../Composables/useInvoiceForm';
 import { invoicePayload } from '../Utils/invoiceFormDefaults';
-import { toYMD, ymdToDate } from '../Utils/helpers';
+import { currencyName, toYMD, ymdToDate } from '../Utils/helpers';
 import type { AuthUser } from '@/types/inertia';
 import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 interface Props {
     show: boolean
@@ -63,7 +66,7 @@ const {
 );
 
 const currencyOptions = computed(() =>
-    (props.currencies ?? []).map((c) => ({ value: c.id, label: `${c.name} (${c.symbol})` })),
+    (props.currencies ?? []).map((c) => ({ value: c.id, label: `${currencyName(c.symbol, c.name)} (${c.symbol})` })),
 );
 
 function submitDrawer(): void {
@@ -92,13 +95,13 @@ function submitDrawer(): void {
         <form @submit.prevent="submitDrawer">
             <!-- ── Základné údaje ─── -->
             <div class="flex items-center gap-2.5 mb-4 mt-5">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">Základné údaje</span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">{{ t('invoices.sections.basicData') }}</span>
                 <span class="flex-1 h-px bg-gray-200" />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <InputLabel for="drawer-number" value="Číslo faktúry" />
+                    <InputLabel for="drawer-number" :value="t('invoices.header.number')" />
                     <TextInput
                         id="drawer-number"
                         v-model="form.number"
@@ -110,7 +113,7 @@ function submitDrawer(): void {
                 </div>
 
                 <div>
-                    <InputLabel for="drawer-vs" value="Variabilný symbol" />
+                    <InputLabel for="drawer-vs" :value="t('invoices.header.variableSymbol')" />
                     <TextInput
                         id="drawer-vs"
                         v-model="form.variable_symbol"
@@ -122,7 +125,7 @@ function submitDrawer(): void {
                 </div>
 
                 <div>
-                    <InputLabel for="drawer-issue-date" value="Dátum vystavenia" />
+                    <InputLabel for="drawer-issue-date" :value="t('invoices.header.issueDate')" />
                     <DatePicker
                         inputId="drawer-issue-date"
                         :modelValue="ymdToDate(form.issue_date)"
@@ -136,7 +139,7 @@ function submitDrawer(): void {
                 </div>
 
                 <div>
-                    <InputLabel for="drawer-due-date" value="Dátum splatnosti" />
+                    <InputLabel for="drawer-due-date" :value="t('invoices.header.dueDate')" />
                     <DatePicker
                         inputId="drawer-due-date"
                         :modelValue="ymdToDate(form.due_date)"
@@ -150,7 +153,7 @@ function submitDrawer(): void {
                 </div>
 
                 <div class="col-span-2">
-                    <InputLabel for="drawer-currency" value="Mena" />
+                    <InputLabel for="drawer-currency" :value="t('invoices.header.currency')" />
                     <AppSelect
                         inputId="drawer-currency"
                         v-model="form.currency_id"
@@ -163,7 +166,7 @@ function submitDrawer(): void {
 
             <!-- ── Klient ─── -->
             <div class="flex items-center gap-2.5 mb-4 mt-6">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">Klient</span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">{{ t('invoices.sections.client') }}</span>
                 <span class="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -178,7 +181,7 @@ function submitDrawer(): void {
 
             <!-- ── Položky faktúry ─── -->
             <div class="flex items-center gap-2.5 mb-4 mt-6">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">Položky faktúry</span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400 whitespace-nowrap">{{ t('invoices.sections.items') }}</span>
                 <span class="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -193,7 +196,7 @@ function submitDrawer(): void {
 
         <template #footer>
             <div class="flex justify-end gap-2">
-                <SecondaryButton type="button" @click="emit('close')">Zrušiť</SecondaryButton>
+                <SecondaryButton type="button" @click="emit('close')">{{ t('common.cancel') }}</SecondaryButton>
                 <PrimaryButton type="button" :disabled="form.processing" @click="submitDrawer">
                     {{ form.processing ? processingLabel : submitLabel }}
                 </PrimaryButton>

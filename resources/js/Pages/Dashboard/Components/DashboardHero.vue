@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import InvoiceStatsPie from '@/Components/InvoiceStatsPie.vue';
 import type { InvoiceStats, DashboardCounts } from '../Utils/types';
 
@@ -11,38 +13,40 @@ interface StatCardDef {
     value: (counts: DashboardCounts) => number
 }
 
+const { t } = useI18n();
+
 defineProps<{
     invoice_stats: InvoiceStats
     currency_symbol: string
     counts: DashboardCounts
 }>();
 
-const statCards: StatCardDef[] = [
+const statCards = computed<StatCardDef[]>(() => [
     {
         key: 'invoices',
-        label: 'Faktúry',
-        hint: 'celkom v systéme',
+        label: t('dashboard.stats.invoices'),
+        hint: t('dashboard.stats.totalInSystem'),
         icon: 'pi pi-file',
         iconClass: 'text-sky-600 bg-sky-50',
         value: (counts) => counts.invoices,
     },
     {
         key: 'clients',
-        label: 'Klienti',
-        hint: 'celkom v systéme',
+        label: t('dashboard.stats.clients'),
+        hint: t('dashboard.stats.totalInSystem'),
         icon: 'pi pi-users',
         iconClass: 'text-violet-600 bg-violet-50',
         value: (counts) => counts.clients,
     },
     {
         key: 'automatizations',
-        label: 'Aktívne automatizácie',
-        hint: 'bežia automaticky',
+        label: t('dashboard.stats.automatizationsActive'),
+        hint: t('dashboard.stats.runAutomatically'),
         icon: 'pi pi-bolt',
         iconClass: 'text-amber-600 bg-amber-50',
         value: (counts) => counts.automatizations_active,
     },
-];
+]);
 </script>
 
 <template>

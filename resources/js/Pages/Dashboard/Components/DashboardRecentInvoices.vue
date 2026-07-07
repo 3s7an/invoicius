@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import DashboardPanel from '@/Pages/Dashboard/Components/DashboardPanel.vue';
 import { formatAmount, formatDate } from '@/utils/formatters';
+import { invoiceStatusLabel } from '@/Pages/Invoices/Utils/helpers';
 import type { DashboardRecentInvoice } from '@/Pages/Dashboard/Utils/types';
+
+const { t } = useI18n();
 
 defineProps<{
     recent_invoices: DashboardRecentInvoice[]
@@ -19,13 +23,13 @@ function statusBadge(code: string): { bg: string; text: string } {
 </script>
 
 <template>
-    <DashboardPanel title="Posledné faktúry">
+    <DashboardPanel :title="t('dashboard.recentInvoices.title')">
         <template #actions>
             <Link
                 :href="route('invoices')"
                 class="flex items-center gap-1 text-sm font-medium text-gray-500 hover:text-gray-700"
             >
-                Zobraziť všetky
+                {{ t('dashboard.recentInvoices.viewAll') }}
                 <i class="pi pi-arrow-right text-xs" aria-hidden="true" />
             </Link>
         </template>
@@ -35,7 +39,7 @@ function statusBadge(code: string): { bg: string; text: string } {
             class="flex flex-col items-center justify-center px-5 py-10 text-center"
         >
             <i class="pi pi-inbox mb-3 text-3xl text-gray-300" aria-hidden="true" />
-            <p class="text-sm text-gray-500">Zatiaľ tu nie sú žiadne faktúry.</p>
+            <p class="text-sm text-gray-500">{{ t('dashboard.recentInvoices.empty') }}</p>
         </div>
 
         <table v-else style="width:100%; border-collapse:collapse; font-size:14px;">
@@ -58,7 +62,7 @@ function statusBadge(code: string): { bg: string; text: string } {
                             style="display:inline-flex; align-items:center; border-radius:9999px; padding:2px 8px; font-size:12px; font-weight:500; white-space:nowrap;"
                             :style="{ background: statusBadge(invoice.invoice_status.code).bg, color: statusBadge(invoice.invoice_status.code).text }"
                         >
-                            {{ invoice.invoice_status.name }}
+                            {{ invoiceStatusLabel(invoice.invoice_status.code, invoice.invoice_status.name) }}
                         </span>
                         <span v-else style="color:var(--text-muted);">—</span>
                     </td>

@@ -1,5 +1,5 @@
 <template>
-    <Head :title="'Upraviť faktúru ' + (invoice?.number ?? '')" />
+    <Head :title="t('invoices.form.editInvoice', { number: invoice?.number ?? '' })" />
 
     <AuthenticatedLayout>
         <InvoiceForm
@@ -15,9 +15,12 @@
 
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import InvoiceForm from './Components/InvoiceForm.vue';
 import type { InvoiceResource, RecipientResource, CurrencyResource, VatTypeResource } from '@/types';
+
+const { t } = useI18n();
 
 defineProps<{
     invoice: InvoiceResource

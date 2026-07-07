@@ -13,12 +13,7 @@ enum AutomatizationType: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::InvoiceAutoGen => 'Automatické generovanie faktúr',
-            self::InvoiceReport => 'Mesačný report faktúr',
-            self::InvoiceDueReminder => 'Upozornenie na splatnosť',
-            self::InvoiceStatusAutoUpdate => 'Automatická zmena stavu faktúry',
-        };
+        return __("automatization.types.{$this->value}.label");
     }
 
     public function icon(): string
@@ -33,12 +28,7 @@ enum AutomatizationType: string
 
     public function description(): string
     {
-        return match ($this) {
-            self::InvoiceAutoGen => 'Faktúra sa vytvorí automaticky v zvolený deň.',
-            self::InvoiceReport => 'Zhrnutie fakturácie za uplynulý mesiac zasielané e-mailom.',
-            self::InvoiceDueReminder => 'Upozornenie klienta na splatnosť faktúry.',
-            self::InvoiceStatusAutoUpdate => 'Faktúry po splatnosti so stavom „Odoslaná“ sa automaticky označia ako „Po splatnosti“.',
-        };
+        return __("automatization.types.{$this->value}.description");
     }
 
     public function requiresRecipient(): bool

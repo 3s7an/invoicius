@@ -1,18 +1,18 @@
 <template>
     <div :class="card ? 'overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50' : ''">
         <template v-if="card">
-            <h3 class="text-lg font-medium text-gray-900">Klient</h3>
+            <h3 class="text-lg font-medium text-gray-900">{{ t('invoices.recipient.title') }}</h3>
             <p class="mt-1 text-sm text-gray-600">{{ description }}</p>
         </template>
 
         <div :class="card ? 'mt-6' : ''">
-            <InputLabel for="invoice-recipient-search" value="Vyberte klienta" />
+            <InputLabel for="invoice-recipient-search" :value="t('invoices.recipient.selectClient')" />
             <AutoComplete
                 id="invoice-recipient-search"
                 v-model="selectedRecipient"
                 :suggestions="filteredRecipients"
                 option-label="_label"
-                placeholder="Začnite písať..."
+                :placeholder="t('invoices.recipient.startTyping')"
                 class="mt-1 w-full"
                 fluid
                 @complete="searchRecipients"
@@ -31,7 +31,7 @@
                         :href="route('recipients.create') + '?from_invoice=1'"
                         class="block px-3 py-2 text-center text-sm font-medium text-emerald-600 hover:bg-emerald-50 hover:text-emerald-800"
                     >
-                        + Pridať nového klienta
+                        {{ t('invoices.recipient.addNewClient') }}
                     </Link>
                 </template>
             </AutoComplete>
@@ -53,6 +53,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import AutoComplete from 'primevue/autocomplete';
 import { Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import InputLabel from '@/Components/InputLabel.vue';
 import RecipientForm from '@/Pages/Recipients/Components/RecipientForm.vue';
 import {
@@ -61,6 +62,8 @@ import {
     type RecipientSectionData,
 } from '../Utils/invoiceFormDefaults';
 import type { RecipientResource } from '@/types';
+
+const { t } = useI18n();
 
 type RecipientWithLabel = RecipientResource & { _label: string }
 

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     show: boolean
@@ -77,7 +80,7 @@ onUnmounted(() => {
                         @click="close"
                     >
                         <i class="pi pi-times text-xl" aria-hidden="true" />
-                        <span class="sr-only">Zatvoriť</span>
+                        <span class="sr-only">{{ t('common.close') }}</span>
                     </button>
                 </div>
 

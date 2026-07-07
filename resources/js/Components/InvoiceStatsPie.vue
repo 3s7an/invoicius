@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { formatAmount } from '@/utils/formatters';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     stats: { paid: number; awaiting: number; overdue: number; draft: number }
@@ -13,10 +16,10 @@ const segments = computed(() => {
     const overdue = Number(props.stats?.overdue ?? 0);
     const draft = Number(props.stats?.draft ?? 0);
     return [
-        { key: 'paid', label: 'Uhradené', value: paid, color: 'var(--status-paid)' },
-        { key: 'awaiting', label: 'Čaká na úhradu', value: awaiting, color: 'var(--status-awaiting)' },
-        { key: 'overdue', label: 'Po splatnosti', value: overdue, color: 'var(--status-overdue)' },
-        { key: 'draft', label: 'Koncept', value: draft, color: 'var(--status-draft)' },
+        { key: 'paid', label: t('dashboard.pie.paid'), value: paid, color: 'var(--status-paid)' },
+        { key: 'awaiting', label: t('dashboard.pie.awaiting'), value: awaiting, color: 'var(--status-awaiting)' },
+        { key: 'overdue', label: t('dashboard.pie.overdue'), value: overdue, color: 'var(--status-overdue)' },
+        { key: 'draft', label: t('dashboard.pie.draft'), value: draft, color: 'var(--status-draft)' },
     ];
 });
 
@@ -41,13 +44,13 @@ const donutGradient = computed(() => {
 <template>
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
         <div class="border-b border-gray-100 px-5 py-3.5">
-            <h2 class="text-sm font-semibold text-gray-900">Fakturované podľa stavu</h2>
-            <p class="mt-0.5 text-xs text-gray-500">Rozdelenie celkovej fakturovanej sumy</p>
+            <h2 class="text-sm font-semibold text-gray-900">{{ t('dashboard.pie.title') }}</h2>
+            <p class="mt-0.5 text-xs text-gray-500">{{ t('dashboard.pie.subtitle') }}</p>
         </div>
 
         <div class="p-5">
             <div v-if="!hasAny" class="rounded-xl bg-gray-50 p-6 text-sm text-gray-500">
-                Zatiaľ nemáš žiadne sumy na rozdelenie.
+                {{ t('dashboard.pie.empty') }}
             </div>
 
             <div v-else style="display:flex; align-items:center; gap:40px; flex-wrap:wrap;">
@@ -60,7 +63,7 @@ const donutGradient = computed(() => {
                         <span style="font-size:17px; font-weight:600; color:var(--text-strong); font-variant-numeric:tabular-nums; white-space:nowrap; line-height:1.2;">
                             {{ formatAmount(total) }} {{ currencySymbol }}
                         </span>
-                        <span style="font-size:12px; color:var(--text-muted); margin-top:2px;">fakturované</span>
+                        <span style="font-size:12px; color:var(--text-muted); margin-top:2px;">{{ t('dashboard.pie.invoiced') }}</span>
                     </div>
                 </div>
 

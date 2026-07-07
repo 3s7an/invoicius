@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
 import screenshot1 from '@/assets/app-screenshot.png';
 import screenshot2 from '@/assets/app-screenshot-2.png';
 import screenshot3 from '@/assets/app-screenshot-3.png';
 import screenshot4 from '@/assets/app-screenshot-4.png';
+
+const { t } = useI18n();
 
 const screenshots = [screenshot1, screenshot2, screenshot3, screenshot4];
 const urls = ['dashboard', 'invoices', 'recipients', 'automatizations'];
@@ -42,36 +46,38 @@ function goTo(index: number) {
 </script>
 
 <template>
-    <Head title="Invoicius – jednoduchá fakturácia" />
+    <Head :title="t('welcome.headTitle')" />
 
     <div class="page">
         <header class="nav" :class="{ scrolled }">
             <ApplicationLogo />
-            <Link :href="route('login')" class="btn-nav">
-                Prihlásiť sa
-            </Link>
+            <div class="nav-actions">
+                <LanguageSwitcher />
+                <Link :href="route('login')" class="btn-nav">
+                    {{ t('welcome.login') }}
+                </Link>
+            </div>
         </header>
 
         <!-- Hero -->
         <section class="hero">
             <div class="container">
                 <h1>
-                    Faktúry, klienti<br>
-                    a automatizácie<br>
-                    <span>na jednom mieste</span>
+                    {{ t('welcome.hero.titleLine1') }}<br>
+                    {{ t('welcome.hero.titleLine2') }}<br>
+                    <span>{{ t('welcome.hero.titleHighlight') }}</span>
                 </h1>
                 <p class="hero-sub">
-                    Vytvárajte faktúry, spravujte klientov a automatizujte opakujúce sa úlohy –
-                    bez zbytočného klikania.
+                    {{ t('welcome.hero.subtitle') }}
                 </p>
                 <div class="hero-cta">
                     <Link :href="route('login')" class="btn-primary">
-                        Prihlásiť sa do aplikácie <i class="pi pi-arrow-right" />
+                        {{ t('welcome.hero.cta') }} <i class="pi pi-arrow-right" />
                     </Link>
                 </div>
                 <p class="hero-tagline">
                     <span class="tagline-dot" />
-                    Slovenská fakturácia · DPH · PDF export · Automatizácie
+                    {{ t('welcome.hero.tagline') }}
                 </p>
 
                 <!-- Browser-frame carousel -->
@@ -91,7 +97,7 @@ function goTo(index: number) {
                                 v-for="(src, i) in screenshots"
                                 :key="i"
                                 :src="src"
-                                alt="Ukážka aplikácie Invoicius"
+                                :alt="t('welcome.hero.screenshotAlt')"
                                 class="carousel-slide"
                                 :class="{ active: i === current }"
                             >
@@ -102,7 +108,7 @@ function goTo(index: number) {
                                 :key="i"
                                 class="dot"
                                 :class="{ active: i === current }"
-                                :aria-label="`Snímka ${i + 1}`"
+                                :aria-label="t('welcome.hero.slideAriaLabel', { n: i + 1 })"
                                 @click="goTo(i)"
                             />
                         </div>
@@ -117,19 +123,19 @@ function goTo(index: number) {
                 <div class="trust-inner">
                     <div class="trust-item">
                         <div class="trust-num">2<span>min</span></div>
-                        <div class="trust-label">Faktúra hotová za 2 minúty</div>
+                        <div class="trust-label">{{ t('welcome.trust.invoiceReady') }}</div>
                     </div>
                     <div class="trust-item">
                         <div class="trust-num">100<span>%</span></div>
-                        <div class="trust-label">Slovenská lokalizácia a DPH</div>
+                        <div class="trust-label">{{ t('welcome.trust.localization') }}</div>
                     </div>
                     <div class="trust-item">
                         <div class="trust-num">PDF<span>.</span></div>
-                        <div class="trust-label">Export faktúr kedykoľvek</div>
+                        <div class="trust-label">{{ t('welcome.trust.pdfExport') }}</div>
                     </div>
                     <div class="trust-item">
                         <div class="trust-num">24<span>/7</span></div>
-                        <div class="trust-label">Automatizácie bežia non-stop</div>
+                        <div class="trust-label">{{ t('welcome.trust.automation') }}</div>
                     </div>
                 </div>
             </div>
@@ -138,20 +144,20 @@ function goTo(index: number) {
         <!-- Features -->
         <section class="features">
             <div class="container">
-                <h2 class="section-title">Všetko čo potrebujete k fakturácii</h2>
-                <p class="section-sub">Žiadne zbytočné funkcie. Len to, čo každý deň skutočne využijete.</p>
+                <h2 class="section-title">{{ t('welcome.features.title') }}</h2>
+                <p class="section-sub">{{ t('welcome.features.subtitle') }}</p>
                 <div class="features-grid">
                     <div class="feat">
                         <div class="feat-header">
                             <div class="feat-icon icon-sky"><i class="pi pi-file" /></div>
                             <span class="feat-num">01</span>
                         </div>
-                        <h3>Faktúry</h3>
-                        <p>Vystavte faktúru za minútu. Sledujte každý stav – od konceptu až po uhradenie.</p>
+                        <h3>{{ t('welcome.features.invoices.title') }}</h3>
+                        <p>{{ t('welcome.features.invoices.description') }}</p>
                         <ul class="feat-list">
-                            <li>Export do PDF kedykoľvek</li>
-                            <li>Položky s DPH a zľavami</li>
-                            <li>Stav platby v reálnom čase</li>
+                            <li>{{ t('welcome.features.invoices.item1') }}</li>
+                            <li>{{ t('welcome.features.invoices.item2') }}</li>
+                            <li>{{ t('welcome.features.invoices.item3') }}</li>
                         </ul>
                     </div>
                     <div class="feat">
@@ -159,12 +165,12 @@ function goTo(index: number) {
                             <div class="feat-icon icon-violet"><i class="pi pi-users" /></div>
                             <span class="feat-num">02</span>
                         </div>
-                        <h3>Klienti</h3>
-                        <p>Správa klientov vrátane IČO, DIČ, adresy a kompletnej histórie fakturácie.</p>
+                        <h3>{{ t('welcome.features.clients.title') }}</h3>
+                        <p>{{ t('welcome.features.clients.description') }}</p>
                         <ul class="feat-list">
-                            <li>Kompletné fakturačné údaje</li>
-                            <li>História faktúr podľa klienta</li>
-                            <li>Celkový obrat na jednom mieste</li>
+                            <li>{{ t('welcome.features.clients.item1') }}</li>
+                            <li>{{ t('welcome.features.clients.item2') }}</li>
+                            <li>{{ t('welcome.features.clients.item3') }}</li>
                         </ul>
                     </div>
                     <div class="feat">
@@ -172,12 +178,12 @@ function goTo(index: number) {
                             <div class="feat-icon icon-amber"><i class="pi pi-bolt" /></div>
                             <span class="feat-num">03</span>
                         </div>
-                        <h3>Automatizácie</h3>
-                        <p>Nastavte raz, systém funguje za vás – mesačné faktúry, reporty, pripomienky.</p>
+                        <h3>{{ t('welcome.features.automatizations.title') }}</h3>
+                        <p>{{ t('welcome.features.automatizations.description') }}</p>
                         <ul class="feat-list">
-                            <li>Automatické generovanie faktúr</li>
-                            <li>Mesačné reporty e-mailom</li>
-                            <li>Pripomienky pred splatnosťou</li>
+                            <li>{{ t('welcome.features.automatizations.item1') }}</li>
+                            <li>{{ t('welcome.features.automatizations.item2') }}</li>
+                            <li>{{ t('welcome.features.automatizations.item3') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -188,28 +194,28 @@ function goTo(index: number) {
         <section class="cta-section">
             <div class="cta-inner">
                 <div class="cta-left">
-                    <h2>Začnite<br>fakturovať<br><span>dnes</span></h2>
-                    <p>Prihláste sa a spravujte svoju fakturáciu prehľadne, rýchlo a bez zbytočného klikania.</p>
+                    <h2>{{ t('welcome.cta.titleLine1') }}<br>{{ t('welcome.cta.titleLine2') }}<br><span>{{ t('welcome.cta.titleHighlight') }}</span></h2>
+                    <p>{{ t('welcome.cta.description') }}</p>
                     <Link :href="route('login')" class="btn-primary" style="margin-top: 32px">
-                        Prihlásiť sa <i class="pi pi-arrow-right" />
+                        {{ t('welcome.cta.button') }} <i class="pi pi-arrow-right" />
                     </Link>
                 </div>
                 <div class="cta-right">
                     <div class="cta-tile">
                         <div class="cta-tile-num">2<span>min</span></div>
-                        <div class="cta-tile-label">Faktúra za 2 minúty</div>
+                        <div class="cta-tile-label">{{ t('welcome.cta.tileInvoiceReady') }}</div>
                     </div>
                     <div class="cta-tile">
                         <div class="cta-tile-num">100<span>%</span></div>
-                        <div class="cta-tile-label">Slovenská lokalizácia</div>
+                        <div class="cta-tile-label">{{ t('welcome.cta.tileLocalization') }}</div>
                     </div>
                     <div class="cta-tile">
                         <div class="cta-tile-num">PDF<span>.</span></div>
-                        <div class="cta-tile-label">Export kedykoľvek</div>
+                        <div class="cta-tile-label">{{ t('welcome.cta.tilePdfExport') }}</div>
                     </div>
                     <div class="cta-tile">
                         <div class="cta-tile-num">24<span>/7</span></div>
-                        <div class="cta-tile-label">Automatizácie non-stop</div>
+                        <div class="cta-tile-label">{{ t('welcome.cta.tileAutomation') }}</div>
                     </div>
                 </div>
             </div>
@@ -217,7 +223,7 @@ function goTo(index: number) {
 
         <!-- Footer -->
         <footer class="footer">
-            <span>Invoicius · 2026</span>
+            <span>{{ t('welcome.footer') }}</span>
         </footer>
 </div>
 </template>
@@ -254,6 +260,7 @@ function goTo(index: number) {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
 }
 .nav :deep(svg) { color: var(--primary); }
+.nav-actions { display: flex; align-items: center; gap: 16px; }
 .btn-nav {
     display: inline-flex; align-items: center; gap: 7px;
     padding: 9px 22px; background: var(--primary); color: #fff;

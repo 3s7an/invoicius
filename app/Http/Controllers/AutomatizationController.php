@@ -70,7 +70,7 @@ class AutomatizationController extends Controller
         );
 
         return to_route('automatizations.index')
-            ->with('success', 'Automatizácia bola vytvorená.');
+            ->with('success', __('messages.automatization_created'));
     }
 
     public function update(UpdateAutomatizationRequest $request, Automatization $automatization): RedirectResponse
@@ -83,7 +83,7 @@ class AutomatizationController extends Controller
         );
 
         return to_route('automatizations.index')
-            ->with('success', 'Automatizácia bola upravená.');
+            ->with('success', __('messages.automatization_updated'));
     }
 
     public function destroy(Automatization $automatization): RedirectResponse
@@ -93,6 +93,6 @@ class AutomatizationController extends Controller
         $this->automatizationService->delete($automatization);
 
         return to_route('automatizations.index')
-            ->with('success', 'Automatizácia bola zmazaná.');
+            ->with('success', __('messages.automatization_deleted'));
     }
 }

@@ -33,7 +33,7 @@ class RecipientService
 
         if ($recipient->user_id !== $userId) {
             throw ValidationException::withMessages([
-                'recipient_id' => 'Vybraný odberateľ nepatrí tvojmu účtu.',
+                'recipient_id' => __('messages.recipient_not_owned'),
             ]);
         }
 

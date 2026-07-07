@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import DatePicker from 'primevue/datepicker';
+import { useI18n } from 'vue-i18n';
 import AppSelect from '@/Components/AppSelect.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { defaultInvoiceHeader, type InvoiceHeaderFormData } from '@/Pages/Invoices/Utils/invoiceFormDefaults';
-import { prefixedId, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
+import { currencyName, prefixedId, toYMD, ymdToDate } from '@/Pages/Invoices/Utils/helpers';
 import type { CurrencyResource } from '@/types';
+
+const { t } = useI18n();
 
 interface Props {
     modelValue?: InvoiceHeaderFormData
@@ -55,20 +58,20 @@ const id = (name: string): string => prefixedId(props.idPrefix, name);
 const currencyOptions = computed(() =>
     props.currencies.map((currency) => ({
         value: currency.id,
-        label: `${currency.name} (${currency.symbol})`,
+        label: `${currencyName(currency.symbol, currency.name)} (${currency.symbol})`,
     })),
 );
 </script>
 
 <template>
     <div class="overflow-hidden rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200/50">
-        <h3 class="text-lg font-medium text-gray-900">Faktúra</h3>
+        <h3 class="text-lg font-medium text-gray-900">{{ t('invoices.header.title') }}</h3>
         <p class="mt-1 text-sm text-gray-600">
-            Číslo, variabilný symbol a dátumy.
+            {{ t('invoices.header.description') }}
         </p>
         <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
             <div>
-                <InputLabel :for="id('number')" value="Číslo faktúry" />
+                <InputLabel :for="id('number')" :value="t('invoices.header.number')" />
                 <TextInput
                     :id="id('number')"
                     v-model="header.number"
@@ -79,7 +82,7 @@ const currencyOptions = computed(() =>
                 <InputError class="mt-2" :message="errors.number" />
             </div>
             <div>
-                <InputLabel :for="id('variable-symbol')" value="Variabilný symbol" />
+                <InputLabel :for="id('variable-symbol')" :value="t('invoices.header.variableSymbol')" />
                 <TextInput
                     :id="id('variable-symbol')"
                     v-model="header.variable_symbol"
@@ -90,7 +93,7 @@ const currencyOptions = computed(() =>
                 <InputError class="mt-2" :message="errors.variable_symbol" />
             </div>
             <div>
-                <InputLabel :for="id('issue-date')" value="Dátum vystavenia" />
+                <InputLabel :for="id('issue-date')" :value="t('invoices.header.issueDate')" />
                 <DatePicker
                     :inputId="id('issue-date')"
                     :modelValue="ymdToDate(header.issue_date)"
@@ -103,7 +106,7 @@ const currencyOptions = computed(() =>
                 <InputError class="mt-2" :message="errors.issue_date" />
             </div>
             <div>
-                <InputLabel :for="id('due-date')" value="Dátum splatnosti" />
+                <InputLabel :for="id('due-date')" :value="t('invoices.header.dueDate')" />
                 <DatePicker
                     :inputId="id('due-date')"
                     :modelValue="ymdToDate(header.due_date)"
@@ -116,7 +119,7 @@ const currencyOptions = computed(() =>
                 <InputError class="mt-2" :message="errors.due_date" />
             </div>
             <div v-if="currencies.length">
-                <InputLabel :for="id('currency_id')" value="Mena" />
+                <InputLabel :for="id('currency_id')" :value="t('invoices.header.currency')" />
                 <AppSelect
                     :inputId="id('currency_id')"
                     v-model="header.currency_id"

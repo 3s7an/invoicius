@@ -36,7 +36,7 @@ class InvoiceAutoGenerationService
             $user = User::with('defaultVatType')->findOrFail($userId);
             $recipient = Recipient::forUser($userId)->findOrFail($automatization->recipient_id);
         } catch (ModelNotFoundException) {
-            throw new AutomatizationException('Používateľ alebo odberateľ automatizácie nebol nájdený.');
+            throw new AutomatizationException(__('messages.automatization_missing_user_or_recipient'));
         }
 
         $data = InvoiceDTO::fromAutomatization(
@@ -51,7 +51,7 @@ class InvoiceAutoGenerationService
         } catch (DuplicateInvoiceNumberException|UniqueConstraintViolationException $e) {
             throw new AutomatizationException($e instanceof DuplicateInvoiceNumberException
                 ? $e->getMessage()
-                : 'Číslo faktúry už existuje.', $e->getCode(), $e);
+                : __('messages.invoice_number_exists'), $e->getCode(), $e);
         }
 
         return [

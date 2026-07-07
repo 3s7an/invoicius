@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
 import type { AuthUser } from '@/types/inertia';
 
 interface SharedProps extends Record<string, unknown> {
@@ -8,12 +10,14 @@ interface SharedProps extends Record<string, unknown> {
     flash: { success?: string; error?: string }
 }
 
-const NAV_ITEMS = [
-    { label: 'Prehľad',        icon: 'pi-home',  href: () => route('dashboard'),              active: () => route().current('dashboard') },
-    { label: 'Faktúry',        icon: 'pi-file',  href: () => route('invoices'),               active: () => route().current('invoices') },
-    { label: 'Klienti',        icon: 'pi-users', href: () => route('recipients.index'),       active: () => route().current('recipients.*') },
-    { label: 'Automatizácie',  icon: 'pi-bolt',  href: () => route('automatizations.index'), active: () => route().current('automatizations.*') },
-] as const;
+const { t } = useI18n();
+
+const NAV_ITEMS = computed(() => [
+    { label: t('nav.dashboard'),       icon: 'pi-home',  href: () => route('dashboard'),              active: () => route().current('dashboard') },
+    { label: t('nav.invoices'),        icon: 'pi-file',  href: () => route('invoices'),               active: () => route().current('invoices') },
+    { label: t('nav.recipients'),      icon: 'pi-users', href: () => route('recipients.index'),       active: () => route().current('recipients.*') },
+    { label: t('nav.automatizations'), icon: 'pi-bolt',  href: () => route('automatizations.index'), active: () => route().current('automatizations.*') },
+]);
 
 const sidebarOpen = ref(false);
 const showUserMenu = ref(false);
@@ -120,7 +124,7 @@ watch(() => page.url, () => {
                             class="flex w-full items-center gap-2 rounded px-2.5 py-[7px] text-sm text-gray-700 hover:bg-gray-50"
                         >
                             <i class="pi pi-user text-[13px]" aria-hidden="true" />
-                            Profil
+                            {{ t('nav.profile') }}
                         </Link>
                         <div class="my-1 h-px bg-gray-100" />
                         <Link
@@ -130,8 +134,12 @@ watch(() => page.url, () => {
                             class="flex w-full items-center gap-2 rounded px-2.5 py-[7px] text-sm text-red-600 hover:bg-red-50"
                         >
                             <i class="pi pi-sign-out text-[13px]" aria-hidden="true" />
-                            Odhlásiť sa
+                            {{ t('nav.logout') }}
                         </Link>
+                        <div class="my-1 h-px bg-gray-100" />
+                        <div class="px-2.5 py-1">
+                            <LanguageSwitcher />
+                        </div>
                     </div>
                 </Transition>
 
@@ -147,7 +155,7 @@ watch(() => page.url, () => {
                     </span>
                     <span class="flex min-w-0 flex-1 flex-col">
                         <span class="truncate text-[13px] font-semibold text-gray-900">{{ user.name }}</span>
-                        <span class="text-[11px] text-gray-500">Admin</span>
+                        <span class="text-[11px] text-gray-500">{{ t('nav.admin') }}</span>
                     </span>
                     <i
                         class="pi pi-chevron-up shrink-0 text-[10px] text-gray-400 transition-transform duration-150"
@@ -163,7 +171,7 @@ watch(() => page.url, () => {
             <button
                 type="button"
                 class="flex items-center p-3 text-gray-700"
-                aria-label="Otvoriť menu"
+                :aria-label="t('nav.openMenu')"
                 @click="sidebarOpen = true"
             >
                 <i class="pi pi-bars text-[20px]" aria-hidden="true" />
