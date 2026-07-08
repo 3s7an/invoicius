@@ -12,6 +12,7 @@ import { definePreset } from '@primeuix/themes';
 import { sk } from 'primelocale/js/sk.js';
 import { en } from 'primelocale/js/en.js';
 import { i18n } from './i18n';
+import * as Sentry from '@sentry/vue';
 
 const PRIME_LOCALES = { sk, en };
 
@@ -35,6 +36,28 @@ const InvoiciusPreset = definePreset(Aura, {
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+const SENSITIVE_KEYS = [
+    'iban', 'ico', 'dic', 'ic_dph', 'recipient_ico', 'recipient_dic', 'recipient_ic_dph',
+    'varsym', 'email', 'recipient_name', 'recipient_street', 'recipient_street_num',
+    'recipient_city', 'recipient_state', 'total_price', 'vat_price', 'wo_vat_price',
+    'notes', 'password', 'password_confirmation', 'current_password',
+];
+
+function scrubSensitiveData(value) {
+    if (Array.isArray(value)) {
+        return value.map(scrubSensitiveData);
+    }
+    if (value !== null && typeof value === 'object') {
+        return Object.fromEntries(
+            Object.entries(value).map(([key, val]) => [
+                key,
+                SENSITIVE_KEYS.includes(key.toLowerCase()) ? '[Filtered]' : scrubSensitiveData(val),
+            ]),
+        );
+    }
+    return value;
+}
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
@@ -47,7 +70,35 @@ createInertiaApp({
         i18n.global.locale.value = initialLocale;
         document.documentElement.lang = initialLocale;
 
-        return createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) });
+
+        if (import.meta.env.VITE_SENTRY_DSN) {
+            Sentry.init({
+                app,
+                dsn: import.meta.env.VITE_SENTRY_DSN,
+                environment: import.meta.env.MODE,
+                integrations: [Sentry.browserTracingIntegration()],
+                tracesSampleRate: 0.2,
+                sendDefaultPii: false,
+                beforeBreadcrumb(breadcrumb) {
+                    if (breadcrumb.data) {
+                        breadcrumb.data = scrubSensitiveData(breadcrumb.data);
+                    }
+                    return breadcrumb;
+                },
+                beforeSend(event) {
+                    if (event.request?.data) {
+                        event.request.data = scrubSensitiveData(event.request.data);
+                    }
+                    if (event.extra) {
+                        event.extra = scrubSensitiveData(event.extra);
+                    }
+                    return event;
+                },
+            });
+        }
+
+        return app
             .use(plugin)
             .use(ZiggyVue)
             .use(i18n)

@@ -33,7 +33,19 @@ COPY vite.config.js tailwind.config.js postcss.config.js tsconfig.json ./
 COPY resources ./resources
 COPY public ./public
 
-RUN npm run build
+# VITE_* is baked into the client bundle at build time, so it must be passed here
+# (not just set in the VPS .env, which the frontend build never sees).
+ARG VITE_SENTRY_DSN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN \
+    SENTRY_ORG=$SENTRY_ORG \
+    SENTRY_PROJECT=$SENTRY_PROJECT
+
+# SENTRY_AUTH_TOKEN comes in via a BuildKit secret (not ARG) so it never lands in the
+# image layer history - only needed transiently for the source map upload.
+RUN --mount=type=secret,id=sentry_auth_token \
+    SENTRY_AUTH_TOKEN=$(cat /run/secrets/sentry_auth_token 2>/dev/null || true) npm run build
 
 
 FROM php:8.4-apache-bookworm AS app
