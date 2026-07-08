@@ -53,9 +53,4 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// TEMPORARY - Sentry production test -  Remove this route right after verifying !
-Route::get('/sentry-test', function () {
-    throw new Exception('Sentry test na produkcii - Invoicius');
-});
-
 require __DIR__.'/auth.php';
