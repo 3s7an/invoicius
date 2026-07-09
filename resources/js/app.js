@@ -80,6 +80,11 @@ createInertiaApp({
                 integrations: [Sentry.browserTracingIntegration()],
                 tracesSampleRate: 0.2,
                 sendDefaultPii: false,
+                ignoreErrors: [
+                    // Thrown by third-party browser extensions (legacy Edge/IE COM bridge)
+                    // trying to call a method on an already-destroyed object. Not from app code.
+                    /Object Not Found Matching Id/,
+                ],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
                         breadcrumb.data = scrubSensitiveData(breadcrumb.data);
