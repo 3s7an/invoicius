@@ -80,6 +80,13 @@ createInertiaApp({
                 integrations: [Sentry.browserTracingIntegration()],
                 tracesSampleRate: 0.2,
                 sendDefaultPii: false,
+                // "Object Not Found Matching Id:*, MethodName:*, ParamCount:*" is not
+                // triggered by our code: it comes from browser-extension/Edge internals
+                // hooking into <object>/<embed> elements and surfaces as an unhandled
+                // promise rejection with no stack trace into our bundle.
+                ignoreErrors: [
+                    /Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+/,
+                ],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
                         breadcrumb.data = scrubSensitiveData(breadcrumb.data);
