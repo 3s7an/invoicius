@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
+/** @mixin \App\Models\InvoiceItem */
 #[TypeScript]
 #[LiteralTypeScriptType([
     'id'          => 'number',

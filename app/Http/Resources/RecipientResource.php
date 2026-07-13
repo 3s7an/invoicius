@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Spatie\TypeScriptTransformer\Attributes\LiteralTypeScriptType;
 use Spatie\TypeScriptTransformer\Attributes\TypeScript;
 
+/** @mixin \App\Models\Recipient */
 #[TypeScript]
 #[LiteralTypeScriptType([
     'id'             => 'number',
@@ -27,7 +28,6 @@ use Spatie\TypeScriptTransformer\Attributes\TypeScript;
     'invoice_count'  => 'number',
     'total_invoiced' => 'number',
 ])]
-/** @mixin \App\Models\Recipient */
 class RecipientResource extends JsonResource
 {
     public function toArray(Request $request): array

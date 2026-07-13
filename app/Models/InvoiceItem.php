@@ -9,6 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int $id
+ * @property int $invoice_id
+ * @property int|null $vat_type_id
+ * @property string $name
+ * @property string|null $unit
+ * @property float|string $quantity
+ * @property float|string $unit_price
+ * @property float|string $line_total
+ */
 class InvoiceItem extends Model
 {
     use HasFactory, SoftDeletes;

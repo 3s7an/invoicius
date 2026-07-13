@@ -15,14 +15,24 @@ use Illuminate\Support\Carbon;
 /**
  * @property int $id
  * @property int $user_id
+ * @property int|null $recipient_id
  * @property string|null $number
  * @property string|null $varsym
  * @property string|null $recipient_name
+ * @property string|null $recipient_street
+ * @property string|null $recipient_street_num
+ * @property string|null $recipient_city
+ * @property string|null $recipient_state
+ * @property string|null $recipient_ico
+ * @property string|null $recipient_dic
+ * @property string|null $recipient_ic_dph
+ * @property string|null $iban
  * @property float|string|null $total_price
  * @property Carbon|null $issue_date
  * @property Carbon|null $due_date
  * @property int|null $invoice_status_id
  * @property int|null $currency_id
+ * @property Carbon|null $created_at
  * @property-read User|null $user
  * @property-read Currency|null $currency
  * @property-read InvoiceStatus|null $invoiceStatus

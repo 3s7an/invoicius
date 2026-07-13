@@ -83,7 +83,7 @@ class GenerateTypeExports extends Command
 
         preg_match_all('/export type (\w+)\s*=/', $current, $matches);
 
-        return $matches[1] ?? [];
+        return $matches[1];
     }
 
     /** Find the position of `{` that opens the given namespace declaration. */
