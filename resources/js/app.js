@@ -80,6 +80,10 @@ createInertiaApp({
                 integrations: [Sentry.browserTracingIntegration()],
                 tracesSampleRate: 0.2,
                 sendDefaultPii: false,
+                // Inertia cancels the in-flight axios request whenever a new visit starts
+                // before the previous one finishes (fast navigation, closing a modal, etc.).
+                // That's expected SPA behaviour, not an application error.
+                ignoreErrors: ['Request aborted'],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
                         breadcrumb.data = scrubSensitiveData(breadcrumb.data);
