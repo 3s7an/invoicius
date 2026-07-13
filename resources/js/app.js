@@ -80,6 +80,13 @@ createInertiaApp({
                 integrations: [Sentry.browserTracingIntegration()],
                 tracesSampleRate: 0.2,
                 sendDefaultPii: false,
+                ignoreErrors: [
+                    // Inertia uses axios internally for page visits/prefetching and
+                    // aborts the in-flight request whenever navigation moves on before
+                    // it resolves. Axios' xhr adapter then rejects with this error even
+                    // though it's expected behavior, not an application failure.
+                    'AxiosError: Request aborted',
+                ],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
                         breadcrumb.data = scrubSensitiveData(breadcrumb.data);
