@@ -80,6 +80,18 @@ createInertiaApp({
                 integrations: [Sentry.browserTracingIntegration()],
                 tracesSampleRate: 0.2,
                 sendDefaultPii: false,
+                // Known-benign noise filtered out before it reaches Sentry:
+                //  - "Object Not Found Matching Id...": raised by third-party browser
+                //    extensions / the legacy Edge-IE COM bridge hooking into page
+                //    objects, not by application code.
+                //  - "Request aborted": Inertia uses axios internally for page visits
+                //    and cancels the in-flight request whenever a new visit starts
+                //    before the previous one finishes (fast navigation, closing a modal,
+                //    prefetching). Expected SPA behaviour, not an application error.
+                ignoreErrors: [
+                    /Object Not Found Matching Id/,
+                    'Request aborted',
+                ],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
                         breadcrumb.data = scrubSensitiveData(breadcrumb.data);
