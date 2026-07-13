@@ -1,6 +1,6 @@
 # Invoicius
 
-Fakturačná webová aplikácia – správa faktúr a klientov, export PDF, automatizácie cez n8n.
+Invoicing web application – invoice and client management, PDF export, automations via n8n.
 
 **Web:** [invoicius.online](https://invoicius.online)
 
@@ -9,59 +9,59 @@ Fakturačná webová aplikácia – správa faktúr a klientov, export PDF, auto
 <table>
   <tr>
     <td><img src="readme-photos/invoicius1.png" alt="Dashboard" /></td>
-    <td><img src="readme-photos/invoicius2.png" alt="Faktúry" /></td>
+    <td><img src="readme-photos/invoicius2.png" alt="Invoices" /></td>
   </tr>
   <tr>
-    <td><img src="readme-photos/invoicius3.png" alt="Klienti" /></td>
-    <td><img src="readme-photos/invoicius4.png" alt="Automatizácie" /></td>
+    <td><img src="readme-photos/invoicius3.png" alt="Clients" /></td>
+    <td><img src="readme-photos/invoicius4.png" alt="Automations" /></td>
   </tr>
 </table>
 
 ## Stack
 
-| Vrstva | Technológie |
+| Layer | Technologies |
 |--------|-------------|
 | Backend | PHP 8.2+, Laravel 12 |
 | Frontend | Vue 3, TypeScript, Inertia.js, Tailwind CSS, PrimeVue |
-| Databáza | MySQL 8 |
-| Automatizácie | n8n (cron → webhook → Laravel API) |
+| Database | MySQL 8 |
+| Automations | n8n (cron → webhook → Laravel API) |
 | Infra | Docker, GitHub Actions → GHCR → Ubuntu server |
 
-## Funkcionalita
+## Features
 
-- **Dashboard** – KPI štatistiky, graf stavov faktúr, posledné faktúry, aktívne automatizácie
-- **Faktúry** – zoznam, vytvorenie/úprava (položky, DPH, odberateľ), zmena stavu, export PDF, QR platba
-- **Klienti** – CRUD, prepojenie s faktúrami
-- **Automatizácie** – mesačný report, automatické generovanie faktúr, upozornenia pred splatnosťou
-- **Profil** – fakturačné údaje, logo a farba faktúry
+- **Dashboard** – KPI stats, invoice status chart, recent invoices, active automations
+- **Invoices** – list, create/edit (line items, VAT, recipient), status changes, PDF export, QR payment
+- **Clients** – CRUD, linked to invoices
+- **Automations** – monthly report, automatic invoice generation, due-date reminders
+- **Profile** – billing details, logo and invoice color
 
-## Architektúra
+## Architecture
 
 ```
 app/
-├── Automatizations/Handlers/   # handler per typ automatizácie
-├── DTOs/                       # typované dáta medzi vrstvami
-├── Http/Controllers/           # tenké — len orchestrácia (Web + Api)
+├── Automatizations/Handlers/   # handler per automation type
+├── DTOs/                       # typed data between layers
+├── Http/Controllers/           # thin — orchestration only (Web + Api)
 ├── Policies/                   # ownership enforcement
-└── Services/                   # business logika (InvoiceService, AutomatizationProcessor, …)
+└── Services/                   # business logic (InvoiceService, AutomatizationProcessor, …)
 
 resources/js/
-├── Components/                 # zdieľané komponenty
+├── Components/                 # shared components
 ├── Layouts/
 └── Pages/                      # Dashboard / Invoices / Recipients / Automatizations / Profile
     └── <Feature>/
         ├── Components/
-        ├── Composables/        # useXxxForm (Inertia useForm wrappery)
+        ├── Composables/        # useXxxForm (Inertia useForm wrappers)
         └── Utils/              # defaults, helpers
 ```
 
-**Automatizácie:**
+**Automations:**
 ```
 n8n (cron)  →  POST /api/automatizations/process  →  AutomatizationProcessor  →  Handlers
                         ↑ auth: N8N_USER header + N8N_TOKEN
 ```
 
-## Rýchly štart
+## Quick start
 
 ```bash
 git clone https://github.com/3s7an/invoicius.git && cd invoicius
@@ -70,36 +70,36 @@ npm run docker:dev
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec app php artisan db:seed
 ```
 
-Aplikácia beží na `http://localhost:8080`, test účet: `test@example.com` / `password`.
+The application runs at `http://localhost:8080`, test account: `test@example.com` / `password`.
 
-## Príkazy
+## Commands
 
-### Vývoj
+### Development
 
 ```bash
-npm run docker:dev          # spustí celý dev stack (app + mysql + n8n + vite HMR)
-npm run types               # regeneruje resources/js/types/index.ts (po každom merge)
+npm run docker:dev          # starts the full dev stack (app + mysql + n8n + vite HMR)
+npm run types                # regenerates resources/js/types/index.ts (after every merge)
 ```
 
-### Testovanie
+### Testing
 
 ```bash
-npm run test:all            # FE (typecheck + lint) + BE (PHPUnit) — lokálne
-npm run test:fe             # len FE: vue-tsc + ESLint
-npm run docker:test:all     # FE + BE testy cez Docker
-npm run docker:analyse      # PHPStan / Larastan (nepotrebuje bežiaci app kontajner)
+npm run test:all            # FE (typecheck + lint) + BE (PHPUnit) — local
+npm run test:fe             # FE only: vue-tsc + ESLint
+npm run docker:test:all     # FE + BE tests via Docker
+npm run docker:analyse      # PHPStan / Larastan (doesn't need a running app container)
 ```
 
-### Build & analýza
+### Build & analysis
 
 ```bash
-npm run build               # produkčný Vite build
-npm run docker:rector:dry   # Rector refaktory — náhľad
-npm run docker:rector       # Rector refaktory — aplikácia
+npm run build                # production Vite build
+npm run docker:rector:dry    # Rector refactors — preview
+npm run docker:rector        # Rector refactors — apply
 ```
 
 ## Deploy
 
-Push na `main` → GitHub Actions: BE testy + FE testy (paralelne) → Docker image → GHCR → SSH deploy → `php artisan migrate --force`.
+Push to `main` → GitHub Actions: BE tests + FE tests (parallel) → Docker image → GHCR → SSH deploy → `php artisan migrate --force`.
 
 Secrets: `SERVER_IP`, `SSH_PRIVATE_KEY`, `GITHUB_TOKEN`.
