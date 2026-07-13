@@ -13,8 +13,7 @@ class AutomatizationService
     public function listForUser(int $userId): Collection
     {
         return Automatization::forUser($userId)
-            ->with('recipient')
-            ->orderByDesc('created_at')
+            ->with('recipient')->latest()
             ->get();
     }
 

@@ -41,8 +41,7 @@ class DashboardService
     {
         /** @var EloquentCollection<int, Invoice> $invoices */
         $invoices = Invoice::forUser($userId)
-            ->with('invoiceStatus')
-            ->orderByDesc('created_at')
+            ->with('invoiceStatus')->latest()
             ->limit($limit)
             ->get([
                 'id',
@@ -83,7 +82,7 @@ class DashboardService
         $automatizations = Automatization::forUser($userId)
             ->with('recipient')
             ->where('is_active', true)
-            ->orderByDesc('updated_at')
+            ->latest('updated_at')
             ->limit($limit)
             ->get([
                 'id',

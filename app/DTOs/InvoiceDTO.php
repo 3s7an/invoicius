@@ -86,7 +86,7 @@ final readonly class InvoiceDTO
             recipientId:    $data->recipient_id,
             recipient:      InvoiceRecipientDTO::fromFormData($data->recipient),
             items:          array_map(
-                                fn (InvoiceItemData $item) => InvoiceItemDTO::fromFormData($item),
+                                InvoiceItemDTO::fromFormData(...),
                                 $data->items,
                             ),
         );

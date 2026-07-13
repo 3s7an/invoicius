@@ -33,7 +33,7 @@ class GenerateTypeExports extends Command
             $lines[] = "export type {$name} = App.Http.Resources.{$name}";
         }
 
-        if ($forms) {
+        if ($forms !== []) {
             $lines[] = '';
             $lines[] = '// Form Data (FE → BE input, useForm<T>)';
             foreach ($forms as $name) {
@@ -41,7 +41,7 @@ class GenerateTypeExports extends Command
             }
         }
 
-        if ($enums) {
+        if ($enums !== []) {
             $lines[] = '';
             $lines[] = '// Enums';
             foreach ($enums as $name) {

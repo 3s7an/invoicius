@@ -28,7 +28,7 @@ class InvoiceStatusAutoUpdateService
 
         $sentInvoicesPastDue = $this->invoiceService
             ->getInvoices($automatization->user_id)
-            ->filter(function ($invoice) use ($today) {
+            ->filter(function ($invoice) use ($today): bool {
                 if (! $invoice->due_date || ! $invoice->invoiceStatus) {
                     return false;
                 }
@@ -38,7 +38,7 @@ class InvoiceStatusAutoUpdateService
             })
             ->values();
 
-        $updatedInvoices = $sentInvoicesPastDue->map(function ($invoice) use ($overdueStatus) {
+        $updatedInvoices = $sentInvoicesPastDue->map(function ($invoice) use ($overdueStatus): array {
             $data = [
                 'id' => $invoice->id,
                 'number' => $invoice->number,

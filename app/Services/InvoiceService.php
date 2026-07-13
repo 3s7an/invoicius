@@ -28,8 +28,7 @@ class InvoiceService
     public function getInvoices(int $userId): EloquentCollection
     {
         return Invoice::forUser($userId)
-            ->with('invoiceStatus')
-            ->orderByDesc('created_at')
+            ->with('invoiceStatus')->latest()
             ->get();
     }
 
@@ -194,7 +193,7 @@ class InvoiceService
     {
         $today = now()->format('Ymd');
         $existingCount = Invoice::forUser($userId)
-            ->where(function ($q) use ($today): void {
+            ->where(function (\Illuminate\Contracts\Database\Query\Builder $q) use ($today): void {
                 $q->where('number', $today)
                     ->orWhere('number', 'like', $today . '-%');
             })

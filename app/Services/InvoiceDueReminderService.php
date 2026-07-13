@@ -43,7 +43,7 @@ class InvoiceDueReminderService
             return $invoice->due_date->isSameDay($targetDate);
         })->values();
 
-        $invoiceData = $dueInvoices->map(fn($invoice) => [
+        $invoiceData = $dueInvoices->map(fn($invoice): array => [
             'id' => $invoice->id,
             'number' => $invoice->number,
             'recipient_name' => $invoice->recipient_name,
