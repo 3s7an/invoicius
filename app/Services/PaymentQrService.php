@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Models\Invoice;
 use App\Models\User;
-use DateTimeInterface;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use rikudou\SkQrPayment\QrPayment;
@@ -70,9 +69,7 @@ class PaymentQrService
             $payment->setVariableSymbol(preg_replace('/\D/', '', (string) $invoice->varsym) ?: (string) $invoice->varsym);
         }
 
-        if ($invoice->due_date instanceof DateTimeInterface) {
-            $payment->setDueDate(\DateTimeImmutable::createFromInterface($invoice->due_date));
-        }
+        $payment->setDueDate(\DateTimeImmutable::createFromInterface(now()));
 
         return $payment->getQrString();
     }
