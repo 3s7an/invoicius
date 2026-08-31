@@ -88,9 +88,15 @@ createInertiaApp({
                 //    and cancels the in-flight request whenever a new visit starts
                 //    before the previous one finishes (fast navigation, closing a modal,
                 //    prefetching). Expected SPA behaviour, not an application error.
+                //  - "Network Error": generic axios/XHR failure raised client-side when
+                //    a request never gets a response (browser offline, DNS hiccup, ad
+                //    blocker, or a brief connection drop during a backend deploy/restart).
+                //    Carries no request/response detail to act on and does not indicate
+                //    an application bug.
                 ignoreErrors: [
                     /Object Not Found Matching Id/,
                     'Request aborted',
+                    'Network Error',
                 ],
                 beforeBreadcrumb(breadcrumb) {
                     if (breadcrumb.data) {
