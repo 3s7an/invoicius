@@ -11,7 +11,7 @@ use Spatie\LaravelPdf\Facades\Pdf;
 class InvoicePdfService
 {
     public function __construct(
-        private readonly PaymentQrService $paymentQrService,
+        private readonly IbanService $ibanService,
     ) {}
 
     public function getPdfDownloadResponse(Invoice $invoice): \Spatie\LaravelPdf\PdfBuilder
@@ -29,10 +29,7 @@ class InvoicePdfService
             }
         }
 
-        $paymentIban = $this->paymentQrService->normalizeIban($issuer->iban);
-        $paymentQrDataUrl = $paymentIban !== null
-            ? $this->paymentQrService->generateDataUriForInvoice($invoice, $issuer)
-            : null;
+        $paymentIban = $this->ibanService->normalizeIban($issuer->iban);
 
         return Pdf::view('pdf.invoice', [
             'invoice' => $invoice,
@@ -40,7 +37,6 @@ class InvoicePdfService
             'currencySymbol' => $currencySymbol,
             'logoDataUrl' => $logoDataUrl,
             'paymentIban' => $paymentIban,
-            'paymentQrDataUrl' => $paymentQrDataUrl,
             'unitLabels' => __('invoice.units'),
         ])
             ->name('invoice-' . preg_replace('/[^a-z0-9-]/i', '-', $invoice->number) . '.pdf')

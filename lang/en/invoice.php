@@ -19,7 +19,6 @@ return [
     'total_due' => 'Total due',
     'payment' => 'Payment',
     'amount' => 'Amount',
-    'qr_payment_note' => 'QR payment (Pay by Square, SEPA)',
     'units' => [
         'pcs' => 'pcs',
         'hrs' => 'hrs',
