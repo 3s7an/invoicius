@@ -19,7 +19,6 @@ return [
     'total_due' => 'Na úhradu',
     'payment' => 'Platba',
     'amount' => 'Suma',
-    'qr_payment_note' => 'QR platba (Pay by Square, SEPA)',
     'units' => [
         'pcs' => 'ks',
         'hrs' => 'hod',

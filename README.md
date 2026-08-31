@@ -30,7 +30,7 @@ Invoicing web application – invoice and client management, PDF export, automat
 ## Features
 
 - **Dashboard** – KPI stats, invoice status chart, recent invoices, active automations
-- **Invoices** – list, create/edit (line items, VAT, recipient), status changes, PDF export, QR payment
+- **Invoices** – list, create/edit (line items, VAT, recipient), status changes, PDF export with IBAN payment details
 - **Clients** – CRUD, linked to invoices
 - **Automations** – monthly report, automatic invoice generation, due-date reminders
 - **Profile** – billing details, logo and invoice color

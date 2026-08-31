@@ -21,8 +21,4 @@ return [
     'automatization_missing_user' => 'The automatization has no assigned user.',
     'automatization_missing_recipient' => 'The automatization has no assigned recipient.',
     'automatization_missing_user_or_recipient' => 'The automatization\'s user or recipient could not be found.',
-
-    'payment_recipient_fallback' => 'Payment recipient',
-    'payment_invoice_prefix' => 'Invoice :number',
-    'payment_reference_fallback' => 'Invoice payment',
 ];

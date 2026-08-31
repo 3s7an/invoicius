@@ -21,8 +21,4 @@ return [
     'automatization_missing_user' => 'Automatizácia nemá priradeného používateľa.',
     'automatization_missing_recipient' => 'Automatizácia nemá priradeného odberateľa.',
     'automatization_missing_user_or_recipient' => 'Používateľ alebo odberateľ automatizácie nebol nájdený.',
-
-    'payment_recipient_fallback' => 'Príjemca platby',
-    'payment_invoice_prefix' => 'Faktúra :number',
-    'payment_reference_fallback' => 'Úhrada faktúry',
 ];

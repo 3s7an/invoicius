@@ -87,10 +87,7 @@
             border: 1px solid #e4e4e7;
         }
         .pay-inner td { vertical-align: top; }
-        .pay .qr { width: 100px; padding-right: 16px; }
-        .pay .qr img { width: 92px; height: 92px; display: block; }
         .pay .line { margin-bottom: 3px; }
-        .pay .sub { margin-top: 8px; color: #a1a1aa; }
 
         .notes {
             margin-top: 28px;
@@ -225,20 +222,14 @@
         </tr>
     </table>
 
-    @if(!empty($paymentQrDataUrl) || !empty($paymentIban))
+    @if(!empty($paymentIban))
     <table class="pay">
         <tr>
             <td class="pay-box">
                 <table class="pay-inner">
                     <tr>
-                        @if(!empty($paymentQrDataUrl))
-                        <td class="qr">
-                            <img src="{{ $paymentQrDataUrl }}" alt="" />
-                        </td>
-                        @endif
                         <td>
                             <span class="muted">{{ __('invoice.payment') }}</span><br>
-                            @if(!empty($paymentIban))
                             <div class="block">
                                 <div class="line">IBAN {{ trim(chunk_split($paymentIban, 4, ' ')) }}</div>
                                 <div class="line">{{ __('invoice.amount') }} {{ number_format($invoice->total_price ?? 0, 2, ',', ' ') }} {{ $currencySymbol }}</div>
@@ -247,8 +238,6 @@
                                 @endif
                                 <div class="line">{{ $issuer->company_name ?: $issuer->name }}</div>
                             </div>
-                            <div class="sub">{{ __('invoice.qr_payment_note') }}</div>
-                            @endif
                         </td>
                     </tr>
                 </table>
