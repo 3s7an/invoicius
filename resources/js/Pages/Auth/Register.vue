@@ -2,7 +2,6 @@
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
@@ -24,93 +23,72 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout
+        :eyebrow="t('auth.register.title')"
+        :title="t('auth.register.heading')"
+        :lead="t('auth.register.lead')"
+    >
         <Head :title="t('auth.register.title')" />
 
-        <form @submit.prevent="submit">
-            <div>
+        <form class="g-form" @submit.prevent="submit">
+            <div class="g-field">
                 <InputLabel for="name" :value="t('common.name')" />
-
                 <TextInput
                     id="name"
                     type="text"
-                    class="mt-1 block w-full"
                     v-model="form.name"
                     required
                     autofocus
                     autocomplete="name"
                 />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError :message="form.errors.name" />
             </div>
 
-            <div class="mt-4">
+            <div class="g-field">
                 <InputLabel for="email" :value="t('common.email')" />
-
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
                     required
                     autocomplete="username"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="g-field">
                 <InputLabel for="password" :value="t('common.password')" />
-
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
                     v-model="form.password"
                     required
                     autocomplete="new-password"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    :value="t('common.passwordConfirmation')"
-                />
-
+            <div class="g-field">
+                <InputLabel for="password_confirmation" :value="t('common.passwordConfirmation')" />
                 <TextInput
                     id="password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
                     v-model="form.password_confirmation"
                     required
                     autocomplete="new-password"
                 />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+                <InputError :message="form.errors.password_confirmation" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                >
-                    {{ t('auth.register.hasAccount') }}
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    {{ t('auth.register.submit') }}
-                </PrimaryButton>
-            </div>
+            <button type="submit" class="g-pill g-pill--block" :disabled="form.processing">
+                {{ t('auth.register.submit') }}
+                <span class="g-knob"><i class="pi pi-arrow-right" /></span>
+            </button>
         </form>
+
+        <template #footer>
+            {{ t('auth.register.hasAccount') }}
+            <Link :href="route('login')">{{ t('auth.register.loginLink') }}</Link>
+        </template>
     </GuestLayout>
 </template>

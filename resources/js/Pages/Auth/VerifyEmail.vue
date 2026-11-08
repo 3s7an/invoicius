@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
@@ -21,38 +20,28 @@ const verificationLinkSent = computed(
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout
+        :eyebrow="t('auth.verifyEmail.eyebrow')"
+        :title="t('auth.verifyEmail.title')"
+        :lead="t('auth.verifyEmail.description')"
+    >
         <Head :title="t('auth.verifyEmail.title')" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ t('auth.verifyEmail.description') }}
-        </div>
-
-        <div
-            class="mb-4 text-sm font-medium text-green-600"
-            v-if="verificationLinkSent"
-        >
+        <div v-if="verificationLinkSent" class="g-note">
             {{ t('auth.verifyEmail.linkSent') }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    {{ t('auth.verifyEmail.submit') }}
-                </PrimaryButton>
-
-                <Link
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                >
-                    {{ t('nav.logout') }}
-                </Link>
-            </div>
+        <form class="g-form" @submit.prevent="submit">
+            <button type="submit" class="g-pill g-pill--block" :disabled="form.processing">
+                {{ t('auth.verifyEmail.submit') }}
+                <span class="g-knob"><i class="pi pi-arrow-right" /></span>
+            </button>
         </form>
+
+        <template #footer>
+            <Link :href="route('logout')" method="post" as="button" class="g-text-link">
+                {{ t('nav.logout') }}
+            </Link>
+        </template>
     </GuestLayout>
 </template>

@@ -2,9 +2,8 @@
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -19,45 +18,39 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout
+        :eyebrow="t('auth.forgotPassword.eyebrow')"
+        :title="t('auth.forgotPassword.title')"
+        :lead="t('auth.forgotPassword.description')"
+    >
         <Head :title="t('auth.forgotPassword.title')" />
 
-        <div class="mb-4 text-sm text-gray-600">
-            {{ t('auth.forgotPassword.description') }}
-        </div>
-
-        <div
-            v-if="status"
-            class="mb-4 text-sm font-medium text-green-600"
-        >
+        <div v-if="status" class="g-note">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
+        <form class="g-form" @submit.prevent="submit">
+            <div class="g-field">
                 <InputLabel for="email" :value="t('common.email')" />
-
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError :message="form.errors.email" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    {{ t('auth.forgotPassword.submit') }}
-                </PrimaryButton>
-            </div>
+            <button type="submit" class="g-pill g-pill--block" :disabled="form.processing">
+                {{ t('auth.forgotPassword.submit') }}
+                <span class="g-knob"><i class="pi pi-arrow-right" /></span>
+            </button>
         </form>
+
+        <template #footer>
+            <Link :href="route('login')">{{ t('auth.forgotPassword.backToLogin') }}</Link>
+        </template>
     </GuestLayout>
 </template>

@@ -1,33 +1,149 @@
-<script setup>
-import { Link } from '@inertiajs/vue3';
-import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
+<script setup lang="ts">
+import '../../css/guest.css';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useGuestMotion } from '@/composables/useGuestMotion';
+import GuestNav from '@/Components/Guest/GuestNav.vue';
+
+const { t } = useI18n();
+
+defineProps<{
+    eyebrow: string
+    title: string
+    lead?: string
+}>();
+
+const root = ref<HTMLElement | null>(null);
+
+useGuestMotion(root);
 </script>
 
 <template>
-    <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0"
-    >
-        <header class="flex w-full max-w-md items-center justify-between px-6 sm:px-0">
-            <Link :href="route('login')" class="flex items-center gap-2 no-underline">
-                <svg
-                    class="h-10 w-10 shrink-0 fill-current text-emerald-500"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm0 2v5h5l-5-5zm-4 4h8v1.5h-8V8zm0 3h8v1.5h-8V11zm0 3h5v1.5h-5V14z"
-                    />
-                </svg>
-                <span class="text-xl font-semibold tracking-tight text-emerald-700">Invoicius</span>
-            </Link>
-            <LanguageSwitcher />
-        </header>
+    <div ref="root" class="guest">
+        <GuestNav />
 
-        <div
-            class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-sm sm:max-w-md sm:rounded-xl"
-        >
-            <slot />
-        </div>
+        <main class="auth guest-wrap">
+            <div class="g-tray auth-grid">
+                <section class="g-card auth-form" data-aos="fade-up">
+                    <header>
+                        <span class="g-eyebrow" data-intro><span class="g-dot" />{{ eyebrow }}</span>
+                        <h1 data-reveal="lines" data-reveal-instant>{{ title }}</h1>
+                        <p v-if="lead" class="lead" data-intro>{{ lead }}</p>
+                    </header>
+
+                    <slot />
+
+                    <p v-if="$slots.footer" class="switch">
+                        <slot name="footer" />
+                    </p>
+                </section>
+
+                <aside class="auth-side" data-aos="fade-left" data-aos-delay="150">
+                    <span class="g-eyebrow side-eyebrow"><span class="g-dot" />invoicius.online</span>
+                    <blockquote>{{ t('auth.side.quote') }}</blockquote>
+                    <div class="side-stats">
+                        <div>
+                            <b>{{ t('auth.side.invoiceValue') }}</b>
+                            <span>{{ t('auth.side.invoiceLabel') }}</span>
+                        </div>
+                        <div>
+                            <b>{{ t('auth.side.automationValue') }}</b>
+                            <span>{{ t('auth.side.automationLabel') }}</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
     </div>
 </template>
+
+<style scoped>
+.auth {
+    padding-block: 24px 64px;
+}
+.auth-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    min-height: 640px;
+}
+.auth-form {
+    padding: clamp(28px, 5vw, 56px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+}
+.auth-form h1 {
+    margin-top: 14px;
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+.lead {
+    margin-top: 12px;
+    color: var(--g-muted);
+    max-width: 44ch;
+}
+.switch {
+    font-size: 14.5px;
+    color: var(--g-muted);
+}
+.switch :deep(a) {
+    color: var(--g-ink);
+    font-weight: 500;
+    text-decoration: underline;
+}
+.auth-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    padding: clamp(24px, 4vw, 44px);
+    border-radius: var(--g-r-card);
+    background: var(--g-accent-soft);
+    border: 1px solid var(--g-accent-line);
+    overflow: hidden;
+}
+.side-eyebrow {
+    color: var(--g-muted);
+}
+.auth-side blockquote {
+    margin: 0;
+    font: 500 clamp(1.4rem, 2.6vw, 2rem)/1.15 var(--g-font);
+    letter-spacing: -0.035em;
+    color: var(--g-ink);
+    max-width: 20ch;
+}
+.side-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+.side-stats div {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid var(--g-accent-line);
+    background: var(--g-surface);
+}
+.side-stats b {
+    font: 600 1.6rem/1 var(--g-font);
+    letter-spacing: -0.04em;
+}
+.side-stats span {
+    color: var(--g-muted);
+    font-size: 13px;
+}
+@media (max-width: 860px) {
+    .auth-grid {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+    .auth-side {
+        display: none;
+    }
+}
+</style>

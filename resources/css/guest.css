@@ -1,0 +1,310 @@
+/* ============================================================
+   Invoicius — Guest (public) pages
+   Welcome + auth screens. Everything is scoped under `.guest`
+   so nothing here leaks into the authenticated app.
+   Light only: grid "ledger" ground, white cards, product views
+   in a pale grey tray, emerald pill as the single loud control.
+   ============================================================ */
+
+.guest {
+    --g-ground:       #f5f7f6;
+    --g-surface:      #ffffff;
+    --g-tray:         #e7ebe9;
+    --g-line:         #e5e7eb;
+    --g-grid-line:    rgb(17 24 39 / 0.05);
+    --g-ink:          #111827;
+    --g-muted:        #4b5563;
+    --g-faint:        #9ca3af;
+    --g-accent:       var(--emerald-600);
+    --g-accent-hover: var(--emerald-700);
+    --g-accent-dot:   var(--emerald-500);
+    --g-accent-soft:  var(--emerald-50);
+    --g-accent-line:  var(--emerald-100);
+    --g-st-draft:     #9ca3af;
+    --g-st-sent:      #2f7fc1;
+    --g-st-paid:      var(--emerald-600);
+    --g-st-overdue:   #cf4a2c;
+    --g-shadow:       0 1px 2px rgb(17 24 39 / 0.04), 0 10px 28px -14px rgb(17 24 39 / 0.14);
+
+    --g-font:         "Geist", var(--font-sans);
+    --g-font-data:    "Geist Mono", var(--font-mono);
+
+    --g-r-tray:  28px;
+    --g-r-card:  20px;
+    --g-r-inner: 12px;
+    --g-max:     1200px;
+
+    /* Motion — read by AOS and GSAP (composables/useGuestMotion.ts) */
+    --motion-duration:      700ms;  /* section / card entrance */
+    --motion-duration-slow: 900ms;  /* headings and large surfaces */
+    --motion-fade:          450ms;  /* pure fades, shorter than a move */
+    --motion-stagger:       90ms;   /* gap between siblings */
+    --motion-shift:         32px;   /* travel distance of an entrance */
+    --motion-offset:        120px;  /* start once 120px is in view */
+    --motion-ease:          cubic-bezier(0.215, 0.61, 0.355, 1); /* ≈ power3.out */
+
+    min-height: 100vh;
+    background-color: var(--g-ground);
+    background-image:
+        linear-gradient(var(--g-grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--g-grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+    background-position: center top;
+    color: var(--g-ink);
+    font-family: var(--g-font);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+}
+
+/* Anchor links (#features …) land below the sticky nav. */
+html:has(.guest) {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+}
+
+.guest h1,
+.guest h2,
+.guest h3 {
+    font-family: var(--g-font);
+    color: var(--g-ink);
+    text-wrap: balance;
+}
+
+.guest :focus-visible {
+    outline: 2px solid var(--g-accent);
+    outline-offset: 3px;
+    border-radius: 8px;
+}
+
+/* ── Layout ─────────────────────────────────── */
+.guest .guest-wrap {
+    max-width: calc(var(--g-max) + 64px);
+    margin: 0 auto;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+@media (min-width: 720px) {
+    .guest .guest-wrap { padding-left: 32px; padding-right: 32px; }
+}
+
+.guest .g-section { padding-block: clamp(80px, 11vw, 140px) 0; }
+
+.guest .g-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: end;
+    margin-bottom: 44px;
+}
+.guest .g-h2 {
+    margin-top: 16px;
+    font-size: clamp(2rem, 4.4vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+.guest .g-lead { color: var(--g-muted); max-width: 44ch; }
+@media (max-width: 760px) {
+    .guest .g-head { grid-template-columns: 1fr; }
+}
+
+/* ── Surfaces ───────────────────────────────── */
+.guest .g-tray {
+    background: var(--g-tray);
+    border-radius: var(--g-r-tray);
+    padding: 8px;
+}
+.guest .g-card {
+    background: var(--g-surface);
+    border: 1px solid var(--g-line);
+    border-radius: var(--g-r-card);
+}
+
+/* ── Type atoms ─────────────────────────────── */
+.guest .g-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font: 500 12px/1 var(--g-font-data);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--g-muted);
+}
+.guest .g-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--g-accent-dot);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--g-accent-dot) 20%, transparent);
+}
+.guest .g-mono {
+    font-family: var(--g-font-data);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Buttons ────────────────────────────────── */
+.guest .g-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 8px 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--g-accent);
+    color: #ffffff;
+    font: 500 15px/1 var(--g-font);
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.guest .g-pill:hover {
+    transform: translateY(-1px);
+    background: var(--g-accent-hover);
+    box-shadow: 0 6px 18px -6px rgb(5 150 105 / 0.45);
+}
+.guest .g-pill:disabled { opacity: 0.6; cursor: progress; transform: none; }
+.guest .g-knob {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgb(255 255 255 / 0.18);
+    font-size: 12px;
+    transition: transform 0.25s ease;
+}
+.guest .g-pill:hover .g-knob { transform: rotate(45deg); }
+.guest .g-pill--sm { height: 38px; padding: 0 6px 0 16px; font-size: 14px; }
+.guest .g-pill--sm .g-knob { width: 26px; height: 26px; font-size: 11px; }
+.guest .g-pill--block { width: 100%; justify-content: space-between; height: 52px; font-size: 15.5px; }
+.guest .g-pill--block:hover .g-knob { transform: translateX(2px); }
+
+.guest .g-ghost {
+    display: inline-flex;
+    align-items: center;
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 999px;
+    border: 1px solid var(--g-line);
+    background: var(--g-surface);
+    color: var(--g-ink);
+    font: 500 15px/1 var(--g-font);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.guest .g-ghost:hover { border-color: var(--g-faint); }
+
+/* ── Invoice status chip ────────────────────── */
+.guest .g-status {
+    --c: var(--g-st-draft);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    font: 500 12px/1.4 var(--g-font);
+    white-space: nowrap;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 12%, transparent);
+}
+.guest .g-status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--c);
+}
+.guest .g-status--draft   { --c: var(--g-st-draft); }
+.guest .g-status--sent    { --c: var(--g-st-sent); }
+.guest .g-status--paid    { --c: var(--g-st-paid); }
+.guest .g-status--overdue { --c: var(--g-st-overdue); }
+
+/* ── Forms (auth) ───────────────────────────── */
+.guest .g-form { display: grid; gap: 16px; max-width: 420px; }
+.guest .g-field { display: grid; gap: 7px; }
+.guest .g-field label { font-size: 14px; font-weight: 500; color: var(--g-ink); }
+.guest .g-field input {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid var(--g-line);
+    background: var(--g-ground);
+    color: var(--g-ink);
+    font: 400 15.5px/1 var(--g-font);
+    box-shadow: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.guest .g-field input:focus {
+    outline: none;
+    border-color: var(--g-accent);
+    background: var(--g-surface);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--g-accent-dot) 18%, transparent);
+}
+.guest .g-row-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 14px;
+}
+.guest .g-row-between a { color: var(--g-muted); text-decoration: underline; }
+.guest .g-row-between a:hover { color: var(--g-ink); }
+.guest .g-check { display: inline-flex; align-items: center; gap: 9px; color: var(--g-muted); cursor: pointer; }
+.guest .g-note {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: var(--g-accent-soft);
+    border: 1px solid var(--g-accent-line);
+    color: var(--g-ink);
+    font-size: 14px;
+}
+.guest .g-text-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--g-ink);
+    font: 500 14.5px/1.4 var(--g-font);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* ── Motion ─────────────────────────────────── */
+/* AOS tuned to the motion tokens: shorter travel, power3-like curve. */
+.guest [data-aos][data-aos][data-aos] { transition-timing-function: var(--motion-ease); }
+.guest [data-aos='fade-up']    { transform: translate3d(0, var(--motion-shift), 0); }
+.guest [data-aos='fade-left']  { transform: translate3d(var(--motion-shift), 0, 0); }
+.guest [data-aos='fade-right'] { transform: translate3d(calc(var(--motion-shift) * -1), 0, 0); }
+
+/* Starting state for GSAP entrances (GSAP sets them visible). */
+@media (prefers-reduced-motion: no-preference) {
+    .guest [data-reveal],
+    .guest [data-intro],
+    .guest [data-intro-fade],
+    .guest [data-head] .g-eyebrow,
+    .guest [data-head] [data-head-lead] {
+        opacity: 0;
+    }
+}
+
+/* Line masks keep diacritics and descenders (Č, ý, ž) inside the clip. */
+.guest .g-line-mask {
+    padding-block: 0.12em 0.16em;
+    margin-block: -0.12em -0.16em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:has(.guest) { scroll-behavior: auto; }
+
+    .guest *,
+    .guest *::before,
+    .guest *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}

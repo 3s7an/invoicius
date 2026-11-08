@@ -3,7 +3,6 @@ import Checkbox from '@/Components/Checkbox.vue';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
@@ -29,78 +28,63 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
+    <GuestLayout
+        :eyebrow="t('auth.login.title')"
+        :title="t('auth.login.heading')"
+        :lead="t('auth.login.lead')"
+    >
         <Head :title="t('auth.login.title')" />
 
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+        <div v-if="status" class="g-note">
             {{ status }}
         </div>
 
-        <form @submit.prevent="submit">
-            <div>
+        <form class="g-form" @submit.prevent="submit">
+            <div class="g-field">
                 <InputLabel for="email" :value="t('common.email')" />
-
                 <TextInput
                     id="email"
                     type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
                     required
                     autofocus
                     autocomplete="username"
                 />
-
-                <InputError class="mt-2" :message="form.errors.email" />
+                <InputError :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
+            <div class="g-field">
                 <InputLabel for="password" :value="t('common.password')" />
-
                 <TextInput
                     id="password"
                     type="password"
-                    class="mt-1 block w-full"
                     v-model="form.password"
                     required
                     autocomplete="current-password"
                 />
-
-                <InputError class="mt-2" :message="form.errors.password" />
+                <InputError :message="form.errors.password" />
             </div>
 
-            <div class="mt-4 block">
-                <label class="flex items-center">
+            <div class="g-row-between">
+                <label class="g-check">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">{{ t('auth.login.rememberMe') }}</span>
+                    <span>{{ t('auth.login.rememberMe') }}</span>
                 </label>
-            </div>
 
-            <div class="mt-4 flex items-center justify-between">
-                <Link
-                    :href="route('register')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                >
-                    {{ t('auth.login.noAccount') }}
+                <Link v-if="canResetPassword" :href="route('password.request')">
+                    {{ t('auth.login.forgotPassword') }}
                 </Link>
-
-                <div class="flex items-center">
-                    <Link
-                        v-if="canResetPassword"
-                        :href="route('password.request')"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-                    >
-                        {{ t('auth.login.forgotPassword') }}
-                    </Link>
-
-                    <PrimaryButton
-                        class="ms-4"
-                        :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                    >
-                        {{ t('auth.login.submit') }}
-                    </PrimaryButton>
-                </div>
             </div>
+
+            <button type="submit" class="g-pill g-pill--block" :disabled="form.processing">
+                {{ t('auth.login.submit') }}
+                <span class="g-knob"><i class="pi pi-arrow-right" /></span>
+            </button>
         </form>
+
+        <template #footer>
+            {{ t('auth.login.noAccount') }}
+            <Link :href="route('register')">{{ t('auth.login.registerLink') }}</Link>
+        </template>
     </GuestLayout>
 </template>
